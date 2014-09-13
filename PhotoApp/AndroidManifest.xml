@@ -8,7 +8,7 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
-    <application
+    <application 
         android:name="com.example.app.PhotoViewerApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
