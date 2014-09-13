@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.app.PhotoViewerApplication;
 import com.example.photo.Photo;
@@ -64,6 +65,7 @@ public class DatabaseManager
 		
 	}
 	
+	//Retrieve all information about a photo for an individual view, resolution 100%
 	public Photo retrievePhoto(String photoID)
 	{
 		//This where statement for select command
@@ -77,6 +79,21 @@ public class DatabaseManager
 		
 		Photo photo = new Photo();
 		
+		photo.setPhotoID(photoID);
+		photo.setAlbum( cursor.getString(cursor
+				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
+		photo.setDescription( cursor.getString(cursor
+				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
+		photo.setName( cursor.getString(cursor
+				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+		photo.setUploadedToServer( cursor.getString(cursor
+				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
+
+	    byte[] data = cursor.getBlob(cursor
+	    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+	    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+	    
+	    cursor.close();
 		return photo;
 	}
 	
