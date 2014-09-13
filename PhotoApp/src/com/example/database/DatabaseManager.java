@@ -1,6 +1,7 @@
 package com.example.database;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -95,6 +96,19 @@ public class DatabaseManager
 	    
 	    cursor.close();
 		return photo;
+	}
+	
+	//This method should return ID and bitmap data for all photos in db to be used by gridview
+	//Also, the bitmap has be scaled to improve performance.
+	public ArrayList<Photo> retrieveAllPhotos()
+	{
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				PhotoViewerDatabaseOpenHelper.ALL_COLUMNS_PHOTO_TABLE, null, null,
+				null, null, null, null, null);
+		
+		return new ArrayList<>();
 	}
 	
 	
