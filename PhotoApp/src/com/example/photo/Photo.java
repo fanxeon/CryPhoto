@@ -17,7 +17,7 @@ public class Photo
 	private final String NO = "no";
 	private final String NONE = "none";
 	
-	private String name;
+	//private String name;
 	//A photo ID is the same as the timestamp.
 	//A date taken for the photo in String, and the value of this attribute has to be in a unified 
 	//format e.g yyyyMMdd_HHmmss. For consistency, the value has to be from the photo manager.
@@ -36,30 +36,32 @@ public class Photo
 	public Photo() {
 	}	
 	
-	public Photo(String name, String photoID, Bitmap bitmap, boolean uploadedToServer) {
+	public Photo(String photoID, String description, Bitmap bitmap, boolean uploadedToServer) {
 		//super();
-		this.name = name;
+		//this.name = name;
+		this.description = description;
 		this.photoID = photoID;
 		this.bitmap = bitmap;
 		this.isUploadedToServer = uploadedToServer;
 	}
 
-	public Photo(String name, String photoID, Bitmap bitmap, String album,
+	public Photo(String photoID,String description, Bitmap bitmap, String album,
 			boolean uploadedToServer) {
 		//super();
-		this.name = name;
+		//this.name = name;
+		this.description = description;
 		this.photoID = photoID;
 		this.bitmap = bitmap;
 		this.album = album;
 		this.isUploadedToServer = uploadedToServer;
 	}
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+//	public String getName() {
+//		return name;
+//	}
+//	public void setName(String name) {
+//		this.name = name;
+//	}
 	public String getPhotoID() {
 		return photoID;
 	}

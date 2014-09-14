@@ -28,17 +28,18 @@ public class DatabaseManager
 	//sql commnads. From this helper you can get writable/readable database.
 	private PhotoViewerDatabaseOpenHelper dbHelper = null;
 	
-	private DatabaseManager()
+	private DatabaseManager(Context con)
 	{
-		context = PhotoViewerApplication.getPhotoViewerAppContext();
-		dbHelper = new PhotoViewerDatabaseOpenHelper();
+		//context = PhotoViewerApplication.getPhotoViewerAppContext();
+		context = con;
+		dbHelper = new PhotoViewerDatabaseOpenHelper(con);
 	}
 	
-	public static DatabaseManager getInstance()
+	public static DatabaseManager getInstance(Context con)
 	{
 		if(instance == null)
 		{
-			instance = new DatabaseManager();
+			instance = new DatabaseManager(con);
 		}
 		return instance;
 	}
@@ -47,7 +48,7 @@ public class DatabaseManager
 	{
 	    ContentValues values = new ContentValues();
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
-	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
+	    //values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION, newPhoto.getDescription());
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM, newPhoto.getAlbum());
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, newPhoto.isUploadedToServerAsYesNO());
@@ -85,8 +86,8 @@ public class DatabaseManager
 				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
 		photo.setDescription( cursor.getString(cursor
 				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
-		photo.setName( cursor.getString(cursor
-				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+		//photo.setName( cursor.getString(cursor
+		//		.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
 		photo.setUploadedToServer( cursor.getString(cursor
 				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
 
@@ -110,6 +111,7 @@ public class DatabaseManager
 		
 		return new ArrayList<>();
 	}
+	
 	
 	
 }

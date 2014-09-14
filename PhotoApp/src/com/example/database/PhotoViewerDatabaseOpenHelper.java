@@ -24,7 +24,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	protected static final String COLUMN_BITMAP = "bitmap";
 	//The value here is either yes or no.
 	protected static final String COLUMN_IS_UPLOADED_TO_SERVER = "uploadedtoserver";
-	protected static final String[] ALL_COLUMNS_PHOTO_TABLE = { COLUMN_ID, COLUMN_NAME,
+	protected static final String[] ALL_COLUMNS_PHOTO_TABLE = { COLUMN_ID, 
 		COLUMN_DESCRIPTION,COLUMN_ALBUM, COLUMN_BITMAP, COLUMN_IS_UPLOADED_TO_SERVER };
 	//NOT SURE We may need it, may be local url or remote url???<<<<<<<<<<<<<<<<<<<---------------
 	//private static final String COLUMN_URL = "url";
@@ -32,9 +32,9 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	//SQL command to create photos table.
 	protected static final String PHOTOS_TABLE_CREATE =
     "CREATE TABLE " + PHOTOS_TABLE_NAME + " (" + COLUMN_ID 
-    	+ " TEXT PRIMARY KEY," + COLUMN_NAME + " TEXT,"
-    	+ COLUMN_ALBUM + " TEXT," + COLUMN_DESCRIPTION + " TEXT," 
-    	+ COLUMN_BITMAP + " BLOB," + COLUMN_IS_UPLOADED_TO_SERVER 
+    	+ " TEXT PRIMARY KEY," + COLUMN_DESCRIPTION + " TEXT," 
+    	+ COLUMN_ALBUM + " TEXT," + COLUMN_BITMAP 
+    	+ " BLOB," + COLUMN_IS_UPLOADED_TO_SERVER 
     	+ " TEXT);";
 
     //Information needed for album table.
@@ -48,9 +48,9 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     "CREATE TABLE " + ALBUM_TABLE_NAME + " (" + COLUMN_NAME 
     	+ " TEXT PRIMARY KEY," + COLUMN_PHOTOS_NUM + " INTEGER);";
 
-    PhotoViewerDatabaseOpenHelper() 
+    PhotoViewerDatabaseOpenHelper(Context context) 
 	{
-		super(PhotoViewerApplication.getPhotoViewerAppContext(), DATABASE_NAME, null, DATABASE_VERSION);
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	    

@@ -34,17 +34,18 @@ public class PhotoManager
 	private long autoPhotoNum = 1;
 	private long autoAlbumNum = 1;
 	
-	private PhotoManager()
+	private PhotoManager(Context con)
 	{
-		context = PhotoViewerApplication.getPhotoViewerAppContext();
-		initializePhotoAlbumAutoNumber();
+		context = con;
+		//context = PhotoViewerApplication.getPhotoViewerAppContext();
+		initializePhotoAlbumAutoNumber();//<<<<<<<<<<<<<--------------
 	}
 	
-	public static PhotoManager getInstance()
+	public static PhotoManager getInstance(Context con)
 	{
 		if(instance == null)
 		{
-			instance = new PhotoManager();
+			instance = new PhotoManager(con);
 		}
 		return instance;
 	}
@@ -155,10 +156,16 @@ public class PhotoManager
 	}
 	
 
-	//This method returns the time stamp as a date object. We are less likely going to use it.????
+	//This method returns the time stamp as a date object. We are less likely going to use it.<<<-----
 	public synchronized Date getCurrentTimeStampAsDate()
 	{
 		return new Date();
+	}
+	
+	//This method returns the time stamp as a String.
+	public synchronized String getCurrentTimeStampAsString()
+	{
+		return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	}
 
 	public Date getTimeStampAsDate(String photoID)
