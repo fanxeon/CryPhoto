@@ -134,7 +134,7 @@ public class DatabaseManager
 		return photoIDs;
 	}
 	
-	//This method will be called by 
+	//This method will be called by cache object.
 	public Bitmap getBitmap(String photoID)
 	{
 		Bitmap photoBitmap = null;
