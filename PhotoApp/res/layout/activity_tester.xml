@@ -49,4 +49,13 @@
         android:layout_alignTop="@+id/btnDB"
         android:src="@drawable/ic_launcher" />
 
+    <TextView
+        android:id="@+id/txtViewDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnDB"
+        android:layout_below="@+id/btnDB"
+        android:layout_marginTop="68dp"
+        android:text="Description :" />
+
 </RelativeLayout>

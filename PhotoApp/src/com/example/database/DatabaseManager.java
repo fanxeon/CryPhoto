@@ -60,16 +60,18 @@ public class DatabaseManager
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
 
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
-	    long rowID = db.replace(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
+	    long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
 	    db.close();
 	    
 	    return rowID;
 		
 	}
 	
+	//This method should be called by individual mode since we need all information about the photo <<<<<<<<<<-----------
 	//Retrieve all information about a photo for an individual view, resolution 100%
-	public Photo retrievePhoto(String photoID)
+	public Photo getPhoto(String photoID)
 	{
+		Photo photo = null;
 		//This where statement for select command
 		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
 		
@@ -79,29 +81,92 @@ public class DatabaseManager
 				PhotoViewerDatabaseOpenHelper.ALL_COLUMNS_PHOTO_TABLE, whereStr, null,
 				null, null, null, null, null);
 		
-		Photo photo = new Photo();
-		
-		photo.setPhotoID(photoID);
-		photo.setAlbum( cursor.getString(cursor
-				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
-		photo.setDescription( cursor.getString(cursor
-				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
-		//photo.setName( cursor.getString(cursor
-		//		.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
-		photo.setUploadedToServer( cursor.getString(cursor
-				.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
-
-	    byte[] data = cursor.getBlob(cursor
-	    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
-	    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+		if ( cursor.moveToFirst() )
+		{	
+			photo = new Photo();
+			photo.setPhotoID(photoID);
+			photo.setAlbum( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
+			photo.setDescription( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
+			//photo.setName( cursor.getString(cursor
+			//		.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+			photo.setUploadedToServer( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
+	
+		    byte[] data = cursor.getBlob(cursor
+		    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+		    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+		}
 	    
 	    cursor.close();
 		return photo;
 	}
 	
+	
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<---------------------------
+	//This method will be called when grid view activity created. Then the activity will pass the arraylist of ids to its adapdter.
+	//The adapter will ask the cache object to get bitmaps for photos from DB asynchronously
+	//This will improve the performance of the application
+	//This method returns photos' ids
+	public ArrayList<String> getPhotoIDs()
+	{
+		ArrayList<String> photoIDs = new ArrayList<String>();
+		
+		SQLiteDatabase db = dbHelper.getReadableDatabase();	
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_ID};
+	
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, null, null,
+				null, null, null, null, null);
+		
+		if ( cursor.moveToFirst() )
+		{
+			do
+			{
+				photoIDs.add( cursor.getString( cursor
+					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_ID) ) );
+			}
+			while(cursor.moveToNext());
+		
+		}
+		
+		return photoIDs;
+	}
+	
+	//This method will be called by 
+	public Bitmap getBitmap(String photoID)
+	{
+		Bitmap photoBitmap = null;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+		
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP};
+	
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, whereStr, null,
+				null, null, null, null, null);
+		
+		if ( cursor.moveToFirst() )
+		{	
+			
+		    byte[] data = cursor.getBlob(cursor
+		    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+		    //BitmapFactory.Options has to be added to scale down the resolution for gird view
+		    photoBitmap =  BitmapFactory.decodeByteArray(data, 0, data.length);	
+		}
+	    
+	    cursor.close();
+		
+		
+		return photoBitmap;
+	}
+	
+	//<<<<<<<<<----------CAlling this method may affect the performance
 	//This method should return ID and bitmap data for all photos in db to be used by gridview
 	//Also, the bitmap has be scaled to improve performance.
-	public ArrayList<Photo> retrieveAllPhotos()
+	public ArrayList<Photo> getAllPhotos()
 	{
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		
@@ -109,9 +174,11 @@ public class DatabaseManager
 				PhotoViewerDatabaseOpenHelper.ALL_COLUMNS_PHOTO_TABLE, null, null,
 				null, null, null, null, null);
 		
+		//This method not completed yet. Do we really need it ???????<<<<<<<<<------------
+		
+		
 		return new ArrayList<>();
 	}
-	
 	
 	
 }

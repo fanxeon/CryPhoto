@@ -2,6 +2,7 @@ package com.example.activities;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -14,6 +15,8 @@ import com.example.photoapp.R.layout;
 import com.example.photoapp.R.menu;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,17 +25,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class TesterActivity extends Activity {
 
 	private Button btnTakePhoto = null;
 	private ImageView imgView = null;
+	private TextView txtViewDescription = null;
 	
 	private Button btnDB = null;
 	private ImageView imgViewDB = null;
@@ -45,6 +52,8 @@ public class TesterActivity extends Activity {
 		//Initialize camera button and imageview 
 		imgView = (ImageView) findViewById(R.id.imageViewPicTaken);		
 		btnTakePhoto = (Button) findViewById(R.id.btnTakePhoto);
+		txtViewDescription = (TextView) findViewById(R.id.txtViewDesc);
+		
 		btnTakePhoto.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -116,7 +125,7 @@ public class TesterActivity extends Activity {
 			}
 			catch (IOException ioe)
 			{
-				Toast.makeText(this, "Unable to create a file.", TRIM_MEMORY_UI_HIDDEN).show();
+				ioe.printStackTrace();
 			}
 			
 			if( photoFile != null)
@@ -131,45 +140,72 @@ public class TesterActivity extends Activity {
 		}
 	}
 
+	private String descriptionStr = "";
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
-		//setContentView(imgView);
-		// Get the dimensions of the View
-	   int targetW = imgView.getWidth();
-	   int targetH = imgView.getHeight();
 
-	    // Get the dimensions of the bitmap
-	    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-	    bmOptions.inJustDecodeBounds = true;
-	    BitmapFactory.decodeFile(photoPath, bmOptions);
-	    int photoW = bmOptions.outWidth;
-	    int photoH = bmOptions.outHeight;
-
-	    // Determine how much to scale down the image
-	    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-	    // Decode the image file into a Bitmap sized to fill the View
-	    bmOptions.inJustDecodeBounds = false;
-	    bmOptions.inSampleSize = scaleFactor;
-	    bmOptions.inPurgeable = true;
+		AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
+		descriptionDialog.setTitle("Enter a decription:");
+		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_TEXT);
+		descriptionDialog.setView(input);
 		
-		Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
-		imgView.setImageBitmap(imgBitmap);
-		
-		//<<<<<<<<<<<----------------- for test
-		DatabaseManager.getInstance(this).insertPhoto(
-				new Photo(tempPhotoIDTest ,"Nice picture",imgBitmap,"My album",false));
-		//testRetrievePhotoFromBD();
-	
+		descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				descriptionStr = input.getText().toString();
+				Toast.makeText(TesterActivity.this, "Photo saved.", Toast.LENGTH_SHORT).show();
+				//setContentView(imgView);
+				// Get the dimensions of the View
+			   int targetW = imgView.getWidth();
+			   int targetH = imgView.getHeight();
+
+			    // Get the dimensions of the bitmap
+			    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+			    //bmOptions.inJustDecodeBounds = true;
+			    BitmapFactory.decodeFile(photoPath, bmOptions);
+			    int photoW = bmOptions.outWidth;
+			    int photoH = bmOptions.outHeight;
+
+			    // Determine how much to scale down the image
+			    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+			    // Decode the image file into a Bitmap sized to fill the View
+			    bmOptions.inJustDecodeBounds = false;
+			    bmOptions.inSampleSize = scaleFactor;
+			    bmOptions.inPurgeable = true;
+				
+				Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
+				imgView.setImageBitmap(imgBitmap);
+				
+				
+				//<<<<<<<<<<<----------------- for test
+				DatabaseManager.getInstance(TesterActivity.this).insertPhoto(
+						new Photo(tempPhotoIDTest , descriptionStr, imgBitmap,"My album",false));
+				//testRetrievePhotoFromBD();				
+			}
+		});
+		descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		descriptionDialog.show();
 	}	
+
+	
 	
 	String tempPhotoIDTest = null;
 	private void testRetrievePhotoFromBD()
 	{
-		Photo testPhoto = DatabaseManager.getInstance(this).retrievePhoto(tempPhotoIDTest);
+		Photo testPhoto = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
 		
 		imgViewDB.setImageBitmap(testPhoto.getBitmap());
+		txtViewDescription.setText("Description: " + testPhoto.getDescription());
 		
 		
 	}
