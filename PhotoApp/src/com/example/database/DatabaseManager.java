@@ -44,7 +44,7 @@ public class DatabaseManager
 		return instance;
 	}
 	
-	public long insertPhoto(Photo newPhoto)
+	public long addPhoto(Photo newPhoto)
 	{
 	    ContentValues values = new ContentValues();
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
