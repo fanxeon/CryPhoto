@@ -9,8 +9,13 @@
     tools:context="com.example.photoapp.MainActivity" >
 
     <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="78dp"
+        android:layout_marginTop="37dp"
+        android:text="Hello World" />
 
 </RelativeLayout>
