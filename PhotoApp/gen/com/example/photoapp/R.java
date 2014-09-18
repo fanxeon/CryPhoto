@@ -32,6 +32,9 @@ public final class R {
         public static final int imgViewDB=0x7f080004;
         public static final int textView1=0x7f080000;
         public static final int txtViewDesc=0x7f080005;
+        public static final int SingleView=0x7f090000;
+        public static final int action_settings=0x7f090002;
+        public static final int gridview=0x7f090001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
