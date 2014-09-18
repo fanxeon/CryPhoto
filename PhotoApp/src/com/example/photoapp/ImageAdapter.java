@@ -12,14 +12,36 @@ import android.widget.ImageView;
 public class ImageAdapter extends BaseAdapter{
 
 	private Context mContext;
+	int[] images;
 
 	   // Constructor
 	   public ImageAdapter(Context c) {
 	      mContext = c;
+	      images = GridActivity.images;
+	    		  //initarray();
 	   }
 
+//	   private void initarray()
+//	   {
+//		   int[] images = mContext.getResources().getIntArray(R.array.ImageRef);
+//		   images = new int[] { R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				   };
+//		   this.images = images;
+//	   }
+	   
 	   public int getCount() {
-	      return mThumbIds.length;
+	      return images.length;
 	   }
 
 	   public Object getItem(int position) {
@@ -54,23 +76,23 @@ public class ImageAdapter extends BaseAdapter{
 	      imageView = (ImageView) convertView;
 	      }
 
-	      imageView.setImageResource(mThumbIds[position]);
+	      imageView.setImageResource(images[position]);
 	      return imageView;
 	   }
 
-	   // Keep all Images in array
-	   public Integer[] mThumbIds = {
-	      R.drawable.img1, R.drawable.img2,
-	      R.drawable.img3, R.drawable.img1,
-	      R.drawable.img2, R.drawable.img3,
-	      R.drawable.img1, R.drawable.img2,
-	      R.drawable.img3, R.drawable.img1,
-	      R.drawable.img2, R.drawable.img3,
-	      R.drawable.img1, R.drawable.img2,
-	      R.drawable.img3, R.drawable.img1,
-	      R.drawable.img2, R.drawable.img3,
-	      R.drawable.img1, R.drawable.img2,
-	      R.drawable.img3, R.drawable.img1,
-	      R.drawable.img2, R.drawable.img3,
-	   };
+//	   // Keep all Images in array
+//	   public Integer[] mThumbIds = {
+//	      R.drawable.img1, R.drawable.img2,
+//	      R.drawable.img3, R.drawable.img1,
+//	      R.drawable.img2, R.drawable.img3,
+//	      R.drawable.img1, R.drawable.img2,
+//	      R.drawable.img3, R.drawable.img1,
+//	      R.drawable.img2, R.drawable.img3,
+//	      R.drawable.img1, R.drawable.img2,
+//	      R.drawable.img3, R.drawable.img1,
+//	      R.drawable.img2, R.drawable.img3,
+//	      R.drawable.img1, R.drawable.img2,
+//	      R.drawable.img3, R.drawable.img1,
+//	      R.drawable.img2, R.drawable.img3,
+//	   };
 	}

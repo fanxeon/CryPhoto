@@ -18,9 +18,9 @@ public class IndividualActivity extends Activity {
 		Intent intent = getIntent();
 		int position = intent.getIntExtra("id",-1);
 		
-		 ImageAdapter imageAdapter = new ImageAdapter(this);
+		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
-	     imageView.setImageResource(imageAdapter.mThumbIds[position]);
+	     imageView.setImageResource(GridActivity.images[position]);
 		
 //		// Create the text view
 //	    TextView textView = new TextView(this);
