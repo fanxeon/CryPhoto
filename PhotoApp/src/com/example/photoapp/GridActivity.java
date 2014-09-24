@@ -32,8 +32,8 @@ public class GridActivity extends Activity {
 		
 		//set up drop-down menu
 		//create an array adapter which will supply views for the drop down menu
-		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
-		        R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
+//		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
+//		        R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
 		
 		//sets up the up button on the action bar for the user to navigate backwards
 		getActionBar().setDisplayHomeAsUpEnabled(true);
