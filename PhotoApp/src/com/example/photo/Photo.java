@@ -13,6 +13,11 @@ import android.graphics.Bitmap;
 public class Photo 
 {	
 
+	public static final String PHOTO_ID = "photoid";
+	public static final String ALBUM = "album";
+	public static final String BITMAP_DATA = "bitmapdata";
+	public static final String DESCRIPTION = "description";
+	
 	private final String YES = "yes";
 	private final String NO = "no";
 	private final String NONE = "none";
