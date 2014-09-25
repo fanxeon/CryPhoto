@@ -1,8 +1,14 @@
 package com.example.activities;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,19 +19,27 @@ import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
 import com.example.photoapp.R.menu;
+import com.example.server.Callback;
+import com.example.server.DownloadPhotoTask;
+import com.example.server.RemoteRemovePhotoTask;
+import com.example.server.ServerManager;
+import com.example.server.UploadPhotoTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.YuvImage;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +57,15 @@ public class TesterActivity extends Activity {
 	
 	private Button btnDB = null;
 	private ImageView imgViewDB = null;
+
+	private Button btnUploadPhoto = null;
+	private TextView txtViewUploadStatus = null;
 	
+	private Button btnDownloadPhoto = null;
+	private ImageView imageViewDownload = null;
+
+	private Button btnRemoteRemovePhoto = null;
+	private TextView txtVRemoteRemovePhotoStatus = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +99,41 @@ public class TesterActivity extends Activity {
 			}
 		});
 		
+		btnUploadPhoto = (Button) findViewById( R.id.btnUploadPhoto );
+		btnUploadPhoto.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				testUploadPhotoToServer();
+				
+			}
+		});
+		txtViewUploadStatus = (TextView) findViewById(R.id.txtViewUploadStatus);
+		
+		imageViewDownload = (ImageView) findViewById(R.id.imgViewDownload);
+		btnDownloadPhoto = (Button) findViewById( R.id.btnDownload );
+		btnDownloadPhoto.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				testDownloadPhotoFromServer();
+				
+			}
+		});
+		
+		btnRemoteRemovePhoto  = (Button) findViewById( R.id.btnServerRemove );
+		btnRemoteRemovePhoto.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				testRemoteRemove();
+
+			}
+		});
+		txtVRemoteRemovePhotoStatus = (TextView) findViewById(R.id.txtVStatuRemove);
+		
+		
+		//--------------------->>>>>>>>>>>>>>>>>>To test remove
 
 	}
 
@@ -207,6 +264,85 @@ public class TesterActivity extends Activity {
 		imgViewDB.setImageBitmap(testPhoto.getBitmap());
 		txtViewDescription.setText("Description: " + testPhoto.getDescription());
 		
+		
+	}
+	
+	private void testUploadPhotoToServer()
+	{
+		Photo testPhotoToServer = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
+		
+		UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(this);
+		uploadPhotoTask.execute(testPhotoToServer);
+		txtViewUploadStatus.setText("Data sent.");
+		
+	}
+	
+
+	private void testDownloadPhotoFromServer()
+	{
+		//Photo testPhoto = new Photo();
+		//already saved on server before
+		String photoId = "20140924_172749";
+		
+		//START<<<<<<<<<<<<<<<--- should be added to activities when downloading
+		//Check connection
+		if(ServerManager.getInstance(this).checkConnection())
+		{
+			DownloadPhotoTask downloadPhotoTask = new DownloadPhotoTask(this);
+			downloadPhotoTask.setCallbackOnTaskFinished(new Callback<Photo>() {			
+				@Override
+				public void OnTaskFinished(Photo result) {
+					if(result != null)
+					{	
+						//this method will be called by downloadPhotoTask when it finish downloading
+						imageViewDownload.setImageBitmap(result.getBitmap());				
+					}	
+				}
+			});
+			downloadPhotoTask.execute(photoId);
+
+		}
+		else
+		{
+			//may be try later, change the icon ????
+			
+		}
+		//End------------------------->>>>>>>>>>>		
+		
+	}
+	private void testRemoteRemove()
+	{
+		String photoIdtoBeRemoved = "20140923_170043";
+		//START<<<<<<<<<<<<<<<--- should be added to activities when downloading
+		if(ServerManager.getInstance(this).checkConnection())
+		{
+		
+			RemoteRemovePhotoTask removePhotoTask = new RemoteRemovePhotoTask(this);
+			removePhotoTask.setCallbackOnTaskFinished(new Callback<String>() {			
+				@Override
+				public void OnTaskFinished(String result) {
+					
+					if(result.equalsIgnoreCase("OK"))
+					{
+						Toast.makeText(TesterActivity.this, "Photo Removed from server.", Toast.LENGTH_SHORT).show();
+					}
+					else
+					{
+						Toast.makeText(TesterActivity.this, "Photo not found on server.", Toast.LENGTH_SHORT).show();
+
+					}
+		
+				}
+			});
+			removePhotoTask.execute(photoIdtoBeRemoved);
+
+		}
+		else
+		{
+			//may be try later, change the icon ????
+			
+		}
+		//End------------------------->>>>>>>>>>>		
 		
 	}
 
