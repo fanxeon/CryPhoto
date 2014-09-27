@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.database.DatabaseManager;
 import com.example.photo.Photo;
 import com.example.photoapp.R;
 
@@ -117,7 +118,6 @@ public class DownloadPhotoTask extends AsyncTask<String, Integer, Photo>//Progre
 				
 				InputStream fromServer = httpConn.getInputStream();
 				int c;
-				StringBuilder sb = new StringBuilder();
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				
@@ -142,10 +142,10 @@ public class DownloadPhotoTask extends AsyncTask<String, Integer, Photo>//Progre
 			
 				//-------------------------------->>>>>>>>>>>>>>post execute
 				String jsonMsg = baos.toString();
+				baos.close();
 				//Log.v("Json msg:" , jsonMsg);
 			    photo = ServerManager.getInstance(activity.getApplicationContext()).getPhotoFromJsonMsg(jsonMsg);
 		    	Log.v("Task bitmap" , photo.getPhotoID());
-				baos.close();
 				
 			} 
 			catch (IOException e) 
@@ -191,6 +191,7 @@ public class DownloadPhotoTask extends AsyncTask<String, Integer, Photo>//Progre
     	 {
     		 nBuilder.setContentText("Download complete").setProgress(0, 0, false);
     		 mNotificationManager.notify(notifyID, nBuilder.build());
+    		 
     	 }
     	 if( this.callbackOnTaskFinished != null )
     	 {

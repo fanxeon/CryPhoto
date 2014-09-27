@@ -27,10 +27,11 @@ public final class R {
         public static final int ic_launcher=0x7f020002;
     }
     public static final class id {
-        public static final int action_settings=0x7f08000b;
+        public static final int action_settings=0x7f08000c;
         public static final int btnDB=0x7f080003;
         public static final int btnDownload=0x7f080008;
         public static final int btnServerRemove=0x7f080009;
+        public static final int btnSync=0x7f08000b;
         public static final int btnTakePhoto=0x7f080005;
         public static final int btnUploadPhoto=0x7f080006;
         public static final int imageViewPicTaken=0x7f080002;

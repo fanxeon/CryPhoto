@@ -23,6 +23,7 @@ import com.example.server.Callback;
 import com.example.server.DownloadPhotoTask;
 import com.example.server.RemoteRemovePhotoTask;
 import com.example.server.ServerManager;
+import com.example.server.SyncPhotosTask;
 import com.example.server.UploadPhotoTask;
 
 import android.app.Activity;
@@ -66,6 +67,8 @@ public class TesterActivity extends Activity {
 
 	private Button btnRemoteRemovePhoto = null;
 	private TextView txtVRemoteRemovePhotoStatus = null;
+	
+	private Button btnSync = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,6 +135,17 @@ public class TesterActivity extends Activity {
 		});
 		txtVRemoteRemovePhotoStatus = (TextView) findViewById(R.id.txtVStatuRemove);
 		
+		btnSync = (Button) findViewById(R.id.btnSync);
+		btnSync.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				SyncPhotosTask syncTask = new SyncPhotosTask(TesterActivity.this);
+				syncTask.execute();
+				
+			}
+		});
 		
 		//--------------------->>>>>>>>>>>>>>>>>>To test remove
 

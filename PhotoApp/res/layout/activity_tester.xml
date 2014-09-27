@@ -101,4 +101,12 @@
         android:layout_toRightOf="@+id/btnServerRemove"
         android:text="Status:" />
 
+    <Button
+        android:id="@+id/btnSync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnUploadPhoto"
+        android:layout_alignLeft="@+id/imgViewDownload"
+        android:text="Sync" />
+
 </RelativeLayout>
