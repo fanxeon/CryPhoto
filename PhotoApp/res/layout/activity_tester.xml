@@ -9,37 +9,10 @@
     tools:context="com.example.activities.TesterActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/txtViewUploadStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
-
-    <Button
-        android:id="@+id/btnTakePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignTop="@+id/imageViewPicTaken"
-        android:text="Take Photo" />
-
-    <ImageView
-        android:id="@+id/imageViewPicTaken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_marginLeft="67dp"
-        android:layout_marginTop="68dp"
-        android:layout_toRightOf="@+id/btnTakePhoto"
-        android:src="@drawable/ic_launcher" />
-
-    <Button
-        android:id="@+id/btnDB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnTakePhoto"
-        android:layout_below="@+id/btnTakePhoto"
-        android:layout_marginTop="109dp"
-        android:text="Retrieve DB" />
 
     <ImageView
         android:id="@+id/imgViewDB"
@@ -55,7 +28,85 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/btnDB"
         android:layout_below="@+id/btnDB"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="24dp"
         android:text="Description :" />
+
+    <Button
+        android:id="@+id/btnTakePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtViewUploadStatus"
+        android:layout_below="@+id/txtViewUploadStatus"
+        android:layout_marginTop="19dp"
+        android:text="Take Photo" />
+
+    <ImageView
+        android:id="@+id/imageViewPicTaken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btnTakePhoto"
+        android:layout_marginLeft="62dp"
+        android:layout_toRightOf="@+id/btnDB"
+        android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/btnDB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnTakePhoto"
+        android:layout_below="@+id/btnTakePhoto"
+        android:layout_marginTop="24dp"
+        android:text="Retrieve DB" />
+
+    <Button
+        android:id="@+id/btnUploadPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/btnDB"
+        android:layout_below="@+id/txtViewDesc"
+        android:layout_marginTop="32dp"
+        android:text="Upload Photo" />
+
+    <ImageView
+        android:id="@+id/imgViewDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imgViewDB"
+        android:layout_alignTop="@+id/btnDownload"
+        android:src="@drawable/ic_launcher" />
+
+    <Button
+        android:id="@+id/btnDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnUploadPhoto"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:text="Download" />
+
+    <Button
+        android:id="@+id/btnServerRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnDownload"
+        android:layout_alignParentBottom="true"
+        android:text="Remove Server" />
+
+    <TextView
+        android:id="@+id/txtVStatuRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnServerRemove"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/btnServerRemove"
+        android:text="Status:" />
+
+    <Button
+        android:id="@+id/btnSync"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnUploadPhoto"
+        android:layout_alignLeft="@+id/imgViewDownload"
+        android:text="Sync" />
 
 </RelativeLayout>
