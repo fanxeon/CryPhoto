@@ -16,20 +16,21 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppBaseTheme" >
+        android:theme="@style/AppBaseTheme"
+        android:largeHeap="true" >
         
         <activity
             android:name=".GridActivity"
             android:label="@string/app_name" >
-        </activity>
-        <activity
-            android:name="com.example.activities.TesterActivity"
-            android:label="@string/title_activity_tester" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             
+        </activity>
+        <activity
+            android:name="com.example.activities.TesterActivity"
+            android:label="@string/title_activity_tester" >
         </activity>
         <activity
             android:name=".IndividualActivity"

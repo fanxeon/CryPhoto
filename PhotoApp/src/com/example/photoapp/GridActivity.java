@@ -1,6 +1,7 @@
 package com.example.photoapp;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,15 +22,35 @@ public class GridActivity extends Activity {
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	protected static int[] images;
 
+	public static void getActivityManager(Context context)
+    {
+      ActivityManager result = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+      if (result == null)
+      {
+        throw new UnsupportedOperationException("Could not retrieve ActivityManager");
+      }
+      System.out.println("The maximum memory for this application is "+result.getLargeMemoryClass());
+      //return result;
+    }
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.out.println("Hit the oncreate of grid activity");
+		try
+		{
+			getActivityManager(getApplicationContext());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
 		//set the layout properties for this activity as in the xml file
 		setContentView(R.layout.activity_main);
-		
+		System.out.println("Just set the layout for the activity");
 		//this will set up an array with references to images which will be used by the adapter later
 		initarray();
-		
+		System.out.println("Just initialized the array of integer ids");
 		//set up drop-down menu
 		//create an array adapter which will supply views for the drop down menu
 //		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
@@ -38,6 +59,7 @@ public class GridActivity extends Activity {
 		//sets up the up button on the action bar for the user to navigate backwards
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		System.out.println("About to get the grid view by finding it using the id name");
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		
@@ -50,8 +72,6 @@ public class GridActivity extends Activity {
 	            Indiview(v,position);
 	        }
 	    });
-	    
-	    
 	}
 
 	@Override
@@ -106,8 +126,8 @@ public class GridActivity extends Activity {
 	
 	private void initarray()
 	   {
-		   int[] images = getResources().getIntArray(R.array.ImgRef);
-		   images = new int[] { R.drawable.img1, R.drawable.img2,
+		   this.images = getResources().getIntArray(R.array.ImgRef);
+		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
 				      R.drawable.img3, R.drawable.img1,
 				      R.drawable.img2, R.drawable.img3,
 				      R.drawable.img1, R.drawable.img2,
@@ -120,8 +140,7 @@ public class GridActivity extends Activity {
 				      R.drawable.img3, R.drawable.img1,
 				      R.drawable.img2, R.drawable.img3,
 				   };
-		   this.images = images;
+		   //this.images = images;
 	   }
-	
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 }
