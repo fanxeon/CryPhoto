@@ -196,4 +196,7 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
   	 	nBuilder.setContentText("Upload failed").setProgress(0, 0, false);
   	 	mNotificationManager.notify(notifyID, nBuilder.build());   	
    }
+    
+    
+    
 }
