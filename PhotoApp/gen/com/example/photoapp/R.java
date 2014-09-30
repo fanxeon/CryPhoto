@@ -26,46 +26,32 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-<<<<<<< HEAD
-        public static final int ic_action_search=0x7f020000;
-        public static final int ic_action_settings=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
-        public static final int img1=0x7f020003;
-        public static final int img2=0x7f020004;
-        public static final int img3=0x7f020005;
-=======
         public static final int ic_action_download=0x7f020000;
-        public static final int ic_action_upload=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
->>>>>>> branch 'master' of https://github.com/yaldwyan/photoviewerrep.git
+        public static final int ic_action_search=0x7f020001;
+        public static final int ic_action_settings=0x7f020002;
+        public static final int ic_action_upload=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int img1=0x7f020005;
+        public static final int img2=0x7f020006;
+        public static final int img3=0x7f020007;
     }
     public static final class id {
-<<<<<<< HEAD
         public static final int SingleView=0x7f090000;
-        public static final int action_search=0x7f090009;
-        public static final int action_settings=0x7f090008;
+        public static final int action_search=0x7f09000f;
+        public static final int action_settings=0x7f09000e;
         public static final int btnDB=0x7f090005;
-        public static final int btnTakePhoto=0x7f090003;
+        public static final int btnDownload=0x7f09000a;
+        public static final int btnServerRemove=0x7f09000b;
+        public static final int btnSync=0x7f09000d;
+        public static final int btnTakePhoto=0x7f090007;
+        public static final int btnUploadPhoto=0x7f090008;
         public static final int gridview=0x7f090001;
         public static final int imageViewPicTaken=0x7f090004;
-        public static final int imgViewDB=0x7f090006;
-        public static final int textView1=0x7f090002;
-        public static final int txtViewDesc=0x7f090007;
-=======
-        public static final int action_settings=0x7f08000c;
-        public static final int btnDB=0x7f080003;
-        public static final int btnDownload=0x7f080008;
-        public static final int btnServerRemove=0x7f080009;
-        public static final int btnSync=0x7f08000b;
-        public static final int btnTakePhoto=0x7f080005;
-        public static final int btnUploadPhoto=0x7f080006;
-        public static final int imageViewPicTaken=0x7f080002;
-        public static final int imgViewDB=0x7f080001;
-        public static final int imgViewDownload=0x7f080007;
-        public static final int txtVStatuRemove=0x7f08000a;
-        public static final int txtViewDesc=0x7f080004;
-        public static final int txtViewUploadStatus=0x7f080000;
->>>>>>> branch 'master' of https://github.com/yaldwyan/photoviewerrep.git
+        public static final int imgViewDB=0x7f090003;
+        public static final int imgViewDownload=0x7f090009;
+        public static final int txtVStatuRemove=0x7f09000c;
+        public static final int txtViewDesc=0x7f090006;
+        public static final int txtViewUploadStatus=0x7f090002;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;

@@ -12,14 +12,16 @@ import android.widget.ImageView;
 
 public class FetchFromCacheTask extends AsyncTask<Integer,Void,Bitmap> {
 
-	private final WeakReference<ImageView> imageViewReference;
+	//private final WeakReference<ImageView> imageViewReference;
+	ImageView imageView;
 	private int position;
 	private Context context; 
 	private ImageCache cache;
 
 	public FetchFromCacheTask(ImageView imageView, Context context, ImageCache cache) {
 		// Use a WeakReference to ensure the ImageView can be garbage collected
-		imageViewReference = new WeakReference<ImageView>(imageView);
+		//imageViewReference = new WeakReference<ImageView>(imageView);
+		this.imageView = imageView;
 		this.context = context;
 		this.cache = cache;
 		position = 0;
@@ -38,18 +40,17 @@ public class FetchFromCacheTask extends AsyncTask<Integer,Void,Bitmap> {
 	}
 
 	@Override
-	protected void onPostExecute(Bitmap bitmap) 
+	protected void onPostExecute(Bitmap bitmap)
 	{
-		if (imageViewReference != null && bitmap != null) {
-			final ImageView imageView = imageViewReference.get();
-			if (imageView != null) {
-				imageView.setImageBitmap(bitmap);
-			}
-			else
-			{
-				//load from other source
-				imageView.setImageResource(position);
-			}
+		//		if (imageViewReference != null && bitmap != null) {
+		//			final ImageView imageView = imageViewReference.get();
+		if (bitmap != null)
+		{
+			imageView.setImageBitmap(bitmap);
+		}else
+		{
+			//load from other source
+			imageView.setImageResource(position);
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}
