@@ -165,7 +165,7 @@ public class PhotoManager
 	//This method returns the time stamp as a String.
 	public synchronized String getCurrentTimeStampAsString()
 	{
-		return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		return new SimpleDateFormat(TIME_STAMP_FORMAT).format(new Date());
 	}
 
 	public Date getTimeStampAsDate(String photoID)
