@@ -2,6 +2,7 @@ package com.example.photoapp;
 
 import java.util.ArrayList;
 
+import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 
 import android.app.Activity;
@@ -103,6 +104,11 @@ public class GridActivity extends Activity {
 	            return true;
 	        case R.id.action_settings:
 	            openSettings();
+	    		Intent intent = new Intent(this, TesterActivity.class);
+	    		//EditText editText = (EditText) findViewById(R.id.edit_message);
+	    		//String message = editText.getText().toString();
+	    		startActivity(intent);
+
 	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);

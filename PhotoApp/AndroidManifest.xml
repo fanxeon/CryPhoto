@@ -30,7 +30,8 @@
         </activity>
         <activity
             android:name="com.example.activities.TesterActivity"
-            android:label="@string/title_activity_tester" >
+            android:label="@string/title_activity_tester" 
+            android:parentActivityName=".GridActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
