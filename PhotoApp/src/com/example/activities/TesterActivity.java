@@ -12,6 +12,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import utils.Utils;
+
 import com.example.database.DatabaseManager;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
@@ -218,132 +220,57 @@ public class TesterActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
 
-		AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-		descriptionDialog.setTitle("Enter a decription:");
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_TEXT);
-		descriptionDialog.setView(input);
-
-		descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				descriptionStr = input.getText().toString();
-				Toast.makeText(TesterActivity.this, "Photo saved.", Toast.LENGTH_SHORT).show();
-				//setContentView(imgView);
-				// Get the dimensions of the View
-				
-				
-				imgView.setImageBitmap(getGridBitmap());
-
-
-				//<<<<<<<<<<<----------------- for test
-				DatabaseManager.getInstance(TesterActivity.this).addPhoto(
-						new Photo(tempPhotoIDTest , descriptionStr, getBitmap(), getGridBitmap(),"My album",false));
-				//testRetrievePhotoFromBD();				
-			}
-		});
-		descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		descriptionDialog.show();
+		if( resultCode == RESULT_OK )
+		{
+			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
+		
+			descriptionDialog.setTitle("Enter a decription:");
+			final EditText input = new EditText(this);
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			descriptionDialog.setView(input);
+	
+			descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					descriptionStr = input.getText().toString();
+					Toast.makeText(TesterActivity.this, "Photo saved.", Toast.LENGTH_SHORT).show();
+					//setContentView(imgView);
+					// Get the dimensions of the View
+					
+					Bitmap gridBitmap = 
+							Utils.getGridBitmapFromFile(photoPath, TesterActivity.this.getApplicationContext());
+					
+					if( gridBitmap != null)
+					{
+						imgView.setImageBitmap( gridBitmap );
+					
+	 
+						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+	
+						//<<<<<<<<<<<----------------- for test
+						DatabaseManager.getInstance(TesterActivity.this).addPhoto(
+								new Photo(tempPhotoIDTest , descriptionStr, individualBitmap , 
+										gridBitmap,"My album",false));
+						//testRetrievePhotoFromBD();
+					}
+				}
+			});
+			descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			descriptionDialog.show();
+		}
+		else if( resultCode == RESULT_CANCELED)
+		{
+			Toast.makeText(this, "Unable to take photo. Try later.", Toast.LENGTH_LONG ).show();
+		}
 	}	
 
-	public Bitmap getBitmap()
-	{
-//		final BitmapFactory.Options options = new BitmapFactory.Options();
-//		options.inJustDecodeBounds = true;
-//		//BitmapFactory.decodeResource(res, resId, options);
-//		BitmapFactory.decodeFile(photoPath, options);
-//
-//		// Calculate inSampleSize
-//		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		//options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(photoPath);
-
-	}
-
-	public static int convertDpToPixel(int dp, Context context)
-	{
-		Resources resources = context.getResources();
-		DisplayMetrics metrics = resources.getDisplayMetrics();
-		double dpx = dp * (metrics.densityDpi / 160.0);
-		Double d = Double.valueOf(dpx);
-		int px = d.intValue();
-		return px;
-	}
-	
-	public static int calculateInSampleSize(
-			BitmapFactory.Options options, int reqWidth, int reqHeight) {
-		// Raw height and width of image
-		final int height = options.outHeight;
-		final int width = options.outWidth;
-		int inSampleSize = 1;
-
-		if (height > reqHeight || width > reqWidth) {
-
-			final int halfHeight = height / 2;
-			final int halfWidth = width / 2;
-
-			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
-			// height and width larger than the requested height and width.
-			while ((halfHeight / inSampleSize) > reqHeight
-					&& (halfWidth / inSampleSize) > reqWidth) {
-				inSampleSize *= 2;
-			}
-		}
-
-		return inSampleSize;
-	}
-
-	public Bitmap getGridBitmap()
-	{
-		//Bitmap gridBitmap = null;
-		//int targetW = imgView.getWidth();
-		//int targetH = imgView.getHeight();
-//		int reqWidthdp = getResources().getInteger(R.dimen.grid_view_width);
-//		int reqHeightdp = getResources().getInteger(R.dimen.grid_view_height);
-		int reqWidthdp = 150;
-		int reqHeightdp = 150;
-		int reqWidth = convertDpToPixel(reqWidthdp,this);
-		int reqHeight = convertDpToPixel(reqHeightdp,this);
-//		// Get the dimensions of the bitmap
-//		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//		//bmOptions.inJustDecodeBounds = true;
-//		BitmapFactory.decodeFile(photoPath, bmOptions);
-//		int photoW = bmOptions.outWidth;
-//		int photoH = bmOptions.outHeight;
-//
-//		// Determine how much to scale down the image
-//		int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-//
-//		// Decode the image file into a Bitmap sized to fill the View
-//		bmOptions.inJustDecodeBounds = false;
-//		bmOptions.inSampleSize = scaleFactor;
-//		bmOptions.inPurgeable = true;
-//
-//		Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
-
-		//First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		//BitmapFactory.decodeResource(res, resId, options);
-		BitmapFactory.decodeFile(photoPath, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(photoPath, options);
-
-	}
 
 
 

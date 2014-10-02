@@ -60,11 +60,16 @@ public class DatabaseManager
 	    newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
 
-	    
-	    ByteArrayOutputStream os = new ByteArrayOutputStream();
-	    newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
-	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
-
+	    if(newPhoto.getGridBitmap() != null )
+	    {
+	    	ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    	newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
+	    	values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
+	    }
+	    else
+	    {
+	    	
+	    }
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
 	    db.close();
