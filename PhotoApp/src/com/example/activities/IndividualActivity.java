@@ -1,4 +1,9 @@
-package com.example.photoapp;
+package com.example.activities;
+
+import com.example.photoapp.R;
+import com.example.photoapp.R.id;
+import com.example.photoapp.R.layout;
+import com.example.photoapp.R.menu;
 
 import android.app.Activity;
 import android.content.Intent;

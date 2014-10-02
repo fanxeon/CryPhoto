@@ -1,9 +1,13 @@
-package com.example.photoapp;
+package com.example.activities;
 
 import java.util.ArrayList;
 
-import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
+import com.example.photoapp.ImageAdapter;
+import com.example.photoapp.R;
+import com.example.photoapp.R.id;
+import com.example.photoapp.R.layout;
+import com.example.photoapp.R.menu;
 
 import android.app.Activity;
 import android.app.ActivityManager;
