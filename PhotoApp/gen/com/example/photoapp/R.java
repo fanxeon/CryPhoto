@@ -24,6 +24,8 @@ public final class R {
          */
         public static final int activity_horizontal_margin=0x7f040000;
         public static final int activity_vertical_margin=0x7f040001;
+        public static final int grid_view_height=0x7f040003;
+        public static final int grid_view_width=0x7f040002;
     }
     public static final class drawable {
         public static final int ic_action_download=0x7f020000;

@@ -60,6 +60,11 @@ public class DatabaseManager
 	    newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
 
+	    
+	    ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
+	    values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
+
 	    SQLiteDatabase db = dbHelper.getWritableDatabase();
 	    long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
 	    db.close();
@@ -106,6 +111,24 @@ public class DatabaseManager
 		options.inJustDecodeBounds = false;
 		return BitmapFactory.decodeByteArray(data, offset, length, options);
 	}
+
+		
+		public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+				int reqWidth, int reqHeight) {
+	
+			// First decode with inJustDecodeBounds=true to check dimensions
+			final BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			BitmapFactory.decodeResource(res, resId, options);
+	
+			// Calculate inSampleSize
+			options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+	
+			// Decode bitmap with inSampleSize set
+			options.inJustDecodeBounds = false;
+			return BitmapFactory.decodeResource(res, resId, options);
+		}
+
 	
 	//compress to jpeg format
 	private byte[] compressTojpeg(Bitmap bm)
@@ -251,7 +274,62 @@ public class DatabaseManager
 		
 		return photoBitmap;
 	}
+
+	public Bitmap getGridBitmap(String photoID)
+	{
+		Bitmap photoBitmap = null;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+		
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP};
 	
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, whereStr, null,
+				null, null, null, null, null);
+		
+		if ( cursor.moveToFirst() )
+		{	
+			
+		    byte[] data = cursor.getBlob(cursor
+		    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+		    //BitmapFactory.Options has to be added to scale down the resolution for gird view
+		    photoBitmap =  BitmapFactory.decodeByteArray(data, 0, data.length);	
+		}
+	    
+	    cursor.close();
+		
+		
+		return photoBitmap;
+	}
+	
+	public byte[] getGridBitmapAsBytes(String photoID)
+	{
+		//Bitmap photoBitmap = null;
+		byte[] data = null;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+		
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP};
+	
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, whereStr, null,
+				null, null, null, null, null);
+		
+		if ( cursor.moveToFirst() )
+		{	
+			
+		    data = cursor.getBlob(cursor
+		    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+		}
+	    
+	    cursor.close();
+		
+		
+		return data;
+	}
+
 	//<<<<<<<<<----------CAlling this method may affect the performance
 	//This method should return ID and bitmap data for all photos in db to be used by gridview
 	//Also, the bitmap has be scaled to improve performance.

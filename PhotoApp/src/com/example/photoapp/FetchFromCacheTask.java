@@ -51,8 +51,7 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 			//imageView.setImageResource(position);
 			//load direct from database here
 			DatabaseManager db = DatabaseManager.getInstance(context);
-			Photo photo = db.getPhoto(position);
-			imageView.setImageBitmap(photo.getBitmap());
+			imageView.setImageBitmap(db.getGridBitmap(position));
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}

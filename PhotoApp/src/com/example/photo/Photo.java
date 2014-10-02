@@ -16,6 +16,7 @@ public class Photo
 	public static final String PHOTO_ID = "photoid";
 	public static final String ALBUM = "album";
 	public static final String BITMAP_DATA = "bitmapdata";
+	public static final String GRID_BITMAP_DATA = "gridbitmapdata";
 	public static final String DESCRIPTION = "description";
 	
 	private final String YES = "yes";
@@ -33,6 +34,8 @@ public class Photo
 	
 	//An image data for a photo
 	private Bitmap bitmap;
+	
+	private Bitmap gridbitmap;
 	//Album name where a photo belongs to, if applicable. Otherwise, null
 	private String album = NONE;
 	
@@ -41,16 +44,18 @@ public class Photo
 	public Photo() {
 	}	
 	
-	public Photo(String photoID, String description, Bitmap bitmap, boolean uploadedToServer) {
+	public Photo(String photoID, String description, Bitmap bitmap, Bitmap gridBitmap, boolean uploadedToServer) {
 		//super();
 		//this.name = name;
 		this.description = description;
 		this.photoID = photoID;
 		this.bitmap = bitmap;
 		this.isUploadedToServer = uploadedToServer;
+		this.gridbitmap = gridBitmap;
+
 	}
 
-	public Photo(String photoID,String description, Bitmap bitmap, String album,
+	public Photo(String photoID,String description, Bitmap bitmap, Bitmap gridBitmap, String album,
 			boolean uploadedToServer) {
 		//super();
 		//this.name = name;
@@ -58,6 +63,7 @@ public class Photo
 		this.photoID = photoID;
 		this.bitmap = bitmap;
 		this.album = album;
+		this.gridbitmap = gridBitmap;
 		this.isUploadedToServer = uploadedToServer;
 	}
 
@@ -81,7 +87,7 @@ public class Photo
 	public void setBitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
 	}
-
+	
 	public String getAlbum() {
 		return album;
 	}
@@ -122,5 +128,15 @@ public class Photo
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public Bitmap getGridBitmap() {
+		return gridbitmap;
+	}
+
+	public void setGridBitmap(Bitmap gridbitmap) {
+		this.gridbitmap = gridbitmap;
+	}
+
+
 
 }

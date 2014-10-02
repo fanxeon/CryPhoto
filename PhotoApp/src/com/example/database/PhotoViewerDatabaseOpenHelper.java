@@ -22,6 +22,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	protected static final String COLUMN_DESCRIPTION = "description";
 	protected static final String COLUMN_ALBUM = "album";
 	protected static final String COLUMN_BITMAP = "bitmap";
+	protected static final String COLUMN_GRID_BITMAP = "gridbitmap";
 	//The value here is either yes or no.
 	protected static final String COLUMN_IS_UPLOADED_TO_SERVER = "uploadedtoserver";
 	protected static final String[] ALL_COLUMNS_PHOTO_TABLE = { COLUMN_ID, 
@@ -33,8 +34,8 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	protected static final String PHOTOS_TABLE_CREATE =
     "CREATE TABLE " + PHOTOS_TABLE_NAME + " (" + COLUMN_ID 
     	+ " TEXT PRIMARY KEY," + COLUMN_DESCRIPTION + " TEXT," 
-    	+ COLUMN_ALBUM + " TEXT," + COLUMN_BITMAP 
-    	+ " BLOB," + COLUMN_IS_UPLOADED_TO_SERVER 
+    	+ COLUMN_ALBUM + " TEXT," + COLUMN_BITMAP + " BLOB," 
+    	+  COLUMN_GRID_BITMAP + " BLOB," +COLUMN_IS_UPLOADED_TO_SERVER 
     	+ " TEXT);";
 
     //Information needed for album table.
