@@ -296,7 +296,7 @@ public class TesterActivity extends Activity {
 	{
 		//Photo testPhoto = new Photo();
 		//already saved on server before
-		String photoId = "20140924_172749";
+		String photoId = "20140930_150922";
 		
 		//START<<<<<<<<<<<<<<<--- should be added to activities when downloading
 		//Check connection
