@@ -1,5 +1,9 @@
 package com.example.photoapp;
 
+import java.util.ArrayList;
+
+import com.example.database.DatabaseManager;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 public class GridActivity extends Activity {
 
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
+	protected static ArrayList<String> list;
 	protected static int[] images;
 
 	public static void getActivityManager(Context context)
@@ -48,9 +53,11 @@ public class GridActivity extends Activity {
 		//set the layout properties for this activity as in the xml file
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
+		
 		//this will set up an array with references to images which will be used by the adapter later
-		initarray();
+		initarray(); //this will retrieve string IDs from the database manager
 		System.out.println("Just initialized the array of integer ids");
+		
 		//set up drop-down menu
 		//create an array adapter which will supply views for the drop down menu
 //		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
@@ -66,6 +73,7 @@ public class GridActivity extends Activity {
 		//set the adapter for the grid view
 	    gridview.setAdapter(new ImageAdapter(this));
 	    
+	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	            Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
@@ -125,21 +133,24 @@ public class GridActivity extends Activity {
 	}
 	
 	private void initarray()
-	   {
-		   this.images = getResources().getIntArray(R.array.ImgRef);
-		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
-				      R.drawable.img3, R.drawable.img1,
-				      R.drawable.img2, R.drawable.img3,
-				      R.drawable.img1, R.drawable.img2,
-				      R.drawable.img3, R.drawable.img1,
-				      R.drawable.img2, R.drawable.img3,
-				      R.drawable.img1, R.drawable.img2,
-				      R.drawable.img3, R.drawable.img1,
-				      R.drawable.img2, R.drawable.img3,
-				      R.drawable.img1, R.drawable.img2,
-				      R.drawable.img3, R.drawable.img1,
-				      R.drawable.img2, R.drawable.img3,
-				   };
+	{
+		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
+		list = db.getPhotoIDs();
+		
+//		   this.images = getResources().getIntArray(R.array.ImgRef);
+//		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				      R.drawable.img1, R.drawable.img2,
+//				      R.drawable.img3, R.drawable.img1,
+//				      R.drawable.img2, R.drawable.img3,
+//				   };
 		   //this.images = images;
 	   }
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";

@@ -9,9 +9,5 @@
     <string name="title_activity_display_message">DisplayMessageActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_search">Search</string>
-    <string-array name="action_list">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-    </string-array>
+    <string-array name="string_IDs"></string-array>
 </resources>

@@ -125,7 +125,6 @@ public class ImageCache {
 
 	public Bitmap getBitmapFromMemCache(String key)
 	{
-		
 		byte[] array = memCache.get(key);
 		Bitmap decoded = null;
 		if (array != null)

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -67,6 +68,94 @@ public class DatabaseManager
 		
 	}
 	
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) 
+	{
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
+	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
+			int length, int reqWidth, int reqHeight) {
+
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeByteArray(data, offset, length, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeByteArray(data, offset, length, options);
+	}
+	
+	//compress to jpeg format
+	private byte[] compressTojpeg(Bitmap bm)
+	{
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		byte[] array = null;
+		
+		if(bm.compress(Bitmap.CompressFormat.JPEG, 100, os))
+		{
+			System.out.println("Compressed the bitmap down to JPEG");
+			//Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), images[i]);
+			//String string = ""+position;
+			array = os.toByteArray();
+			System.out.println("The size of the bitmap is now "+(array.length/1024));
+		}
+		
+		return array;
+	}
+		
+	//This method will be called by cache object.
+		public byte[] getCompressedBitmap(String photoID, int reqWidth, int reqHeight)
+		{
+			Bitmap photoBitmap = null;
+			byte[] array = null;
+			//This where statement for select command
+			String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+			
+			SQLiteDatabase db = dbHelper.getReadableDatabase();
+			String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP};
+		
+			Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+					projection, whereStr, null,
+					null, null, null, null, null);
+			
+			if ( cursor.moveToFirst() )
+			{	
+				
+			    byte[] data = cursor.getBlob(cursor
+			    		.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+			    //BitmapFactory.Options has to be added to scale down the resolution for gird view
+			    photoBitmap =  decodeSampledBitmapFromByteArray(data, 0, data.length, reqWidth, reqHeight);
+				System.out.println("Scaled down the bitmap to 300, 300 and is now of size "+ (photoBitmap.getByteCount()/1024));
+				array = compressTojpeg(photoBitmap);
+			}
+		    
+		    cursor.close();
+			
+			return array;
+		}
+		
 	//This method should be called by individual mode since we need all information about the photo <<<<<<<<<<-----------
 	//Retrieve all information about a photo for an individual view, resolution 100%
 	public Photo getPhoto(String photoID)

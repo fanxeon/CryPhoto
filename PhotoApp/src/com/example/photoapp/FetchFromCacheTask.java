@@ -1,21 +1,19 @@
 package com.example.photoapp;
 
-import java.io.ByteArrayOutputStream;
-import java.lang.ref.WeakReference;
-
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-public class FetchFromCacheTask extends AsyncTask<Integer,Void,Bitmap> {
+import com.example.database.DatabaseManager;
+import com.example.photo.Photo;
+
+public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 
 	//private final WeakReference<ImageView> imageViewReference;
 	ImageView imageView;
-	private int position;
-	private Context context; 
+	private String position;
+	private Context context;
 	private ImageCache cache;
 
 	public FetchFromCacheTask(ImageView imageView, Context context, ImageCache cache) {
@@ -24,17 +22,17 @@ public class FetchFromCacheTask extends AsyncTask<Integer,Void,Bitmap> {
 		this.imageView = imageView;
 		this.context = context;
 		this.cache = cache;
-		position = 0;
+		position = "";
 	}
 
 	// Decode image in background.
 	@Override
-	protected Bitmap doInBackground(Integer... params)
+	protected Bitmap doInBackground(String... params)
 	{
 		position = params[0];
 		synchronized(cache)
 		{
-			Bitmap bm = cache.getBitmapFromMemCache(""+position);
+			Bitmap bm = cache.getBitmapFromMemCache(position);
 			return bm;
 		}
 	}
@@ -43,14 +41,18 @@ public class FetchFromCacheTask extends AsyncTask<Integer,Void,Bitmap> {
 	protected void onPostExecute(Bitmap bitmap)
 	{
 		//		if (imageViewReference != null && bitmap != null) {
-		//			final ImageView imageView = imageViewReference.get();
+		//final ImageView imageView = imageViewReference.get();
 		if (bitmap != null)
 		{
 			imageView.setImageBitmap(bitmap);
 		}else
 		{
 			//load from other source
-			imageView.setImageResource(position);
+			//imageView.setImageResource(position);
+			//load direct from database here
+			DatabaseManager db = DatabaseManager.getInstance(context);
+			Photo photo = db.getPhoto(position);
+			imageView.setImageBitmap(photo.getBitmap());
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}

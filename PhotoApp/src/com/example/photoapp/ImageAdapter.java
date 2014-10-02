@@ -1,6 +1,7 @@
 package com.example.photoapp;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
@@ -17,13 +18,17 @@ import android.widget.ImageView;
 public class ImageAdapter extends BaseAdapter{
 
 	private Context mContext;
-	private int[] images;
+	//private int[] images;
+	private ArrayList<String> list;
 	private ImageCache cache;
+	private int reqWidth = 300;
+	private int reqHeight = 300;
 
 	// Constructor
 	public ImageAdapter(Context c) {
 		mContext = c;
-		images = GridActivity.images;
+		//images = GridActivity.images;
+		list = GridActivity.list;
 		//initarray();
 		cache = ImageCache.getInstance();
 		System.out.println("Just got an instance of the Image Cache");
@@ -96,11 +101,11 @@ public class ImageAdapter extends BaseAdapter{
 	{
 		System.out.println("Attempting to add stuff to cache");
 		int i;
-		for(i=0; i < 3; i++)
+		for(i=0; i < list.size(); i++)
 		{
-			Integer pos = Integer.valueOf(images[i]);
-			AddToCacheTask task = new AddToCacheTask(mContext,cache);
-			task.execute(pos);
+			//Integer pos = Integer.valueOf(list.get(i));
+			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
+			task.execute(list.get(i));
 			boolean done = false;
 			//boolean interrupted = false;
 			while(!done)
@@ -151,7 +156,7 @@ public class ImageAdapter extends BaseAdapter{
 		//	   }
 
 		public int getCount() {
-			return images.length;
+			return list.size();
 		}
 
 		public Object getItem(int position) {
@@ -192,7 +197,7 @@ public class ImageAdapter extends BaseAdapter{
 			//set the image resource for the image view
 			//first check whether available in the cache
 			FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
-			fetchtask.execute(images[position]);
+			fetchtask.execute(list.get(position));
 //			boolean done = false;
 //			while(!done)
 //			{
