@@ -121,6 +121,7 @@ public final class R {
         /**  Indivdual View Values 
          */
         public static final int action_share=0x7f070012;
+        public static final int action_test=0x7f070014;
         /**  Activity titles 
          */
         public static final int activity_location_found=0x7f070008;

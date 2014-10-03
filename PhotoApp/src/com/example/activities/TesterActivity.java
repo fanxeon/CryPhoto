@@ -46,6 +46,7 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -158,7 +159,9 @@ public class TesterActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.tester, menu);
+		MenuInflater inflater = getMenuInflater();
+		// MODIFIED by Fan : test on Layout
+		inflater.inflate(R.menu.display_message, menu);
 		return true;
 	}
 
