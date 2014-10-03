@@ -26,7 +26,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	//The value here is either yes or no.
 	protected static final String COLUMN_IS_UPLOADED_TO_SERVER = "uploadedtoserver";
 	protected static final String[] ALL_COLUMNS_PHOTO_TABLE = { COLUMN_ID, 
-		COLUMN_DESCRIPTION,COLUMN_ALBUM, COLUMN_BITMAP, COLUMN_IS_UPLOADED_TO_SERVER };
+		COLUMN_DESCRIPTION,COLUMN_ALBUM, COLUMN_BITMAP,COLUMN_GRID_BITMAP, COLUMN_IS_UPLOADED_TO_SERVER };
 	//NOT SURE We may need it, may be local url or remote url???<<<<<<<<<<<<<<<<<<<---------------
 	//private static final String COLUMN_URL = "url";
 
@@ -35,7 +35,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     "CREATE TABLE " + PHOTOS_TABLE_NAME + " (" + COLUMN_ID 
     	+ " TEXT PRIMARY KEY," + COLUMN_DESCRIPTION + " TEXT," 
     	+ COLUMN_ALBUM + " TEXT," + COLUMN_BITMAP + " BLOB," 
-    	+  COLUMN_GRID_BITMAP + " BLOB," +COLUMN_IS_UPLOADED_TO_SERVER 
+    	+  COLUMN_GRID_BITMAP + " BLOB," + COLUMN_IS_UPLOADED_TO_SERVER 
     	+ " TEXT);";
 
     //Information needed for album table.
