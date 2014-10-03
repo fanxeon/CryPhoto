@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
+import com.example.database.SpinnerNavItem;
 
-import actionbar.adapter.TitleNavigationAdapter;
-import actionbar.model.SpinnerNavItem;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -151,27 +150,30 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
-		case R.id.action_search:
-			openSearch();
-			return true;
-		case R.id.action_photo:
-			// Take photo
-			takePhoto();
-			return true;
-		case R.id.action_help:
-			// help action
-			return true;
-		case R.id.action_restore:
-			// check for updates action
-			return true;
-        case R.id.action_settings:
-            openSettings();
-    		Intent intent = new Intent(this, TesterActivity.class);
-    		//EditText editText = (EditText) findViewById(R.id.edit_message);
-    		//String message = editText.getText().toString();
-    		startActivity(intent);
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.action_search:
+				openSearch();
+				return true;
+			case R.id.action_photo:
+				// Take photo
+				takePhoto();
+				// TEST : Yasser test
+				Intent intent2 = new Intent(this, TesterActivity.class);
+				startActivity(intent2);
+				return true;
+			case R.id.action_help:
+				// help action
+				return true;
+			case R.id.action_restore:
+				// check for updates action
+				return true;
+	        case R.id.action_settings:
+	            openSettings();
+	    		Intent intent = new Intent(this, TesterActivity.class);
+	    		//EditText editText = (EditText) findViewById(R.id.edit_message);
+	    		//String message = editText.getText().toString();
+	    		startActivity(intent);
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 	
