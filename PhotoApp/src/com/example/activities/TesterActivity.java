@@ -17,6 +17,7 @@ import utils.Utils;
 import com.example.database.DatabaseManager;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
+import com.example.photoapp.GridActivity;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
@@ -189,9 +190,7 @@ public class TesterActivity extends Activity {
 		{
 			//Get id for a new photo and use it as a file name for the photo.
 			String photoID = PhotoManager.getInstance(this).getCurrentTimeStampAsString();
-			//<<<<<<<<<<<<-------------For test
-			tempPhotoIDTest = photoID;
-			//<<<------------end test
+
 			File fileDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 			File photoFile = null;
@@ -227,7 +226,7 @@ public class TesterActivity extends Activity {
 		{
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
 		
-			descriptionDialog.setTitle("Enter a decription:");
+			descriptionDialog.setTitle("Enter a description:");
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			descriptionDialog.setView(input);
@@ -237,22 +236,22 @@ public class TesterActivity extends Activity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					descriptionStr = input.getText().toString();
-					Toast.makeText(TesterActivity.this, "Photo saved.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
 					//setContentView(imgView);
 					// Get the dimensions of the View
 					
 					Bitmap gridBitmap = 
-							Utils.getGridBitmapFromFile(photoPath, TesterActivity.this.getApplicationContext());
+							Utils.getGridBitmapFromFile(photoPath, getApplicationContext().getApplicationContext());
 					
 					if( gridBitmap != null)
-					{
-						imgView.setImageBitmap( gridBitmap );
-					
+					{					
 	 
 						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+						
+						imgView.setImageBitmap( gridBitmap );
 	
 						//<<<<<<<<<<<----------------- for test
-						DatabaseManager.getInstance(TesterActivity.this).addPhoto(
+						DatabaseManager.getInstance(getApplicationContext()).addPhoto(
 								new Photo(tempPhotoIDTest , descriptionStr, individualBitmap , 
 										gridBitmap,"My album",false));
 						//testRetrievePhotoFromBD();

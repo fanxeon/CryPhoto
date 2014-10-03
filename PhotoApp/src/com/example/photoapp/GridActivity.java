@@ -1,10 +1,16 @@
 package com.example.photoapp;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import utils.Utils;
 
 import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 import com.example.database.SpinnerNavItem;
+import com.example.photo.Photo;
+import com.example.photo.PhotoManager;
 
 
 import android.annotation.SuppressLint;
@@ -12,11 +18,18 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +37,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.SearchView;
 import android.widget.SpinnerAdapter;
@@ -155,10 +169,10 @@ public class GridActivity extends Activity implements OnNavigationListener {
 				return true;
 			case R.id.action_photo:
 				// Take photo
-				takePhoto();
-				// TEST : Yasser test
-				Intent intent2 = new Intent(this, TesterActivity.class);
-				startActivity(intent2);
+				capturePhotoAndSaveIt();
+//				// TEST : Yasser test
+//				Intent intent2 = new Intent(this, TesterActivity.class);
+//				startActivity(intent2);
 				return true;
 			case R.id.action_help:
 				// help action
@@ -177,10 +191,10 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		}
 	}
 	
-	private void takePhoto() {
-		// TODO Auto-generated method stub
-		
-	}
+//	private void takePhoto() {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 	private void openSettings() {
 		// TODO Auto-generated method stub
@@ -265,4 +279,106 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+
+	//START part for taking photos from camera app
+	String photoPath = null; 
+	String newPhotoID = null;
+	static final int REQUEST_IMAGE_CAPTURE = 1;
+	private void capturePhotoAndSaveIt()
+	{
+		Intent takePicIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if(takePicIntent.resolveActivity(getPackageManager()) != null)
+		{
+			//Get id for a new photo and use it as a file name for the photo.
+			newPhotoID = PhotoManager.getInstance(this).getCurrentTimeStampAsString();
+
+			File fileDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+			File photoFile = null;
+			try
+			{
+				photoFile = File.createTempFile(newPhotoID, ".jpg", fileDirectory);
+				photoPath = photoFile.getAbsolutePath();
+
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
+
+			if( photoFile != null)
+			{
+				takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, 
+						Uri.fromFile(photoFile));
+				
+				//takePicIntent.putExtra(Photo.PHOTO_ID, photoID);
+				startActivityForResult(takePicIntent, REQUEST_IMAGE_CAPTURE);
+
+			}
+
+		}
+	}
+
+	
+	private String descriptionStr = null;
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		if( resultCode == RESULT_OK )
+		{
+			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
+		
+			descriptionDialog.setTitle("Enter a description:");
+			final EditText input = new EditText(this);
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			descriptionDialog.setView(input);
+	
+			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			//Deal with albume option ???????????????
+			//>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+			descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					descriptionStr = input.getText().toString();
+					
+					Bitmap gridBitmap = 
+							Utils.getGridBitmapFromFile(photoPath, getApplicationContext());
+					
+					if( gridBitmap != null)
+					{
+					
+	 
+						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+	
+						
+								//PhotoManager.getInstance(getApplicationContext()).getCurrentTimeStampAsString();
+						DatabaseManager.getInstance(getApplicationContext()).addPhoto(
+								new Photo(newPhotoID , descriptionStr, individualBitmap , 
+										gridBitmap,"My album",false));
+						
+						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						//Add photoId, individualBitmap to Cache and adapter ???????????????????
+						//>>>>>>>>>>>>>>>>>>>>>>>>
+					}
+					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
+				}
+			});
+			descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			descriptionDialog.show();
+		}
+		else if( resultCode == RESULT_CANCELED)
+		{
+			Toast.makeText(this, "Unable to take photo. Try later.", Toast.LENGTH_LONG ).show();
+		}
+	}	
+	//END part for taking photos from camera app
+
 }
