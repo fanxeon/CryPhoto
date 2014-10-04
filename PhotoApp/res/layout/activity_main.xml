@@ -9,14 +9,14 @@
     tools:context="com.example.gridview.MainActivity">
     
     <!-- Test purpose -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_test"
-        android:layout_centerInParent="true"
-        android:textColor="#000000"
-        android:fontFamily="sans-serif"
-    />
+<!--     <TextView -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:text="@string/action_test" -->
+<!--         android:layout_centerInParent="true" -->
+<!--         android:textColor="#000000" -->
+<!--         android:fontFamily="sans-serif" -->
+<!--     /> -->
     
     <!-- V's original grid view -->
 	<GridView
