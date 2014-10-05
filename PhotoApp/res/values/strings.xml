@@ -36,4 +36,14 @@
     <string name="action_discard">Discard</string>
     <string name="action_test">Long Press test for action Bar</string>
     
+    <!-- New CAB Values -->
+    <string name="helloTextView">Hello world!</string>
+    <string name="menu_context_title">Items Selected</string>
+    <string name="menu_context_increase">Share</string>
+    <string name="menu_context_condensed_increase">Share</string>
+    <string name="menu_context_decrease">discard</string>
+    <string name="menu_context_condensed_decrease">discard</string>
+    <string name="increase">Share</string>
+    <string name="decrease">Discard</string>
+    
 </resources>

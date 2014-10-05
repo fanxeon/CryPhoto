@@ -30,10 +30,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -41,6 +44,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.SearchView;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 //import android.widget.EditText;
 
@@ -49,8 +53,11 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	protected static ArrayList<String> list;
 	protected static int[] images;
-
-
+	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
+	private TextView mHelloTextView;
+	private ActionMode mActionMode;
+	//-- END --//
+	
 	//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 	private ActionBar actionBar;
 	// Title navigation Spinner data
@@ -113,22 +120,18 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		// Changing the action bar icon
 		// actionBar.setIcon(R.drawable.ico_actionbar);
 		//-- ACTION BAR END --//
-
+		
 		//set up drop-down menu
 		//create an array adapter which will supply views for the drop down menu
-//		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
-//		        R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
-		
+		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
+		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
 		//sets up the up button on the action bar for the user to navigate backwards
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
 		System.out.println("About to get the grid view by finding it using the id name");
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
-		
 		//set the adapter for the grid view
 	    gridview.setAdapter(new ImageAdapter(this));
-	    
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -136,8 +139,59 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	            Indiview(v,position);
 	        }
 	    });
-	}
+	    
+	/** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
+	    mHelloTextView = (TextView) findViewById (R.id.action_test);
+	    mHelloTextView.setOnLongClickListener(new OnLongClickListener(){
+	    	@Override
+	    	public boolean onLongClick(View v){
+	    		MyActionModeCallback callback = new MyActionModeCallback();
+	    		mActionMode = startActionMode (callback);
+	    		mActionMode.setTitle(R.string.menu_context_title);
+	    		return true;
+			}
+	    });
 
+	}
+	class MyActionModeCallback implements ActionMode.Callback{
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			mode.getMenuInflater().inflate(R.menu.context, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			float textSize = mHelloTextView.getTextSize();
+			switch (item.getItemId()){
+				//Should be Share and discard,
+				//but now using change text font size
+				//for test purpose
+				case R.id.action_share:
+					mHelloTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+							textSize + 2);
+				case R.id.action_discard:
+					mHelloTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+							textSize - 2);
+			}
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+    /** END OF CAB  **/
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -178,7 +232,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 				// help action
 				return true;
 			case R.id.action_restore:
-				// check for updates action
+				// restore action
 				return true;
 	        case R.id.action_settings:
 	            openSettings();
