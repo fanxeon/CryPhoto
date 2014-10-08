@@ -12,9 +12,12 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import utils.Utils;
+
 import com.example.database.DatabaseManager;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
+import com.example.photoapp.GridActivity;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
@@ -31,6 +34,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.YuvImage;
@@ -40,8 +44,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -55,32 +61,32 @@ public class TesterActivity extends Activity {
 	private Button btnTakePhoto = null;
 	private ImageView imgView = null;
 	private TextView txtViewDescription = null;
-	
+
 	private Button btnDB = null;
 	private ImageView imgViewDB = null;
 
 	private Button btnUploadPhoto = null;
 	private TextView txtViewUploadStatus = null;
-	
+
 	private Button btnDownloadPhoto = null;
 	private ImageView imageViewDownload = null;
 
 	private Button btnRemoteRemovePhoto = null;
 	private TextView txtVRemoteRemovePhotoStatus = null;
-	
+
 	private Button btnSync = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tester);
-		
+
 		//Initialize camera button and imageview 
 		imgView = (ImageView) findViewById(R.id.imageViewPicTaken);		
 		btnTakePhoto = (Button) findViewById(R.id.btnTakePhoto);
 		txtViewDescription = (TextView) findViewById(R.id.txtViewDesc);
-		
+
 		btnTakePhoto.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
@@ -94,39 +100,39 @@ public class TesterActivity extends Activity {
 		imgViewDB = (ImageView) findViewById(R.id.imgViewDB);		
 		btnDB = (Button) findViewById(R.id.btnDB);
 		btnDB.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
 				testRetrievePhotoFromBD();
 			}
 		});
-		
+
 		btnUploadPhoto = (Button) findViewById( R.id.btnUploadPhoto );
 		btnUploadPhoto.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				testUploadPhotoToServer();
-				
+
 			}
 		});
 		txtViewUploadStatus = (TextView) findViewById(R.id.txtViewUploadStatus);
-		
+
 		imageViewDownload = (ImageView) findViewById(R.id.imgViewDownload);
 		btnDownloadPhoto = (Button) findViewById( R.id.btnDownload );
 		btnDownloadPhoto.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				testDownloadPhotoFromServer();
-				
+
 			}
 		});
-		
+
 		btnRemoteRemovePhoto  = (Button) findViewById( R.id.btnServerRemove );
 		btnRemoteRemovePhoto.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				testRemoteRemove();
@@ -134,19 +140,19 @@ public class TesterActivity extends Activity {
 			}
 		});
 		txtVRemoteRemovePhotoStatus = (TextView) findViewById(R.id.txtVStatuRemove);
-		
+
 		btnSync = (Button) findViewById(R.id.btnSync);
 		btnSync.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) 
 			{
 				SyncPhotosTask syncTask = new SyncPhotosTask(TesterActivity.this);
 				syncTask.execute();
-				
+
 			}
 		});
-		
+
 		//--------------------->>>>>>>>>>>>>>>>>>To test remove
 
 	}
@@ -154,7 +160,9 @@ public class TesterActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.tester, menu);
+		MenuInflater inflater = getMenuInflater();
+		// MODIFIED by Fan : test on Layout
+		inflater.inflate(R.menu.display_message, menu);
 		return true;
 	}
 
@@ -169,10 +177,10 @@ public class TesterActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
 
-	
-	
+
+
+
 	String photoPath = null; 
 	static final int REQUEST_IMAGE_CAPTURE = 1;
 	private void capturePhotoAndSaveIt()
@@ -182,11 +190,9 @@ public class TesterActivity extends Activity {
 		{
 			//Get id for a new photo and use it as a file name for the photo.
 			String photoID = PhotoManager.getInstance(this).getCurrentTimeStampAsString();
-			//<<<<<<<<<<<<-------------For test
-			tempPhotoIDTest = photoID;
-			//<<<------------end test
+
 			File fileDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-			
+
 			File photoFile = null;
 			try
 			{
@@ -198,16 +204,16 @@ public class TesterActivity extends Activity {
 			{
 				ioe.printStackTrace();
 			}
-			
+
 			if( photoFile != null)
 			{
 				takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, 
 						Uri.fromFile(photoFile));
-				
+
 				startActivityForResult(takePicIntent, REQUEST_IMAGE_CAPTURE);
-				
+
 			}
-				
+
 		}
 	}
 
@@ -216,88 +222,88 @@ public class TesterActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
 
-		AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-		descriptionDialog.setTitle("Enter a decription:");
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_TEXT);
-		descriptionDialog.setView(input);
+		if( resultCode == RESULT_OK )
+		{
+			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
 		
-		descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				descriptionStr = input.getText().toString();
-				Toast.makeText(TesterActivity.this, "Photo saved.", Toast.LENGTH_SHORT).show();
-				//setContentView(imgView);
-				// Get the dimensions of the View
-			   int targetW = imgView.getWidth();
-			   int targetH = imgView.getHeight();
-
-			    // Get the dimensions of the bitmap
-			    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-			    //bmOptions.inJustDecodeBounds = true;
-			    BitmapFactory.decodeFile(photoPath, bmOptions);
-			    int photoW = bmOptions.outWidth;
-			    int photoH = bmOptions.outHeight;
-
-			    // Determine how much to scale down the image
-			    int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-			    // Decode the image file into a Bitmap sized to fill the View
-			    bmOptions.inJustDecodeBounds = false;
-			    bmOptions.inSampleSize = scaleFactor;
-			    bmOptions.inPurgeable = true;
-				
-				Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
-				imgView.setImageBitmap(imgBitmap);
-				
-				
-				//<<<<<<<<<<<----------------- for test
-				DatabaseManager.getInstance(TesterActivity.this).addPhoto(
-						new Photo(tempPhotoIDTest , descriptionStr, imgBitmap,"My album",false));
-				//testRetrievePhotoFromBD();				
-			}
-		});
-		descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		descriptionDialog.show();
+			descriptionDialog.setTitle("Enter a description:");
+			final EditText input = new EditText(this);
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			descriptionDialog.setView(input);
+	
+			descriptionDialog.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					descriptionStr = input.getText().toString();
+					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
+					//setContentView(imgView);
+					// Get the dimensions of the View
+					
+					Bitmap gridBitmap = 
+							Utils.getGridBitmapFromFile(photoPath, getApplicationContext().getApplicationContext());
+					
+					if( gridBitmap != null)
+					{					
+	 
+						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+						
+						imgView.setImageBitmap( gridBitmap );
+	
+						//<<<<<<<<<<<----------------- for test
+						DatabaseManager.getInstance(getApplicationContext()).addPhoto(
+								new Photo(tempPhotoIDTest , descriptionStr, individualBitmap , 
+										gridBitmap,"My album",false));
+						//testRetrievePhotoFromBD();
+					}
+				}
+			});
+			descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+			descriptionDialog.show();
+		}
+		else if( resultCode == RESULT_CANCELED)
+		{
+			Toast.makeText(this, "Unable to take photo. Try later.", Toast.LENGTH_LONG ).show();
+		}
 	}	
 
-	
-	
+
+
+
 	String tempPhotoIDTest = null;
 	private void testRetrievePhotoFromBD()
 	{
 		Photo testPhoto = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
-		
-		imgViewDB.setImageBitmap(testPhoto.getBitmap());
+
+		imgViewDB.setImageBitmap(testPhoto.getGridBitmap());
 		txtViewDescription.setText("Description: " + testPhoto.getDescription());
-		
-		
+
+
 	}
-	
+
 	private void testUploadPhotoToServer()
 	{
 		Photo testPhotoToServer = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
-		
+
 		UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(this);
 		uploadPhotoTask.execute(testPhotoToServer);
 		txtViewUploadStatus.setText("Data sent.");
-		
+
 	}
-	
+
 
 	private void testDownloadPhotoFromServer()
 	{
 		//Photo testPhoto = new Photo();
 		//already saved on server before
-		String photoId = "20140930_150922";
-		
+		String photoId = "20141002_221538";
+
 		//START<<<<<<<<<<<<<<<--- should be added to activities when downloading
 		//Check connection
 		if(ServerManager.getInstance(this).checkConnection())
@@ -319,10 +325,10 @@ public class TesterActivity extends Activity {
 		else
 		{
 			//may be try later, change the icon ????
-			
+
 		}
 		//End------------------------->>>>>>>>>>>		
-		
+
 	}
 	private void testRemoteRemove()
 	{
@@ -330,12 +336,12 @@ public class TesterActivity extends Activity {
 		//START<<<<<<<<<<<<<<<--- should be added to activities when downloading
 		if(ServerManager.getInstance(this).checkConnection())
 		{
-		
+
 			RemoteRemovePhotoTask removePhotoTask = new RemoteRemovePhotoTask(this);
 			removePhotoTask.setCallbackOnTaskFinished(new Callback<String>() {			
 				@Override
 				public void OnTaskFinished(String result) {
-					
+
 					if(result.equalsIgnoreCase("OK"))
 					{
 						Toast.makeText(TesterActivity.this, "Photo Removed from server.", Toast.LENGTH_SHORT).show();
@@ -345,7 +351,7 @@ public class TesterActivity extends Activity {
 						Toast.makeText(TesterActivity.this, "Photo not found on server.", Toast.LENGTH_SHORT).show();
 
 					}
-		
+
 				}
 			});
 			removePhotoTask.execute(photoIdtoBeRemoved);
@@ -354,10 +360,10 @@ public class TesterActivity extends Activity {
 		else
 		{
 			//may be try later, change the icon ????
-			
+
 		}
 		//End------------------------->>>>>>>>>>>		
-		
+
 	}
 
 }

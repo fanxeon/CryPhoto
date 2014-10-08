@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Search Widget -->
+    <item android:id="@+id/action_search"
+          android:icon="@drawable/ic_action_search"
+          android:title="@string/action_search"
+          android:showAsAction="ifRoom"
+          android:actionViewClass="android.widget.SearchView"/>
+    
+    <!-- Camera take photo -->
+    <item android:id="@+id/action_photo"
+          android:icon="@drawable/ic_action_photo"
+          android:title="@string/action_photo"
+          android:showAsAction="ifRoom" />
+    
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/action_settings"
+          android:title="@string/action_settings"
+          android:icon="@drawable/ic_action_settings"
+          android:showAsAction="ifRoom" />
+    
+    <!-- Help -->
+    <item android:id="@+id/action_help"
+          android:icon="@drawable/ic_action_help"
+          android:title="@string/action_help" 
+          android:showAsAction="never"/>
+    
+    <!-- Restore from Remote server -->
+    <item android:id="@+id/action_restore"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/action_restore"
+          android:showAsAction="never" />
+</menu>

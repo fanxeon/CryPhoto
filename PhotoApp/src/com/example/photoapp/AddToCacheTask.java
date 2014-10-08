@@ -91,7 +91,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		//			System.out.println("Attempting to add bitmap to cache");
 		//			byte[] array = os.toByteArray();
 		//			System.out.println("The size of the bitmap is now "+(array.length/1024));
-		byte[] array = DatabaseManager.getInstance(context).getCompressedBitmap(position, reqWidth, reqHeight);
+		byte[] array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
 		if (array != null)
 		{
 			System.out.println("Attempting to add bitmap to cache");
