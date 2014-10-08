@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.example.database.DatabaseManager;
 import com.example.photoapp.ImageAdapter;
+import com.example.photoapp.ImageCache;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
@@ -11,6 +12,7 @@ import com.example.photoapp.R.menu;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,7 +31,9 @@ import android.widget.Toast;
 public class GridActivity extends Activity {
 
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
-	protected static ArrayList<String> list;
+	public final static String STRING_LIST = "string_id_list";
+	public final static String STRING_ID = "string_id";
+	private static ArrayList<String> list;
 	protected static int[] images;
 
 	public static void getActivityManager(Context context)
@@ -59,6 +63,9 @@ public class GridActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
 		
+		//initialize cache and fragment
+		ImageCache cache = getImageCache(this.getFragmentManager());
+		
 		//this will set up an array with references to images which will be used by the adapter later
 		initarray(); //this will retrieve string IDs from the database manager
 		System.out.println("Just initialized the array of integer ids");
@@ -76,7 +83,7 @@ public class GridActivity extends Activity {
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		
 		//set the adapter for the grid view
-	    gridview.setAdapter(new ImageAdapter(this));
+	    gridview.setAdapter(new ImageAdapter(this,cache));
 	    
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
@@ -85,6 +92,11 @@ public class GridActivity extends Activity {
 	            Indiview(v,position);
 	        }
 	    });
+	}
+
+	private ImageCache getImageCache(FragmentManager fragmentManager) {
+		
+		return ImageCache.getInstance(fragmentManager);
 	}
 
 	@Override
@@ -138,14 +150,15 @@ public class GridActivity extends Activity {
 		Intent intent = new Intent(this, IndividualActivity.class);
 		//EditText editText = (EditText) findViewById(R.id.edit_message);
 		//String message = editText.getText().toString();
-		intent.putExtra("id", position);
+		intent.putExtra(STRING_ID, list.get(position));
+		intent.putStringArrayListExtra(STRING_LIST, list);
 		startActivity(intent);
 	}
 	
 	private void initarray()
 	{
 		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
-		list = db.getPhotoIDs();
+		setList(db.getPhotoIDs());
 		
 //		   this.images = getResources().getIntArray(R.array.ImgRef);
 //		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
@@ -164,4 +177,12 @@ public class GridActivity extends Activity {
 		   //this.images = images;
 	   }
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
+
+	public static ArrayList<String> getList() {
+		return list;
+	}
+
+	public static void setList(ArrayList<String> list) {
+		GridActivity.list = list;
+	}
 }

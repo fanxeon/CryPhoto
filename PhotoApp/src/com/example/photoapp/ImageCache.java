@@ -11,8 +11,10 @@ import java.io.ByteArrayInputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
+//import android.support.v4.app.Fragment;
+//import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 //import android.graphics.Bitmap.CompressFormat;
 //import android.graphics.Bitmap.Config;
@@ -55,6 +57,11 @@ public class ImageCache {
 
 		return imageCache;
 	}
+	
+//	private static RetainFragment findFragment(FragmentManager fm)
+//	{
+//		return (RetainFragment) fm.findFragmentByTag(TAG);
+//	}
 
 	private static RetainFragment findOrCreateRetainFragment(FragmentManager fm) {
 		//BEGIN_INCLUDE(find_create_retain_fragment)

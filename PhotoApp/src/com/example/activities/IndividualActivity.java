@@ -1,5 +1,8 @@
 package com.example.activities;
 
+import java.util.ArrayList;
+
+import com.example.photoapp.FetchFromCacheTask;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
@@ -21,11 +24,17 @@ public class IndividualActivity extends Activity {
 		//setContentView(R.layout.activity_display_message);
 		setContentView(R.layout.activity_display_message);
 		Intent intent = getIntent();
-		int position = intent.getIntExtra("id",-1);
+		String position = intent.getExtras().getString(GridActivity.STRING_ID);
+		ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
 		
+		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
-	     imageView.setImageResource(GridActivity.images[position]);
+	     
+	     //check the cache for the image
+	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
+		 fetchtask.execute(position);
+	     //imageView.setImageResource(GridActivity.images[position]);
 		
 //		// Create the text view
 //	    TextView textView = new TextView(this);

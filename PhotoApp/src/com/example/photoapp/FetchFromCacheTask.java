@@ -1,5 +1,6 @@
 package com.example.photoapp;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -24,7 +25,15 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 		this.cache = cache;
 		position = "";
 	}
-
+	
+	public FetchFromCacheTask(ImageView imageView, Context context, FragmentManager fm) {
+		// Use a WeakReference to ensure the ImageView can be garbage collected
+		//imageViewReference = new WeakReference<ImageView>(imageView);
+		this.imageView = imageView;
+		this.context = context;
+		cache = ImageCache.getInstance(fm);
+		position = "";
+	}
 	// Decode image in background.
 	@Override
 	protected Bitmap doInBackground(String... params)

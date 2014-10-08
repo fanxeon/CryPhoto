@@ -27,12 +27,12 @@ public class ImageAdapter extends BaseAdapter{
 	private int reqHeight = 300;
 
 	// Constructor
-	public ImageAdapter(Context c) {
+	public ImageAdapter(Context c, ImageCache cache) {
 		mContext = c;
 		//images = GridActivity.images;
-		list = GridActivity.list;
+		list = GridActivity.getList();
 		//initarray();
-		cache = ImageCache.getInstance();
+		this.cache = cache;
 		System.out.println("Just got an instance of the Image Cache");
 		putincache();
 	}
