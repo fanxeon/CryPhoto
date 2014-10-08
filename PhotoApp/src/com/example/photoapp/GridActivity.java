@@ -1,10 +1,9 @@
-package com.example.activities;
+package com.example.photoapp;
 
 import java.util.ArrayList;
 
+import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
-import com.example.photoapp.ImageAdapter;
-import com.example.photoapp.ImageCache;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;

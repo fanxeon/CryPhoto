@@ -1,8 +1,7 @@
-package com.example.activities;
+package com.example.photoapp;
 
 import java.util.ArrayList;
 
-import com.example.photoapp.FetchFromCacheTask;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;

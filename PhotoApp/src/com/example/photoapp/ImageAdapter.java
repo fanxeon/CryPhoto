@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import com.example.activities.GridActivity;
 
 import android.content.Context;
 import android.content.res.Resources;
