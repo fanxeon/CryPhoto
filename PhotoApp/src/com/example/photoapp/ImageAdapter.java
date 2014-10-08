@@ -108,31 +108,31 @@ public class ImageAdapter extends BaseAdapter{
 			task.execute(list.get(i));
 			boolean done = false;
 			//boolean interrupted = false;
-			while(!done)
-			{
-				try
-				{
-					boolean b = task.get();
-					if(b)
-					{
-						done = true;
-					}
-					else
-					{
-						done = true;
-					}
-				}
-				catch(InterruptedException in)
-				{
-					//interrupted = false;
-					done = false;
-				}
-				catch(ExecutionException e)
-				{
-					done = true;
-					System.out.println("Encountered an executopn exception");
-				}
-			}
+//			while(!done)
+//			{
+//				try
+//				{
+//					boolean b = task.get();
+//					if(b)
+//					{
+//						done = true;
+//					}
+//					else
+//					{
+//						done = true;
+//					}
+//				}
+//				catch(InterruptedException in)
+//				{
+//					//interrupted = false;
+//					done = false;
+//				}
+//				catch(ExecutionException e)
+//				{
+//					done = true;
+//					System.out.println("Encountered an executopn exception");
+//				}
+//			}
 		}
 	}
 
