@@ -108,7 +108,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		
 		//this will set up an array with references to images which will be used by the adapter later
 		initarray(); //this will retrieve string IDs from the database manager
-		System.out.println("Just initialized the array of integer ids");
+		System.out.println("Just initialized the array of string ids");
 		
 		//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 		actionBar = getActionBar();
@@ -135,13 +135,17 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		//create an array adapter which will supply views for the drop down menu
 		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
 		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
+		
 		//sets up the up button on the action bar for the user to navigate backwards
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		System.out.println("About to get the grid view by finding it using the id name");
+		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
+		
 		//set the adapter for the grid view
 	    gridview.setAdapter(new ImageAdapter(this,cache));
+	    
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -324,8 +328,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	private void initarray()
 	{
 		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
-		setList(db.getPhotoIDs());
-		
+		setList(db.getPhotoIDs());		
 //		   this.images = getResources().getIntArray(R.array.ImgRef);
 //		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
 //				      R.drawable.img3, R.drawable.img1,

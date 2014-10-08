@@ -107,7 +107,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		}
 		else
 		{
-			System.out.println("Failed to compress the bitmap to JPEG format");
+			System.out.println("Grid Bitmap Bytes returned from database is null");
 			return false;
 		}
 	}

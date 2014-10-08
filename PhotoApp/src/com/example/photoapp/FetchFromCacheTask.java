@@ -34,6 +34,7 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 		cache = ImageCache.getInstance(fm);
 		position = "";
 	}
+	
 	// Decode image in background.
 	@Override
 	protected Bitmap doInBackground(String... params)
@@ -60,7 +61,24 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 			//imageView.setImageResource(position);
 			//load direct from database here
 			DatabaseManager db = DatabaseManager.getInstance(context);
-			imageView.setImageBitmap(db.getGridBitmap(position));
+			byte[] array = db.getGridBitmapAsBytes(position);
+			//byte[] array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
+			if (array != null)
+			{
+				System.out.println("Attempting to add bitmap to cache");
+				synchronized(cache)
+				{
+					if(!cache.addBitmapToMemoryCache(position, array))
+					{
+						System.out.println("Failed to write bitmap with identifier "+position+ " to cache");
+					}
+				}
+				imageView.setImageBitmap(db.getGridBitmap(position));
+			}
+			else
+			{
+				System.out.println("Grid Image as bytes returned null");
+			}
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}

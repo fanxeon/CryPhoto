@@ -105,6 +105,7 @@ public class ImageAdapter extends BaseAdapter{
 		for(i=0; i < list.size(); i++)
 		{
 			//Integer pos = Integer.valueOf(list.get(i));
+			//FetchFromCacheTask fttask = new FetchFromCacheTask();
 			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
 			task.execute(list.get(i));
 			boolean done = false;
