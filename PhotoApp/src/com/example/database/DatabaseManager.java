@@ -21,7 +21,6 @@ import com.example.photo.Photo;
  */
 public class DatabaseManager 
 {
-
 	
 	private static DatabaseManager instance = null;
 	private Context context = null;
