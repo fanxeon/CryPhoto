@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import utils.Utils;
+
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -187,7 +189,7 @@ public class ImageAdapter extends BaseAdapter{
 			{
 				//set properties of the image view
 				imageView = new ImageView(mContext);
-				int px = convertDpToPixel(150,mContext);
+				int px = convertDpToPixel(mContext.getResources().getInteger(R.dimen.grid_img_view_height),mContext);
 				System.out.println("The value of view width and height is now " + px + "," + px);
 				imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
