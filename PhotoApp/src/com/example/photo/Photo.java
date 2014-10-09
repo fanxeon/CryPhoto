@@ -19,9 +19,9 @@ public class Photo
 	public static final String GRID_BITMAP_DATA = "gridbitmapdata";
 	public static final String DESCRIPTION = "description";
 	
-	private final String YES = "yes";
-	private final String NO = "no";
-	private final String NONE = "none";
+	public static final String YES = "yes";
+	public static final String NO = "no";
+	public static final String NONE = "none";
 	
 	//private String name;
 	//A photo ID is the same as the timestamp.
