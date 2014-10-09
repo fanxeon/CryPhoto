@@ -59,32 +59,30 @@ public final class R {
     }
     public static final class id {
         public static final int SingleView=0x7f0a0001;
-        public static final int action_discard=0x7f0a001a;
-        public static final int action_help=0x7f0a0017;
-        public static final int action_photo=0x7f0a0015;
-        public static final int action_restore=0x7f0a0018;
-        public static final int action_search=0x7f0a0014;
-        public static final int action_settings=0x7f0a0016;
-        public static final int action_share=0x7f0a0019;
-        public static final int action_test=0x7f0a0003;
-        public static final int btnDB=0x7f0a0009;
-        public static final int btnDownload=0x7f0a000e;
-        public static final int btnServerRemove=0x7f0a000f;
-        public static final int btnSync=0x7f0a0011;
-        public static final int btnTakePhoto=0x7f0a000b;
-        public static final int btnUploadPhoto=0x7f0a000c;
-        public static final int gridview=0x7f0a0004;
-        public static final int imageViewPicTaken=0x7f0a0008;
-        public static final int imgIcon=0x7f0a0012;
-        public static final int imgViewDB=0x7f0a0007;
-        public static final int imgViewDownload=0x7f0a000d;
-        public static final int linearLayout1=0x7f0a0002;
+        public static final int action_discard=0x7f0a0018;
+        public static final int action_help=0x7f0a0015;
+        public static final int action_photo=0x7f0a0013;
+        public static final int action_restore=0x7f0a0016;
+        public static final int action_search=0x7f0a0012;
+        public static final int action_settings=0x7f0a0014;
+        public static final int action_share=0x7f0a0017;
+        public static final int btnDB=0x7f0a0007;
+        public static final int btnDownload=0x7f0a000c;
+        public static final int btnServerRemove=0x7f0a000d;
+        public static final int btnSync=0x7f0a000f;
+        public static final int btnTakePhoto=0x7f0a0009;
+        public static final int btnUploadPhoto=0x7f0a000a;
+        public static final int gridview=0x7f0a0002;
+        public static final int imageViewPicTaken=0x7f0a0006;
+        public static final int imgIcon=0x7f0a0010;
+        public static final int imgViewDB=0x7f0a0005;
+        public static final int imgViewDownload=0x7f0a000b;
         public static final int progressBar=0x7f0a0000;
-        public static final int txtQuery=0x7f0a0005;
-        public static final int txtTitle=0x7f0a0013;
-        public static final int txtVStatuRemove=0x7f0a0010;
-        public static final int txtViewDesc=0x7f0a000a;
-        public static final int txtViewUploadStatus=0x7f0a0006;
+        public static final int txtQuery=0x7f0a0003;
+        public static final int txtTitle=0x7f0a0011;
+        public static final int txtVStatuRemove=0x7f0a000e;
+        public static final int txtViewDesc=0x7f0a0008;
+        public static final int txtViewUploadStatus=0x7f0a0004;
     }
     public static final class layout {
         public static final int action_progressbar=0x7f030000;

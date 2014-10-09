@@ -155,7 +155,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	    });
 	    
 	    /** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
-	    mHelloTextView = (TextView) findViewById (R.id.action_test);
+	    /*mHelloTextView = (TextView) findViewById (R.id.action_test);
 	    mHelloTextView.setOnLongClickListener(new OnLongClickListener(){
 	    	@Override
 	    	public boolean onLongClick(View v){
@@ -164,7 +164,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	    		mActionMode.setTitle(R.string.menu_context_title);
 	    		return true;
 			}
-	    });
+	    });*/
 	}
 
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
