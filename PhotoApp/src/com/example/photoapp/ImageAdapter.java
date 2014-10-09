@@ -189,7 +189,8 @@ public class ImageAdapter extends BaseAdapter{
 			{
 				//set properties of the image view
 				imageView = new ImageView(mContext);
-				int px = convertDpToPixel(mContext.getResources().getInteger(R.dimen.grid_img_view_height),mContext);
+				//int px = convertDpToPixel(mContext.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height),mContext);
+				int px = mContext.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
 				System.out.println("The value of view width and height is now " + px + "," + px);
 				imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
