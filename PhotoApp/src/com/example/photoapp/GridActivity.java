@@ -8,6 +8,10 @@ import utils.Utils;
 
 import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
+import com.example.photoapp.R;
+import com.example.photoapp.R.id;
+import com.example.photoapp.R.layout;
+import com.example.photoapp.R.menu;
 import com.example.database.SpinnerNavItem;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
@@ -18,6 +22,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.FragmentManager;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -51,7 +56,9 @@ import android.widget.Toast;
 public class GridActivity extends Activity implements OnNavigationListener {
 
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
-	protected static ArrayList<String> list;
+	public final static String STRING_LIST = "string_id_list";
+	public final static String STRING_ID = "string_id";
+	private static ArrayList<String> list;
 	protected static int[] images;
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
 	private TextView mHelloTextView;
@@ -96,9 +103,12 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
 		
+		//initialize cache and fragment
+		ImageCache cache = getImageCache(this.getFragmentManager());
+		
 		//this will set up an array with references to images which will be used by the adapter later
 		initarray(); //this will retrieve string IDs from the database manager
-		System.out.println("Just initialized the array of integer ids");
+		System.out.println("Just initialized the array of string ids");
 		
 		//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 		actionBar = getActionBar();
@@ -125,13 +135,17 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		//create an array adapter which will supply views for the drop down menu
 		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
 		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
+		
 		//sets up the up button on the action bar for the user to navigate backwards
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		System.out.println("About to get the grid view by finding it using the id name");
+		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
+		
 		//set the adapter for the grid view
-	    gridview.setAdapter(new ImageAdapter(this));
+	    gridview.setAdapter(new ImageAdapter(this,cache));
+	    
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -140,8 +154,8 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	        }
 	    });
 	    
-	/** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
-	    mHelloTextView = (TextView) findViewById (R.id.action_test);
+	    /** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
+	    /*mHelloTextView = (TextView) findViewById (R.id.action_test);
 	    mHelloTextView.setOnLongClickListener(new OnLongClickListener(){
 	    	@Override
 	    	public boolean onLongClick(View v){
@@ -150,9 +164,14 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	    		mActionMode.setTitle(R.string.menu_context_title);
 	    		return true;
 			}
-	    });
-
+	    });*/
 	}
+
+	private ImageCache getImageCache(FragmentManager fragmentManager) {
+		
+		return ImageCache.getInstance(fragmentManager);
+	}
+
 	class MyActionModeCallback implements ActionMode.Callback{
 
 		@Override
@@ -301,15 +320,15 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		Intent intent = new Intent(this, IndividualActivity.class);
 		//EditText editText = (EditText) findViewById(R.id.edit_message);
 		//String message = editText.getText().toString();
-		intent.putExtra("id", position);
+		intent.putExtra(STRING_ID, list.get(position));
+		intent.putStringArrayListExtra(STRING_LIST, list);
 		startActivity(intent);
 	}
 	
 	private void initarray()
 	{
 		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
-		list = db.getPhotoIDs();
-		
+		setList(db.getPhotoIDs());		
 //		   this.images = getResources().getIntArray(R.array.ImgRef);
 //		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
 //				      R.drawable.img3, R.drawable.img1,
@@ -328,6 +347,14 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	   }
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 
+	public static ArrayList<String> getList() {
+		return list;
+	}
+
+	public static void setList(ArrayList<String> list) {
+		GridActivity.list = list;
+	}
+	
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		// TODO Auto-generated method stub
@@ -434,5 +461,4 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		}
 	}	
 	//END part for taking photos from camera app
-
 }

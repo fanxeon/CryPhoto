@@ -1,5 +1,6 @@
 package com.example.photoapp;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -24,7 +25,16 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 		this.cache = cache;
 		position = "";
 	}
-
+	
+	public FetchFromCacheTask(ImageView imageView, Context context, FragmentManager fm) {
+		// Use a WeakReference to ensure the ImageView can be garbage collected
+		//imageViewReference = new WeakReference<ImageView>(imageView);
+		this.imageView = imageView;
+		this.context = context;
+		cache = ImageCache.getInstance(fm);
+		position = "";
+	}
+	
 	// Decode image in background.
 	@Override
 	protected Bitmap doInBackground(String... params)
@@ -51,7 +61,24 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 			//imageView.setImageResource(position);
 			//load direct from database here
 			DatabaseManager db = DatabaseManager.getInstance(context);
-			imageView.setImageBitmap(db.getGridBitmap(position));
+			byte[] array = db.getGridBitmapAsBytes(position);
+			//byte[] array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
+			if (array != null)
+			{
+				System.out.println("Attempting to add bitmap to cache");
+				synchronized(cache)
+				{
+					if(!cache.addBitmapToMemoryCache(position, array))
+					{
+						System.out.println("Failed to write bitmap with identifier "+position+ " to cache");
+					}
+				}
+				imageView.setImageBitmap(db.getGridBitmap(position));
+			}
+			else
+			{
+				System.out.println("Grid Image as bytes returned null");
+			}
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}

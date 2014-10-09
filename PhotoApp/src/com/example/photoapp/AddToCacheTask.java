@@ -94,44 +94,44 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		byte[] array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
 		if (array != null)
 		{
-		System.out.println("Attempting to add bitmap to cache");
-		synchronized(cache)
-		{
-			if(!cache.addBitmapToMemoryCache(position, array))
+			System.out.println("Attempting to add bitmap to cache");
+			synchronized(cache)
 			{
-				System.out.println("Failed to write bitmap with identifier "+position+ " to cache");
-				return false;
+				if(!cache.addBitmapToMemoryCache(position, array))
+				{
+					System.out.println("Failed to write bitmap with identifier "+position+ " to cache");
+					return false;
+				}
+				return true;
 			}
-			return true;
+		}
+		else
+		{
+			System.out.println("Grid Bitmap Bytes returned from database is null");
+			return false;
 		}
 	}
-	else
-	{
-		System.out.println("Failed to compress the bitmap to JPEG format");
-		return false;
-	}
-}
 
-//	    if (imageViewReference != null && bitmap != null) {
-//            final ImageView imageView = imageViewReference.get();
-//            if (imageView != null) {
-//                imageView.setImageBitmap(bitmap);
-//            }
-//        }
-//	     Once complete, see if ImageView is still around and set bitmap.
-@Override
-protected void onPostExecute(Boolean addedTocache) 
-{
-	if (addedTocache)
+	//	    if (imageViewReference != null && bitmap != null) {
+	//            final ImageView imageView = imageViewReference.get();
+	//            if (imageView != null) {
+	//                imageView.setImageBitmap(bitmap);
+	//            }
+	//        }
+	//	     Once complete, see if ImageView is still around and set bitmap.
+	@Override
+	protected void onPostExecute(Boolean addedTocache) 
 	{
-		//added to cache, so do something
-		System.out.println("Successfully added to cache");
+		if (addedTocache)
+		{
+			//added to cache, so do something
+			System.out.println("Successfully added to cache");
+		}
+		else
+		{
+			//could not add to cache
+			System.out.println("Failed to write object with key "+position+" to cache");
+			//System.out.println("Failed to write bitmap with identifier "+images[position]+ " to cache");
+		}
 	}
-	else
-	{
-		//could not add to cache
-		System.out.println("Failed to write object with key "+position+" to cache");
-		//System.out.println("Failed to write bitmap with identifier "+images[position]+ " to cache");
-	}
-}
 }

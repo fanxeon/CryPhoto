@@ -6,41 +6,76 @@ package com.example.photoapp;
 
 import java.io.ByteArrayInputStream;
 
+//import com.example.android.displayingbitmaps.util.ImageCache.RetainFragment;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.app.Fragment;
+import android.app.FragmentManager;
+//import android.support.v4.app.Fragment;
+//import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 //import android.graphics.Bitmap.CompressFormat;
 //import android.graphics.Bitmap.Config;
 
 public class ImageCache {
 
-	private static ImageCache imageCache;
+	//private static ImageCache imageCache;
 	private LruCache<String,byte[]> memCache;
 	private static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 2; // 2MB
 	private static final int TO_KILO_BYTE = 1024; //divide byte count by this number to convert to KB
 	private static final int TO_MEGA_BYTE = 1048576; //divide byte count by this number to get MB
-
+    private static final String TAG = "ImageCache";
+	
 	private ImageCache()
 	{
-		imageCache = null;
+		//imageCache = null;
 		emptyinit();
 		//no-arg constructor
 	}
 
 	private ImageCache(int size)
 	{
-		imageCache = null;
+		//imageCache = null;
 		//size should be in kilobytes
 		arginit(size);
 	}
 
-	public static ImageCache getInstance()
+	public static ImageCache getInstance(FragmentManager fragmentManager)
 	{
+		// Search for, or create an instance of the non-UI RetainFragment
+		final RetainFragment mRetainFragment = findOrCreateRetainFragment(fragmentManager);
+
+		// See if we already have an ImageCache stored in RetainFragment
+		ImageCache imageCache = mRetainFragment.getcache();
+
 		// No existing ImageCache, create one and store it in RetainFragment
 		if (imageCache == null) {
 			imageCache = new ImageCache();
 		}
+
 		return imageCache;
+	}
+	
+//	private static RetainFragment findFragment(FragmentManager fm)
+//	{
+//		return (RetainFragment) fm.findFragmentByTag(TAG);
+//	}
+
+	private static RetainFragment findOrCreateRetainFragment(FragmentManager fm) {
+		//BEGIN_INCLUDE(find_create_retain_fragment)
+		// Check to see if we have retained the worker fragment.
+		RetainFragment mRetainFragment = (RetainFragment) fm.findFragmentByTag(TAG);
+
+		// If not retained (or first time running), we need to create and add it.
+		if (mRetainFragment == null) {
+			mRetainFragment = new RetainFragment();
+			fm.beginTransaction().add(mRetainFragment, TAG).commitAllowingStateLoss();
+		}
+
+		return mRetainFragment;
+		//END_INCLUDE(find_create_retain_fragment)
 	}
 
 	private void emptyinit()
@@ -52,10 +87,10 @@ public class ImageCache {
 		System.out.println("Max memory available is "+maxMemory);
 		// Use 1/8th of the available memory for this memory cache.
 		final int cacheSize = maxMemory/8;
-		
+
 		System.out.println("Allocating "+ cacheSize+ " for the cache from the memory");
 		//long memory = Runtime.getRuntime().maxMemory();
-		
+
 		memCache = new LruCache<String, byte[]>(cacheSize) {
 			@Override
 			protected int sizeOf(String key, byte[] array) {
@@ -132,5 +167,45 @@ public class ImageCache {
 			decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(array));
 		}
 		return decoded;
+	}
+
+	/**
+	 * A simple non-UI Fragment that stores a single Object and is retained over configuration
+	 * changes. It will be used to retain the ImageCache object.
+	 */
+	public static class RetainFragment extends Fragment {
+
+		private ImageCache cache;
+
+		/**
+		 * Empty constructor as per the Fragment documentation
+		 */
+		public RetainFragment() {}
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			// Make sure this Fragment is retained over a configuration change
+			setRetainInstance(true);
+		}
+
+		/**
+		 * Store a single object in this Fragment.
+		 *
+		 * @param object The object to store
+		 */
+		public void setcache(ImageCache cache) {
+			this.cache = cache;
+		}
+
+		/**
+		 * Get the stored object.
+		 *
+		 * @return The stored object
+		 */
+		public ImageCache getcache() {
+			return cache;
+		}
 	}
 }

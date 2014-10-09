@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -25,12 +26,12 @@ public class ImageAdapter extends BaseAdapter{
 	private int reqHeight = 300;
 
 	// Constructor
-	public ImageAdapter(Context c) {
+	public ImageAdapter(Context c, ImageCache cache) {
 		mContext = c;
 		//images = GridActivity.images;
-		list = GridActivity.list;
+		list = GridActivity.getList();
 		//initarray();
-		cache = ImageCache.getInstance();
+		this.cache = cache;
 		System.out.println("Just got an instance of the Image Cache");
 		putincache();
 	}
@@ -104,6 +105,7 @@ public class ImageAdapter extends BaseAdapter{
 		for(i=0; i < list.size(); i++)
 		{
 			//Integer pos = Integer.valueOf(list.get(i));
+			//FetchFromCacheTask fttask = new FetchFromCacheTask();
 			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
 			task.execute(list.get(i));
 			boolean done = false;
