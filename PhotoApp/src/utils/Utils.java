@@ -100,5 +100,48 @@ public class Utils
 		return BitmapFactory.decodeFile(filePath, options);
 
 	}
+	
+	public static Bitmap getBitmapFromByteArray(byte[] array, Context context, int reqWidth, int reqHeight)
+	{
+		//Bitmap gridBitmap = null;
+		//int targetW = imgView.getWidth();
+		//int targetH = imgView.getHeight();
+//		int reqWidthdp = getResources().getInteger(R.dimen.grid_view_width);
+//		int reqHeightdp = getResources().getInteger(R.dimen.grid_view_height);
+		int reqWidthdp = 150;
+		int reqHeightdp = 150;
+		//int reqWidth = convertDpToPixel(reqWidthdp, context);
+		//int reqHeight = convertDpToPixel(reqHeightdp, context);
+//		// Get the dimensions of the bitmap
+//		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//		//bmOptions.inJustDecodeBounds = true;
+//		BitmapFactory.decodeFile(photoPath, bmOptions);
+//		int photoW = bmOptions.outWidth;
+//		int photoH = bmOptions.outHeight;
+//
+//		// Determine how much to scale down the image
+//		int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+//
+//		// Decode the image file into a Bitmap sized to fill the View
+//		bmOptions.inJustDecodeBounds = false;
+//		bmOptions.inSampleSize = scaleFactor;
+//		bmOptions.inPurgeable = true;
+//
+//		Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
+
+		//First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		//BitmapFactory.decodeResource(res, resId, options);
+		BitmapFactory.decodeByteArray(array,0,array.length, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeByteArray(array,0,array.length, options);
+
+	}
 
 }

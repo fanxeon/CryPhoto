@@ -6,8 +6,11 @@ import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
 import com.example.photoapp.R.menu;
 import com.example.activities.TesterActivity;
+import com.example.database.DatabaseManager;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,12 +27,15 @@ public class IndividualActivity extends Activity {
 		setContentView(R.layout.activity_display_message);
 		Intent intent = getIntent();
 		String position = intent.getExtras().getString(GridActivity.STRING_ID);
-		ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
+		//ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
 		
 		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
-	     
+//	     int height = imageView.getHeight();
+//	     int width = imageView.getWidth();
+//	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
+//	     imageView.setImageBitmap(bm);
 	     //check the cache for the image
 	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
 		 fetchtask.execute(position);
