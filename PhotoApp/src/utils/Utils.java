@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 
 public class Utils 
@@ -104,7 +105,15 @@ public class Utils
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(filePath, options);
+		
+		Bitmap sampledBitmap =  BitmapFactory.decodeFile(filePath, options);
+		Matrix matrix = new Matrix();
+		matrix.postRotate(90);
+		
+		Bitmap rotatedBitamp = Bitmap.createBitmap(sampledBitmap, 0, 0, 
+                sampledBitmap.getWidth(), sampledBitmap.getHeight(), 
+                matrix, true);
+		return rotatedBitamp;
 
 	}
 	

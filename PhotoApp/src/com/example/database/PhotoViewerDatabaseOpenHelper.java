@@ -1,18 +1,20 @@
 package com.example.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.app.PhotoViewerApplication;
+import com.example.photo.Photo;
 
 public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 {
 	//Database details
 	private static final String DATABASE_NAME = "photoviewerdb";
 	//NOT SURE what version should we use <<<<<<<<<<<<<<<<<<<<<<<<----------------
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	
 	//Information needed for photos table.
 	protected static final String PHOTOS_TABLE_NAME = "photos";
@@ -63,7 +65,15 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     	//Create tables once
     	db.execSQL(PHOTOS_TABLE_CREATE);
     	db.execSQL(ALBUM_TABLE_CREATE);
+    	initial(db);
 	}
+    private void initial(SQLiteDatabase db)
+    {
+		ContentValues values = new ContentValues();
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, Photo.NONE);
+		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
+
+    }
     //This methods will be called whenever the database is open
     @Override 
     public void onOpen(SQLiteDatabase db){
@@ -73,7 +83,11 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	}
  
     @Override
-    public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {  
+    public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) 
+    {  
+    	 db.execSQL("DROP TABLE IF EXISTS " + PHOTOS_TABLE_NAME);
+    	 db.execSQL("DROP TABLE IF EXISTS " + ALBUM_TABLE_NAME);
+         onCreate(db);    	
     }
 
 }

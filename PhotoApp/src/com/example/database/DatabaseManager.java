@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 
 import com.example.app.PhotoViewerApplication;
 import com.example.photo.Photo;
+import com.example.photo.PhotoManager;
 
 /**
  * This a (singleton) database manager class.  
@@ -382,6 +383,125 @@ public class DatabaseManager
 
 
 		return new ArrayList<>();
+	}
+
+	
+
+	public ArrayList<String> getAlbumNames()
+	{
+		ArrayList<String> albumNames = new ArrayList<String>();
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();	
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_NAME};
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME,
+				projection, null, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{
+			do
+			{
+				albumNames.add( cursor.getString( cursor
+						.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+			}
+			while(cursor.moveToNext());
+
+		}
+
+		return albumNames;
+		
+	}
+	
+	public boolean insertAlbum(String newAlbum)
+	{
+		if(newAlbum != null)
+		{
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+			ContentValues values = new ContentValues();
+			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newAlbum);
+
+		
+			long rowId = db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
+		
+			db.close();
+		
+			if(rowId == -1)
+				return false;
+		}
+		else
+			return false;
+		
+		return true;
+
+	}
+	public int deleteAlbum(String albumName)
+	{
+		int numRows = 0;
+		if( albumName != null)
+		{
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			
+			String selection = PhotoViewerDatabaseOpenHelper.COLUMN_NAME + " = ?";
+			String[] selectionArgs = {albumName};
+		    numRows = 
+					db.delete(PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, selection, selectionArgs);
+		}
+		else
+		{
+			return 0;
+		}
+		return numRows;
+	}
+	
+	public int deletePhoto(String photoId)
+	{
+		int numRows = 0;
+		if( photoId != null)
+		{
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			
+			String selection = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = ?";
+			String[] selectionArgs = {photoId};
+		    numRows = 
+					db.delete(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, selection, selectionArgs);
+		}
+		else
+		{
+			return 0;
+		}
+		return numRows;	
+	}
+	
+	public int updateSavedOnServer(String photoId, boolean isSaved)
+	{
+		int c = 0;
+		if( photoId != null)
+		{
+			String savedStr = null;
+			
+			if(isSaved)
+				savedStr = Photo.YES;
+			else
+				savedStr = Photo.NO;
+			
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			
+			String selection = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = ?";
+			String[] selectionArgs = {photoId};
+			
+			ContentValues values = new ContentValues();
+			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, savedStr);
+			
+			c = db.update(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, values, selection, selectionArgs);
+			
+			db.close();
+		}
+		else
+			return 0;
+		return c;
+		
 	}
 
 
