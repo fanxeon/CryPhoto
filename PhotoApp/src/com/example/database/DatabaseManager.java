@@ -58,9 +58,9 @@ public class DatabaseManager
 
 		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
 		//Is JPEG a good idea? since it is its compression reduces the data size?????
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
 
 		if(newPhoto.getGridBitmap() != null )
 		{
@@ -213,15 +213,58 @@ public class DatabaseManager
 			photo.setUploadedToServer( cursor.getString(cursor
 					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
 
+			//Ignore bitmap variable in photo object since we may not need it, use gridbitmap
+			//for now.
+//			byte[] data = cursor.getBlob(cursor
+//					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+//			photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
 			byte[] data = cursor.getBlob(cursor
-					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
-			photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+			.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+			photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
 		}
 
 		cursor.close();
 		return photo;
 	}
 
+	public Photo getPhotoWithoutBitmaps(String photoID)
+	{
+		Photo photo = null;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				PhotoViewerDatabaseOpenHelper.ALL_COLUMNS_PHOTO_TABLE_NO_BITMAPS, whereStr, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{	
+			photo = new Photo();
+			photo.setPhotoID(photoID);
+			photo.setAlbum( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
+			photo.setDescription( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
+			//photo.setName( cursor.getString(cursor
+			//		.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+			photo.setUploadedToServer( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
+
+			//Ignore bitmap variable in photo object since we may not need it, use gridbitmap
+			//for now.
+//			byte[] data = cursor.getBlob(cursor
+//					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+//			photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+//			byte[] data = cursor.getBlob(cursor
+//			.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+//			photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+		}
+
+		cursor.close();
+		return photo;
+	}
 
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<---------------------------
 	//This method will be called when grid view activity created. Then the activity will pass the arraylist of ids to its adapdter.
