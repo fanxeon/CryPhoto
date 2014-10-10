@@ -74,6 +74,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 		ContentValues values = new ContentValues();
 		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, Photo.NONE);
 		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
+		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, "test", values);
 
     }
     //This methods will be called whenever the database is open

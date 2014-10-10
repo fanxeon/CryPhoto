@@ -7,6 +7,7 @@ import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
 import com.example.photoapp.R.menu;
+import com.example.server.UploadPhotoTask;
 import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 
@@ -127,12 +128,35 @@ public class IndividualActivity extends Activity {
 	}
 
 	private void openShare() {
+		Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
+		//Photo testPhotoToServer = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
+
+		UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(this);
+		uploadPhotoTask.execute(photoDetails);
+
 		// TODO Auto-generated method stub
 		
 	}
 
 	private void discard() {
+		int n = DatabaseManager.getInstance(getApplicationContext()).deletePhoto(photoDetails.getPhotoID());
+		
+		if( n > 0 )
+			Toast.makeText(getApplicationContext(), "Photo deleted.", Toast.LENGTH_LONG).show();
+		
+		Intent intent = new Intent(this, GridActivity.class);
+		//EditText editText = (EditText) findViewById(R.id.edit_message);
+		//String message = editText.getText().toString();
+		intent.putExtra("deleted", photoDetails.getPhotoID());
+		//intent.putStringArrayListExtra(STRING_LIST, getList());
+		startActivity(intent);
+		
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
 	}
 }

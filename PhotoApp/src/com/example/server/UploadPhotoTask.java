@@ -102,7 +102,7 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
     				
     				counter++;
     				
-					if( ++progressCounter == 200 )
+					if( ++progressCounter == 5000 )
 					{
 						publishProgress( (int)((counter*100)/numberOfBytes) );
 						progressCounter = 0;
