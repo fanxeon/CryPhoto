@@ -14,7 +14,8 @@ import android.util.DisplayMetrics;
 
 public class Utils 
 {
-
+	
+	public static String PHOTO_DELETED = "photo_deleted";
 	public final static int GRID_IMAGE_VIEW_SIZE_DP = 100;
 	public final static int GRID_VIEW_HOR_SPACING = 1;
 	public final static int GRID_VIEW_VER_SPACING = 1;

@@ -15,6 +15,8 @@ import com.example.photoapp.R.menu;
 import com.example.database.SpinnerNavItem;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
+import com.example.server.Callback;
+import com.example.server.DownloadPhotoTask;
 
 
 import android.annotation.SuppressLint;
@@ -92,6 +94,26 @@ public class GridActivity extends Activity implements OnNavigationListener {
     }
 	
 	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		setIntent(intent);
+		processExtraData();
+		
+	}
+	private void processExtraData()
+	{
+		Intent intent = getIntent();
+		//do something
+		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
+		{
+			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
+			imgadapter.notifyDataSetChanged();
+		}
+		
+	}
+	
+	@Override
 	public void onResume() {
 	    super.onResume();  // Always call the superclass method first
 	    //initarray(); //this will retrieve string IDs from the database manager
@@ -122,6 +144,8 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		//set the layout properties for this activity as in the xml file
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
+		
+		processExtraData();
 		
 		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
@@ -215,6 +239,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 				case R.id.action_share:
 					return true;
 				case R.id.action_discard:
+					
 					return true;
 			}
 			return false;
@@ -266,6 +291,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 //				startActivity(intent2);
 				return true;
 			case R.id.action_sync:
+				openSync();
 				//sync action
 				return true;
 			case R.id.action_restore:
@@ -286,6 +312,34 @@ public class GridActivity extends Activity implements OnNavigationListener {
 //		// TODO Auto-generated method stub
 //		
 //	}
+	private void openSync()
+	{
+		//Tesing donwload this should be sync <<<<<<<<<<<<<<<<<----------------
+		DownloadPhotoTask downloadPhotoTask = new DownloadPhotoTask(this);
+		downloadPhotoTask.setCallbackOnTaskFinished(new Callback<Photo>() {			
+			@Override
+			public void OnTaskFinished(Photo downloadedPhoto) {
+				if(downloadedPhoto != null)
+				{	
+					//this method will be called by downloadPhotoTask when it finish downloading
+					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
+							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
+					task.execute(downloadedPhoto.getPhotoID());
+					
+//					DatabaseWorker dbWorker = new DatabaseWorker();
+//					dbWorker.execute(newPhoto);						
+					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+					//Add photoId, individualBitmap to Cache and adapter ???????????????????
+					//>>>>>>>>>>>>>>>>>>>>>>>>
+					getList().add(downloadedPhoto.getPhotoID());
+					imgadapter.notifyDataSetChanged();
+				}	
+			}
+		});
+		downloadPhotoTask.execute("20141011_023717");
+		
+
+	}
 
 	private void openSettings() {
 		// TODO Auto-generated method stub
@@ -463,12 +517,10 @@ public class GridActivity extends Activity implements OnNavigationListener {
 						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
 								,getImageCache(getFragmentManager()), gridBitmap);
 						task.execute(newPhotoID);						
-					    //PhotoManager.getInstance(getApplicationContext()).getCurrentTimeStampAsString();
 						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
 								gridBitmap,"My album",false);
 						DatabaseWorker dbWorker = new DatabaseWorker();
-						dbWorker.execute(newPhoto);
-						
+						dbWorker.execute(newPhoto);						
 						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 						//Add photoId, individualBitmap to Cache and adapter ???????????????????
 						//>>>>>>>>>>>>>>>>>>>>>>>>
