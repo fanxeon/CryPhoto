@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,7 +133,9 @@ public class ImageAdapter extends BaseAdapter{
 				System.out.println("The value of view width and height is now " + px + "," + px);
 				imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-				imageView.setPadding(8, 8, 8, 8);
+				imageView.setBackgroundColor(Color.WHITE);
+				int pdx = convertDpToPixel(5,mContext);
+				imageView.setPadding(pdx,pdx ,pdx ,pdx );
 //				FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
 //				fetchtask.execute(list.get(position));
 			} else {

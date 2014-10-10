@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -159,6 +160,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
+		gridview.setBackgroundColor(Color.BLACK);
 		
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
