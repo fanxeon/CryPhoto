@@ -16,10 +16,20 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 	private String position;
 	private Context context;
 	private ImageCache cache;
+	boolean setimage;
 
 	public FetchFromCacheTask(ImageView imageView, Context context, ImageCache cache) {
 		// Use a WeakReference to ensure the ImageView can be garbage collected
 		//imageViewReference = new WeakReference<ImageView>(imageView);
+//		if (imageView == null)
+//		{
+//			setimage = false;
+//		}
+//		else
+//		{
+//			setimage = true;
+//		}
+		//setimage = true;
 		this.imageView = imageView;
 		this.context = context;
 		this.cache = cache;
@@ -77,7 +87,7 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 			}
 			else
 			{
-				System.out.println("Grid Image as bytes returned null");
+				System.out.println("Grid Image as bytes returned null, Could not update the image view");
 			}
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap

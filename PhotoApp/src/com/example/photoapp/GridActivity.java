@@ -58,7 +58,8 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
-	private static ArrayList<String> list;
+	private ImageAdapter imgadapter;
+	//private static ArrayList<String> list;
 	protected static int[] images;
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
 	private TextView mHelloTextView;
@@ -86,6 +87,22 @@ public class GridActivity extends Activity implements OnNavigationListener {
       System.out.println("The maximum memory for this application is "+result.getLargeMemoryClass());
       //return result;
     }
+	
+	@Override
+	public void onResume() {
+	    super.onResume();  // Always call the superclass method first
+	    //initarray(); //this will retrieve string IDs from the database manager
+	    //Toast.makeText(GridActivity.this, "On Resume Called", Toast.LENGTH_SHORT).show();
+	}
+	
+	@Override
+	protected void onStop() {
+	    super.onStop();  // Always call the superclass method first
+
+	    // Save the note's current draft, because the activity is stopping
+	    // and we want to be sure the current note progress isn't lost.
+	    
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +154,16 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
 		
 		//sets up the up button on the action bar for the user to navigate backwards
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		System.out.println("About to get the grid view by finding it using the id name");
 		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		
 		//set the adapter for the grid view
-	    gridview.setAdapter(new ImageAdapter(this,cache));
+		imgadapter = new ImageAdapter(this,cache);
+		gridview.setAdapter(imgadapter);
+	   // gridview.setAdapter(new ImageAdapter(this,cache));
 	    
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
@@ -320,8 +339,8 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		Intent intent = new Intent(this, IndividualActivity.class);
 		//EditText editText = (EditText) findViewById(R.id.edit_message);
 		//String message = editText.getText().toString();
-		intent.putExtra(STRING_ID, list.get(position));
-		intent.putStringArrayListExtra(STRING_LIST, list);
+		intent.putExtra(STRING_ID, getList().get(position));
+		//intent.putStringArrayListExtra(STRING_LIST, getList());
 		startActivity(intent);
 	}
 	
@@ -348,11 +367,11 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 
 	public static ArrayList<String> getList() {
-		return list;
+		return Utils.list;
 	}
 
 	public static void setList(ArrayList<String> list) {
-		GridActivity.list = list;
+		Utils.list = list;
 	}
 	
 	@Override
@@ -408,6 +427,9 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	{
 		if( resultCode == RESULT_OK )
 		{
+			//GridView gridview = (GridView) findViewById(R.id.gridview);
+			getList().add(newPhotoID);
+			imgadapter.notifyDataSetChanged();
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
 		
 			descriptionDialog.setTitle("Enter a description:");
@@ -443,10 +465,10 @@ public class GridActivity extends Activity implements OnNavigationListener {
 						//Add photoId, individualBitmap to Cache and adapter ???????????????????
 						//>>>>>>>>>>>>>>>>>>>>>>>>
 						//Temp<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<----------------
-						GridView gridview = (GridView) findViewById(R.id.gridview);
-						list.add(newPhotoID);
-						ImageAdapter im = ( (ImageAdapter)gridview.getAdapter() );
-						im.notifyDataSetChanged();
+//						GridView gridview = (GridView) findViewById(R.id.gridview);
+//						list.add(newPhotoID);
+//						ImageAdapter im = ( (ImageAdapter)gridview.getAdapter() );
+//						im.notifyDataSetChanged();
 					}
 					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
 				}
