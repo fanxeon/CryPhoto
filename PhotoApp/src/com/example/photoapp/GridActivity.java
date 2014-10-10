@@ -141,7 +141,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		navSpinner.add(new SpinnerNavItem("Sort by", R.drawable.ic_action_sort_by_size));
 		navSpinner.add(new SpinnerNavItem("Album", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Date", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Name", R.drawable.ic_action_view_as_grid));
+		navSpinner.add(new SpinnerNavItem("Name", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -212,8 +212,6 @@ public class GridActivity extends Activity implements OnNavigationListener {
 			//float textSize = mHelloTextView.getTextSize();
 			switch (item.getItemId()){
 				//Should be Share and discard,
-				//but now using change text font size
-				//for test purpose
 				case R.id.action_share:
 					return true;
 				case R.id.action_discard:
