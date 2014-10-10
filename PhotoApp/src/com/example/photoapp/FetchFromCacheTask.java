@@ -13,7 +13,7 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 
 	//private final WeakReference<ImageView> imageViewReference;
 	ImageView imageView;
-	private String position;
+	public String position;
 	private Context context;
 	private ImageCache cache;
 	boolean setimage;
