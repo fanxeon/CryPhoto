@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutionException;
 
 import utils.Utils;
 
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -35,69 +34,8 @@ public class ImageAdapter extends BaseAdapter{
 		//initarray();
 		this.cache = cache;
 		System.out.println("Just got an instance of the Image Cache");
-		putincache();
+		//putincache();
 	}
-
-	//	public static int calculateInSampleSize(
-	//			BitmapFactory.Options options, int reqWidth, int reqHeight) {
-	//		// Raw height and width of image
-	//		final int height = options.outHeight;
-	//		final int width = options.outWidth;
-	//		int inSampleSize = 1;
-	//
-	//		if (height > reqHeight || width > reqWidth) {
-	//
-	//			final int halfHeight = height / 2;
-	//			final int halfWidth = width / 2;
-	//
-	//			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
-	//			// height and width larger than the requested height and width.
-	//			while ((halfHeight / inSampleSize) > reqHeight
-	//					&& (halfWidth / inSampleSize) > reqWidth) {
-	//				inSampleSize *= 2;
-	//			}
-	//		}
-	//
-	//		return inSampleSize;
-	//	}
-	//	
-	//	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-	//			int reqWidth, int reqHeight) {
-	//
-	//		// First decode with inJustDecodeBounds=true to check dimensions
-	//		final BitmapFactory.Options options = new BitmapFactory.Options();
-	//		options.inJustDecodeBounds = true;
-	//		BitmapFactory.decodeResource(res, resId, options);
-	//
-	//		// Calculate inSampleSize
-	//		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-	//
-	//		// Decode bitmap with inSampleSize set
-	//		options.inJustDecodeBounds = false;
-	//		return BitmapFactory.decodeResource(res, resId, options);
-	//	}
-
-	//System.out.println("Decoding resource into bitmap");
-	//	Bitmap bm = decodeSampledBitmapFromResource(mContext.getResources(),images[i],300,300);
-	//	System.out.println("Scaled down the bitmap to 300, 300 and is now of size "+ (bm.getByteCount()/1024));
-	//	ByteArrayOutputStream os = new ByteArrayOutputStream();
-	//	if(bm.compress(Bitmap.CompressFormat.JPEG, 100, os))
-	//	{
-	//		System.out.println("Compressed the bitmap down to JPEG");
-	//		//Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), images[i]);
-	//		String string = ""+images[i];
-	//		System.out.println("Attempting to add bitmap to cache");
-	//		byte[] array = os.toByteArray();
-	//		System.out.println("The size of the bitmap is now "+(array.length/1024));
-	//		if(!cache.addBitmapToMemoryCache(string, array))
-	//		{
-	//			System.out.println("Failed to write bitmap with identifier "+images[i]+ " to cache");
-	//		}
-	//	}
-	//	else
-	//	{
-	//		System.out.println("Failed to compress the bitmap to JPEG format");
-	//	}
 
 	//working properly
 	private void putincache()
@@ -195,6 +133,8 @@ public class ImageAdapter extends BaseAdapter{
 				imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 				imageView.setPadding(8, 8, 8, 8);
+//				FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
+//				fetchtask.execute(list.get(position));
 			} else {
 				imageView = (ImageView) convertView;
 			}
@@ -240,20 +180,4 @@ public class ImageAdapter extends BaseAdapter{
 
 			return imageView;
 		}
-
-		//	   // Keep all Images in array
-		//	   public Integer[] mThumbIds = {
-		//	      R.drawable.img1, R.drawable.img2,
-		//	      R.drawable.img3, R.drawable.img1,
-		//	      R.drawable.img2, R.drawable.img3,
-		//	      R.drawable.img1, R.drawable.img2,
-		//	      R.drawable.img3, R.drawable.img1,
-		//	      R.drawable.img2, R.drawable.img3,
-		//	      R.drawable.img1, R.drawable.img2,
-		//	      R.drawable.img3, R.drawable.img1,
-		//	      R.drawable.img2, R.drawable.img3,
-		//	      R.drawable.img1, R.drawable.img2,
-		//	      R.drawable.img3, R.drawable.img1,
-		//	      R.drawable.img2, R.drawable.img3,
-		//	   };
 	}

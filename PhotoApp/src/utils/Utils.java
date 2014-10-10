@@ -1,5 +1,7 @@
 package utils;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ public class Utils
 	public final static int GRID_IMAGE_VIEW_SIZE_DP = 100;
 	public final static int GRID_VIEW_HOR_SPACING = 1;
 	public final static int GRID_VIEW_VER_SPACING = 1;
+	public static ArrayList<String> list;
 	
 	public static Bitmap getBitmapFromFile(String filePath)
 	{
