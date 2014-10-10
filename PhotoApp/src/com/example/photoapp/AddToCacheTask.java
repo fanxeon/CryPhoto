@@ -2,6 +2,7 @@ package com.example.photoapp;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
 
 import com.example.database.DatabaseManager;
 
@@ -21,6 +22,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 	//private int[] images;
 	int reqWidth = 300;
 	int reqHeight = 300;
+	private Bitmap bitmap = null;
 
 	public AddToCacheTask(Context context, ImageCache cache, int reqWidth, int reqHeight) 
 	{
@@ -31,6 +33,26 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		this.context = context;
 		this.cache = cache;
 	}
+	public AddToCacheTask(Context context, ImageCache cache, Bitmap bitmap) 
+	{
+		// Use a WeakReference to ensure the ImageView can be garbage collected
+		//imageViewReference = new WeakReference<ImageView>(imageView);
+//		this.reqWidth = reqWidth;
+//		this.reqHeight = reqHeight;
+		this.context = context;
+		this.cache = cache;
+		this.bitmap = bitmap;
+	}
+	
+//	public AddToCacheTask(Context context, ImageCache cache, int reqWidth, int reqHeight) 
+//	{
+//		// Use a WeakReference to ensure the ImageView can be garbage collected
+//		//imageViewReference = new WeakReference<ImageView>(imageView);
+//		this.reqWidth = reqWidth;
+//		this.reqHeight = reqHeight;
+//		this.context = context;
+//		this.cache = cache;
+//	}
 
 	//	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) 
 	//	{
@@ -91,7 +113,22 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		//			System.out.println("Attempting to add bitmap to cache");
 		//			byte[] array = os.toByteArray();
 		//			System.out.println("The size of the bitmap is now "+(array.length/1024));
-		byte[] array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
+		byte[] array = null;
+		if( bitmap == null)
+		{
+			array = DatabaseManager.getInstance(context).getGridBitmapAsBytes(position);
+		}
+		else
+		{
+			int bytes = bitmap.getByteCount();
+			//or we can calculate bytes this way. Use a different value than 4 if you don't use 32bit images.
+			//int bytes = b.getWidth()*b.getHeight()*4; 
+
+			ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
+			bitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
+			array = buffer.array();
+		}
+		
 		if (array != null)
 		{
 			System.out.println("Attempting to add bitmap to cache");

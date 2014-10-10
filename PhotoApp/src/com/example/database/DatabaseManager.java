@@ -58,9 +58,41 @@ public class DatabaseManager
 
 		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
 		//Is JPEG a good idea? since it is its compression reduces the data size?????
-//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
+
+		if(newPhoto.getGridBitmap() != null )
+		{
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
+			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
+		}
+		else
+		{
+
+		}
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
+		db.close();
+
+		return rowID;
+
+	}
+	public long addPhoto(Photo newPhoto, int quality)
+	{
+		ContentValues values = new ContentValues();
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
+		//values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION, newPhoto.getDescription());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM, newPhoto.getAlbum());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, newPhoto.isUploadedToServerAsYesNO());
+
+		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
+		//Is JPEG a good idea? since it is its compression reduces the data size?????
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
 
 		if(newPhoto.getGridBitmap() != null )
 		{
@@ -98,43 +130,52 @@ public class DatabaseManager
 					&& (halfWidth / inSampleSize) > reqWidth) {
 				inSampleSize *= 2;
 			}
-		}
+            long totalPixels = width * height / inSampleSize;
+
+            // Anything more than 2x the requested pixels we'll sample down further
+            final long totalReqPixelsCap = reqWidth * reqHeight * 2;
+
+            while (totalPixels > totalReqPixelsCap) {
+                inSampleSize *= 2;
+                totalPixels /= 2;
+            }
+        }
 
 		return inSampleSize;
 	}
 
-	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
-			int length, int reqWidth, int reqHeight) {
+//	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
+//			int length, int reqWidth, int reqHeight) {
+//
+//		// First decode with inJustDecodeBounds=true to check dimensions
+//		final BitmapFactory.Options options = new BitmapFactory.Options();
+//		options.inJustDecodeBounds = true;
+//		BitmapFactory.decodeByteArray(data, offset, length, options);
+//
+//		// Calculate inSampleSize
+//		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+//
+//		// Decode bitmap with inSampleSize set
+//		options.inJustDecodeBounds = false;
+//		return BitmapFactory.decodeByteArray(data, offset, length, options);
+//	}
 
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeByteArray(data, offset, length, options);
 
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeByteArray(data, offset, length, options);
-	}
-
-
-	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-			int reqWidth, int reqHeight) {
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeResource(res, resId, options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeResource(res, resId, options);
-	}
+//	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+//			int reqWidth, int reqHeight) {
+//
+//		// First decode with inJustDecodeBounds=true to check dimensions
+//		final BitmapFactory.Options options = new BitmapFactory.Options();
+//		options.inJustDecodeBounds = true;
+//		BitmapFactory.decodeResource(res, resId, options);
+//
+//		// Calculate inSampleSize
+//		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+//
+//		// Decode bitmap with inSampleSize set
+//		options.inJustDecodeBounds = false;
+//		return BitmapFactory.decodeResource(res, resId, options);
+//	}
 
 
 	//compress to jpeg format
@@ -155,36 +196,36 @@ public class DatabaseManager
 		return array;
 	}
 
-	//This method will be called by cache object.
-	public byte[] getCompressedBitmap(String photoID, int reqWidth, int reqHeight)
-	{
-		Bitmap photoBitmap = null;
-		byte[] array = null;
-		//This where statement for select command
-		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
-
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP};
-
-		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
-				projection, whereStr, null,
-				null, null, null, null, null);
-
-		if ( cursor.moveToFirst() )
-		{	
-
-			byte[] data = cursor.getBlob(cursor
-					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
-			//BitmapFactory.Options has to be added to scale down the resolution for gird view
-			photoBitmap =  decodeSampledBitmapFromByteArray(data, 0, data.length, reqWidth, reqHeight);
-			System.out.println("Scaled down the bitmap to 300, 300 and is now of size "+ (photoBitmap.getByteCount()/1024));
-			array = compressTojpeg(photoBitmap);
-		}
-
-		cursor.close();
-
-		return array;
-	}
+//	//This method will be called by cache object.
+//	public byte[] getCompressedBitmap(String photoID, int reqWidth, int reqHeight)
+//	{
+//		Bitmap photoBitmap = null;
+//		byte[] array = null;
+//		//This where statement for select command
+//		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+//
+//		SQLiteDatabase db = dbHelper.getReadableDatabase();
+//		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP};
+//
+//		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+//				projection, whereStr, null,
+//				null, null, null, null, null);
+//
+//		if ( cursor.moveToFirst() )
+//		{	
+//
+//			byte[] data = cursor.getBlob(cursor
+//					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+//			//BitmapFactory.Options has to be added to scale down the resolution for gird view
+//			photoBitmap =  decodeSampledBitmapFromByteArray(data, 0, data.length, reqWidth, reqHeight);
+//			System.out.println("Scaled down the bitmap to 300, 300 and is now of size "+ (photoBitmap.getByteCount()/1024));
+//			array = compressTojpeg(photoBitmap);
+//		}
+//
+//		cursor.close();
+//
+//		return array;
+//	}
 
 	//This method should be called by individual mode since we need all information about the photo <<<<<<<<<<-----------
 	//Retrieve all information about a photo for an individual view, resolution 100%
@@ -215,12 +256,50 @@ public class DatabaseManager
 
 			//Ignore bitmap variable in photo object since we may not need it, use gridbitmap
 			//for now.
-//			byte[] data = cursor.getBlob(cursor
-//					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
-//			photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
 			byte[] data = cursor.getBlob(cursor
-			.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
-			photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+			photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+//			byte[] data = cursor.getBlob(cursor
+//			.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+//			photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+		}
+
+		cursor.close();
+		return photo;
+	}
+	public Photo getPhoto(String photoID, int reqWidth, int reqHieght)
+	{
+		Photo photo = null;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				PhotoViewerDatabaseOpenHelper.ALL_COLUMNS_PHOTO_TABLE, whereStr, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{	
+			photo = new Photo();
+			photo.setPhotoID(photoID);
+			photo.setAlbum( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM) ) );
+			photo.setDescription( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION) ) );
+			//photo.setName( cursor.getString(cursor
+			//		.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_NAME) ) );
+			photo.setUploadedToServer( cursor.getString(cursor
+					.getColumnIndex( PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER) ) );
+
+			//Ignore bitmap variable in photo object since we may not need it, use gridbitmap
+			//for now.
+			byte[] data = cursor.getBlob(cursor
+					.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP));
+			photo.setBitmap( Utils.decodeSampledBitmapFromByteArray(data, 0, data.length, reqWidth, reqHieght) );	
+//			byte[] data = cursor.getBlob(cursor
+//			.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP));
+//			photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
 		}
 
 		cursor.close();

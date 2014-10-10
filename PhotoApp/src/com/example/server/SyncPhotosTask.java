@@ -160,7 +160,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 									
 									//this method will be called by downloadPhotoTask when it finish downloading
 						    		//Should we add the downloaded photo to DB here???????????<<<<<<<<<<<<<<<<<<<--------
-						    		DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo);
+						    		DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo,100);
 						    		incrNumOfSuccessfulDownloadPhotos();
 						    		
 						    		//<<<<<<<<<<<<<<<<<<<<<----------------------- HAS to be complete

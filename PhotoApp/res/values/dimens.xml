@@ -7,6 +7,6 @@
     <dimen name="grid_img_view_width">150dp</dimen>
     <dimen name="grid_img_view_height">150dp</dimen>
     <dimen name="grid_view_hor_spacing">1dp</dimen>
-    <dimen name="grid_view_ver_spacing">1dp</dimen>
+    <dimen name="grid_view_ver_spacing">5dp</dimen>
     
 </resources>

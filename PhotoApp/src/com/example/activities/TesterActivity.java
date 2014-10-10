@@ -253,7 +253,7 @@ public class TesterActivity extends Activity {
 						//<<<<<<<<<<<----------------- for test
 						DatabaseManager.getInstance(getApplicationContext()).addPhoto(
 								new Photo(tempPhotoIDTest , descriptionStr, individualBitmap , 
-										gridBitmap,"My album",false));
+										gridBitmap,"My album",false),80);
 						//testRetrievePhotoFromBD();
 					}
 				}

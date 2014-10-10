@@ -13,7 +13,9 @@ import com.example.database.DatabaseManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,16 +38,28 @@ public class IndividualActivity extends Activity {
 		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
+	     imageView.setBackgroundColor(Color.BLACK);
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
 //	     imageView.setImageBitmap(bm);
 	     //check the cache for the image	     
-	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
-		 fetchtask.execute(position);
+//	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
+//		 fetchtask.execute(position);
 		 
+//		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
+//				 					.getPhotoWithoutBitmaps(position);
+//		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
+	        final DisplayMetrics displayMetrics = new DisplayMetrics();
+	        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+	        final int height = displayMetrics.heightPixels;
+	        final int width = displayMetrics.widthPixels;
+
+	        final int longest = (height > width ? height : width) / 2;
 		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
-				 					.getPhotoWithoutBitmaps(position);
+					.getPhoto(position, longest, longest);
+		 
+		 imageView.setImageBitmap(photoDetails.getBitmap());
 		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 	     //imageView.setImageResource(GridActivity.images[position]);
 		

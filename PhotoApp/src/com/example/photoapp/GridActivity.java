@@ -29,6 +29,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -159,7 +162,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
-		
+		gridview.setBackgroundColor(Color.BLACK);
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
 		gridview.setAdapter(imgadapter);
@@ -428,8 +431,6 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		if( resultCode == RESULT_OK )
 		{
 			//GridView gridview = (GridView) findViewById(R.id.gridview);
-			getList().add(newPhotoID);
-			imgadapter.notifyDataSetChanged();
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
 		
 			descriptionDialog.setTitle("Enter a description:");
@@ -437,6 +438,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			descriptionDialog.setView(input);
 	
+			
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 			//Deal with albume option ???????????????
 			//>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -453,26 +455,30 @@ public class GridActivity extends Activity implements OnNavigationListener {
 					{
 					
 	 
+//						Display display = getWindowManager().getDefaultDisplay();
+//						Point size = new Point();
+//						display.getSize(size);
+//						int width = size.x;
+//						int height = size.y;
 						//Ignore bitmap colonm since we are using gridBitmap for both<<<<<<------
-						//Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
-						Bitmap individualBitmap = null;
+						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+						//Bitmap individualBitmap = null;
 	
-						
-								//PhotoManager.getInstance(getApplicationContext()).getCurrentTimeStampAsString();
-						DatabaseManager.getInstance(getApplicationContext()).addPhoto(
-								new Photo(newPhotoID , descriptionStr, individualBitmap , 
-										gridBitmap,"My album",false));
+						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
+								,getImageCache(getFragmentManager()), gridBitmap);
+						task.execute(newPhotoID);						
+					    //PhotoManager.getInstance(getApplicationContext()).getCurrentTimeStampAsString();
+						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
+								gridBitmap,"My album",false);
+						DatabaseWorker dbWorker = new DatabaseWorker();
+						dbWorker.execute(newPhoto);
 						
 						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 						//Add photoId, individualBitmap to Cache and adapter ???????????????????
 						//>>>>>>>>>>>>>>>>>>>>>>>>
-						//Temp<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<----------------
-//						GridView gridview = (GridView) findViewById(R.id.gridview);
-//						list.add(newPhotoID);
-//						ImageAdapter im = ( (ImageAdapter)gridview.getAdapter() );
-//						im.notifyDataSetChanged();
+						getList().add(newPhotoID);
+						imgadapter.notifyDataSetChanged();
 					}
-					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
 				}
 			});
 			descriptionDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -490,4 +496,27 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		}
 	}	
 	//END part for taking photos from camera app
+	
+	private class DatabaseWorker extends AsyncTask<Photo, Void , Void>
+	{
+		public DatabaseWorker() {
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		protected Void doInBackground(Photo... newPhoto) 
+		{
+			//super(newPhoto);
+			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 75);
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
+
+		}
+		
+	}
 }

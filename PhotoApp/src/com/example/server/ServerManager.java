@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import utils.Utils;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -212,6 +214,8 @@ public class ServerManager
 			byte[] data = Base64.decode(json.getString(Photo.BITMAP_DATA), Base64.DEFAULT);
 		    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
 
+		    photo.setGridBitmap(Utils.getGridBitmapFromByteArray(data, context));
+		    
 			photo.setPhotoID(json.getString(Photo.PHOTO_ID));
 			photo.setDescription((json.getString(Photo.DESCRIPTION)));
 			photo.setAlbum(json.getString(Photo.ALBUM));
