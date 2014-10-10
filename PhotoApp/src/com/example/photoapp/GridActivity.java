@@ -138,7 +138,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		// Spinner title navigation data
 		navSpinner = new ArrayList<SpinnerNavItem>();
-		navSpinner.add(new SpinnerNavItem("Sort by", R.drawable.ic_action_sort_by_size));
+		navSpinner.add(new SpinnerNavItem("Grid View", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Recents", R.drawable.ic_action_time));
 		navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));

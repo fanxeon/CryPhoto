@@ -12,18 +12,18 @@
           android:icon="@drawable/ic_action_photo"
           android:title="@string/action_photo"
           android:showAsAction="ifRoom" />
+      
+    <!-- Sync -->
+    <item android:id="@+id/action_sync"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/action_sync" 
+          android:showAsAction="never"/>
     
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:icon="@drawable/ic_action_settings"
           android:showAsAction="ifRoom" />
-    
-    <!-- Help -->
-    <item android:id="@+id/action_sync"
-          android:icon="@drawable/ic_action_refresh"
-          android:title="@string/action_sync" 
-          android:showAsAction="never"/>
     
     <!-- Restore from Remote server -->
     <item android:id="@+id/action_restore"
