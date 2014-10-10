@@ -139,9 +139,9 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		// Spinner title navigation data
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("Sort by", R.drawable.ic_action_sort_by_size));
-		navSpinner.add(new SpinnerNavItem("Album", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Date", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Name", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
+		navSpinner.add(new SpinnerNavItem("Recents", R.drawable.ic_action_time));
+		navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
