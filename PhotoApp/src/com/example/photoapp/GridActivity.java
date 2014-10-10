@@ -442,6 +442,11 @@ public class GridActivity extends Activity implements OnNavigationListener {
 						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 						//Add photoId, individualBitmap to Cache and adapter ???????????????????
 						//>>>>>>>>>>>>>>>>>>>>>>>>
+						//Temp<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<----------------
+						GridView gridview = (GridView) findViewById(R.id.gridview);
+						list.add(newPhotoID);
+						ImageAdapter im = ( (ImageAdapter)gridview.getAdapter() );
+						im.notifyDataSetChanged();
 					}
 					Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
 				}
