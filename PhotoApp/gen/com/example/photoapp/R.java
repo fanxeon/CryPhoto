@@ -39,37 +39,38 @@ public final class R {
         public static final int ic_action_download=0x7f020006;
         public static final int ic_action_help=0x7f020007;
         public static final int ic_action_location_found=0x7f020008;
-        public static final int ic_action_photo=0x7f020009;
-        public static final int ic_action_place=0x7f02000a;
-        public static final int ic_action_refresh=0x7f02000b;
-        public static final int ic_action_search=0x7f02000c;
-        public static final int ic_action_settings=0x7f02000d;
-        public static final int ic_action_share=0x7f02000e;
-        public static final int ic_action_slideshow=0x7f02000f;
-        public static final int ic_action_sort_by_size=0x7f020010;
-        public static final int ic_action_time=0x7f020011;
-        public static final int ic_action_upload=0x7f020012;
-        public static final int ic_action_view_as_grid=0x7f020013;
-        public static final int ic_checkin=0x7f020014;
-        public static final int ic_latitude=0x7f020015;
-        public static final int ic_launcher=0x7f020016;
-        public static final int ic_location=0x7f020017;
-        public static final int ic_my_places=0x7f020018;
-        public static final int ico_actionbar=0x7f020019;
-        public static final int img1=0x7f02001a;
-        public static final int img2=0x7f02001b;
-        public static final int img3=0x7f02001c;
+        public static final int ic_action_new=0x7f020009;
+        public static final int ic_action_photo=0x7f02000a;
+        public static final int ic_action_place=0x7f02000b;
+        public static final int ic_action_refresh=0x7f02000c;
+        public static final int ic_action_search=0x7f02000d;
+        public static final int ic_action_settings=0x7f02000e;
+        public static final int ic_action_share=0x7f02000f;
+        public static final int ic_action_slideshow=0x7f020010;
+        public static final int ic_action_sort_by_size=0x7f020011;
+        public static final int ic_action_time=0x7f020012;
+        public static final int ic_action_upload=0x7f020013;
+        public static final int ic_action_view_as_grid=0x7f020014;
+        public static final int ic_checkin=0x7f020015;
+        public static final int ic_latitude=0x7f020016;
+        public static final int ic_launcher=0x7f020017;
+        public static final int ic_location=0x7f020018;
+        public static final int ic_my_places=0x7f020019;
+        public static final int ico_actionbar=0x7f02001a;
+        public static final int img1=0x7f02001b;
+        public static final int img2=0x7f02001c;
+        public static final int img3=0x7f02001d;
     }
     public static final class id {
         public static final int SingleView=0x7f0a0001;
-        public static final int action_discard=0x7f0a0019;
-        public static final int action_help=0x7f0a001a;
-        public static final int action_photo=0x7f0a0014;
-        public static final int action_restore=0x7f0a0017;
-        public static final int action_search=0x7f0a0013;
-        public static final int action_settings=0x7f0a0016;
-        public static final int action_share=0x7f0a0018;
-        public static final int action_sync=0x7f0a0015;
+        public static final int action_add_album=0x7f0a0016;
+        public static final int action_discard=0x7f0a001b;
+        public static final int action_photo=0x7f0a0015;
+        public static final int action_restore=0x7f0a0019;
+        public static final int action_search=0x7f0a0014;
+        public static final int action_settings=0x7f0a0018;
+        public static final int action_share=0x7f0a001a;
+        public static final int action_sync=0x7f0a0017;
         public static final int btnDB=0x7f0a0008;
         public static final int btnDownload=0x7f0a000d;
         public static final int btnServerRemove=0x7f0a000e;
@@ -77,6 +78,7 @@ public final class R {
         public static final int btnTakePhoto=0x7f0a000a;
         public static final int btnUploadPhoto=0x7f0a000b;
         public static final int check=0x7f0a0003;
+        public static final int editText_prompt=0x7f0a0013;
         public static final int gridview=0x7f0a0002;
         public static final int imageViewPicTaken=0x7f0a0007;
         public static final int imgIcon=0x7f0a0011;
@@ -98,6 +100,7 @@ public final class R {
         public static final int activity_search_results=0x7f030005;
         public static final int activity_tester=0x7f030006;
         public static final int list_item_title_navigation=0x7f030007;
+        public static final int prompt_view=0x7f030008;
     }
     public static final class menu {
         public static final int activity_main_action_bar=0x7f090000;
@@ -110,6 +113,7 @@ public final class R {
         public static final int tester=0x7f090007;
     }
     public static final class string {
+        public static final int action_add_album=0x7f07001f;
         public static final int action_check_updates=0x7f070010;
         public static final int action_contacts=0x7f07000f;
         public static final int action_discard=0x7f070014;
@@ -138,18 +142,18 @@ public final class R {
         public static final int btn_send_message=0x7f070007;
         public static final int button_send=0x7f070004;
         public static final int check=0x7f070018;
-        public static final int decrease=0x7f07001e;
+        public static final int editText_prompt=0x7f07001e;
         public static final int edit_message=0x7f070003;
         /**  New CAB Values 
          */
         public static final int helloTextView=0x7f070016;
         public static final int hello_world=0x7f070006;
-        public static final int increase=0x7f07001d;
         public static final int menu_context_condensed_decrease=0x7f07001c;
         public static final int menu_context_condensed_increase=0x7f07001a;
         public static final int menu_context_decrease=0x7f07001b;
         public static final int menu_context_increase=0x7f070019;
         public static final int menu_context_title=0x7f070017;
+        public static final int promptmessage=0x7f07001d;
         /**  Search  
          */
         public static final int search_hint=0x7f070012;

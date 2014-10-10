@@ -13,6 +13,7 @@ import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
 import com.example.photoapp.R.menu;
 import com.example.database.SpinnerNavItem;
+import com.example.photo.Album;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
 
@@ -22,11 +23,13 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -40,6 +43,7 @@ import android.text.InputType;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -57,7 +61,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 //import android.widget.EditText;
 
-public class GridActivity extends Activity implements OnNavigationListener {
+public class GridActivity extends Activity implements OnNavigationListener, OnClickListener {
 
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
@@ -195,37 +199,33 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	}
 
 	class MyActionModeCallback implements ActionMode.Callback{
-
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			mode.getMenuInflater().inflate(R.menu.context, menu);
 			return true;
 		}
-
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 			return false;
 		}
-
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 			//float textSize = mHelloTextView.getTextSize();
 			switch (item.getItemId()){
 				//Should be Share and discard,
 				case R.id.action_share:
+					//Share method
 					return true;
 				case R.id.action_discard:
+					//Delete
 					return true;
 			}
 			return false;
 		}
-
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
 			// TODO Auto-generated method stub
-			
 		}
-		
 	}
     /** END OF CAB  **/
 	
@@ -261,12 +261,12 @@ public class GridActivity extends Activity implements OnNavigationListener {
 			case R.id.action_photo:
 				// Take photo
 				capturePhotoAndSaveIt();
-//				// TEST : Yasser test
-//				Intent intent2 = new Intent(this, TesterActivity.class);
-//				startActivity(intent2);
 				return true;
 			case R.id.action_sync:
 				//sync action
+				return true;
+			case R.id.action_add_album:
+				add_album();
 				return true;
 			case R.id.action_restore:
 				// restore action
@@ -281,11 +281,20 @@ public class GridActivity extends Activity implements OnNavigationListener {
 				return super.onOptionsItemSelected(item);
 		}
 	}
+	private String album_name = null;
 	
-//	private void takePhoto() {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	private void add_album() {
+		LayoutInflater li = LayoutInflater.from(this);  
+		View view = li.inflate(R.layout.prompt_view, null);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);  
+	    builder.setTitle("Enter an Album name");  
+
+	    builder.setView(view);  
+	    builder.setPositiveButton("Save", this);  
+	    builder.setNegativeButton("Cancel", this);
+	    builder.create().show();  
+	      
+	}
 
 	private void openSettings() {
 		// TODO Auto-generated method stub
@@ -421,6 +430,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 
 	
 	private String descriptionStr = null;
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
@@ -428,8 +438,25 @@ public class GridActivity extends Activity implements OnNavigationListener {
 		{
 			//GridView gridview = (GridView) findViewById(R.id.gridview);
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-		
-			descriptionDialog.setTitle("Enter a description:");
+			//Fan - How to retrive album list from database manager
+			String[] str = new String[5];
+				for (int i = 0; i < 5; i++) {  
+				     str[i] = "album" + i;  
+				};
+
+			descriptionDialog.setTitle("Select an album and enter description")
+								.setIcon(android.R.drawable.ic_dialog_alert)
+								.setSingleChoiceItems(str, 2,  
+		                            new DialogInterface.OnClickListener() {  
+		 
+		                                @Override 
+		                                public void onClick(DialogInterface dialog,  
+		                                        int which) {
+		                                // Onclick
+		                                }  
+		                            })  
+								;
+			//END
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			descriptionDialog.setView(input);
@@ -449,8 +476,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 					
 					if( gridBitmap != null)
 					{
-					
-	 
+
 //						Display display = getWindowManager().getDefaultDisplay();
 //						Point size = new Point();
 //						display.getSize(size);
@@ -486,6 +512,9 @@ public class GridActivity extends Activity implements OnNavigationListener {
 			});
 			descriptionDialog.show();
 		}
+		//Dialog new options
+				
+		//
 		else if( resultCode == RESULT_CANCELED)
 		{
 			Toast.makeText(this, "Unable to take photo. Try later.", Toast.LENGTH_LONG ).show();
@@ -511,8 +540,23 @@ public class GridActivity extends Activity implements OnNavigationListener {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
-
 		}
-		
 	}
+	// -- NEW CONSTRUCTION -- //
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+	   if(which == Dialog.BUTTON_POSITIVE){  
+		   
+	        AlertDialog ad = (AlertDialog) dialog;  
+	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
+	        
+	        String ab =  t.getText().toString();
+	        Album newAlbum = new Album(ab);
+
+	        Toast.makeText(this, t.getText().toString(), Toast.LENGTH_LONG)  
+	             .show();
+	        
+	    }  
+	}
+	// -- END -- //
 }

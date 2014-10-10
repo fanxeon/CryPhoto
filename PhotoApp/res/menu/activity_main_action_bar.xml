@@ -13,12 +13,18 @@
           android:title="@string/action_photo"
           android:showAsAction="ifRoom" />
       
+    <!-- Add new Album -->
+    <item android:id="@+id/action_add_album"
+          android:icon="@drawable/ic_action_photo"
+          android:title="@string/action_add_album"
+          android:showAsAction="ifRoom" />
+    
     <!-- Sync -->
     <item android:id="@+id/action_sync"
           android:icon="@drawable/ic_action_refresh"
           android:title="@string/action_sync" 
           android:showAsAction="never"/>
-    
+
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"

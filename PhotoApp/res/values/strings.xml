@@ -45,7 +45,8 @@
     <string name="menu_context_condensed_increase">Share</string>
     <string name="menu_context_decrease">discard</string>
     <string name="menu_context_condensed_decrease">discard</string>
-    <string name="increase">Share</string>
-    <string name="decrease">Discard</string>
+    <string name="promptmessage"></string>
+    <string name="editText_prompt"></string>
+    <string name="action_add_album">Add New Album</string>
     
 </resources>

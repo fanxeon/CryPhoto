@@ -97,8 +97,8 @@ public class IndividualActivity extends Activity {
 				// Delete current image
 				discard();
 				return true;
-			case R.id.action_help:
-				// help action
+			case R.id.action_sync:
+				// sync action
 				return true;
 			case R.id.action_restore:
 				// check for updates action
