@@ -1,6 +1,8 @@
 package com.example.photoapp;
 
 import java.util.ArrayList;
+
+import com.example.photo.Photo;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
 import com.example.photoapp.R.layout;
@@ -17,9 +19,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class IndividualActivity extends Activity {
 
+	private Photo photoDetails = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,9 +40,13 @@ public class IndividualActivity extends Activity {
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
 //	     imageView.setImageBitmap(bm);
-	     //check the cache for the image
+	     //check the cache for the image	     
 	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
 		 fetchtask.execute(position);
+		 
+		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
+				 					.getPhotoWithoutBitmaps(position);
+		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 	     //imageView.setImageResource(GridActivity.images[position]);
 		
 //		// Create the text view

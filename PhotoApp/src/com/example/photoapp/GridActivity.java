@@ -170,7 +170,7 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	    //set on item click listener
 	    gridview.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	            Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
+	            //Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
 	            Indiview(v,position);
 	        }
 	    });
@@ -455,7 +455,9 @@ public class GridActivity extends Activity implements OnNavigationListener {
 					{
 					
 	 
-						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+						//Ignore bitmap colonm since we are using gridBitmap for both<<<<<<------
+						//Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+						Bitmap individualBitmap = null;
 	
 						
 								//PhotoManager.getInstance(getApplicationContext()).getCurrentTimeStampAsString();
