@@ -27,6 +27,7 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_contacts">Contacts</string>
     <string name="action_check_updates">Check for Updates</string>
+    <string name="action_sync">Sync</string>
     
     <!-- Search  -->
     <string name="search_hint">Search photos...</string>

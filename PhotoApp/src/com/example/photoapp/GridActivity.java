@@ -65,7 +65,6 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	//private static ArrayList<String> list;
 	protected static int[] images;
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
-	private TextView mHelloTextView;
 	private ActionMode mActionMode;
 	//-- END --//
 	
@@ -209,17 +208,15 @@ public class GridActivity extends Activity implements OnNavigationListener {
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			float textSize = mHelloTextView.getTextSize();
+			//float textSize = mHelloTextView.getTextSize();
 			switch (item.getItemId()){
 				//Should be Share and discard,
 				//but now using change text font size
 				//for test purpose
 				case R.id.action_share:
-					mHelloTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-							textSize + 2);
+					return true;
 				case R.id.action_discard:
-					mHelloTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-							textSize - 2);
+					return true;
 			}
 			return false;
 		}
@@ -269,8 +266,8 @@ public class GridActivity extends Activity implements OnNavigationListener {
 //				Intent intent2 = new Intent(this, TesterActivity.class);
 //				startActivity(intent2);
 				return true;
-			case R.id.action_help:
-				// help action
+			case R.id.action_sync:
+				//sync action
 				return true;
 			case R.id.action_restore:
 				// restore action

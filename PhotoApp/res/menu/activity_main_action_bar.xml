@@ -20,9 +20,9 @@
           android:showAsAction="ifRoom" />
     
     <!-- Help -->
-    <item android:id="@+id/action_help"
-          android:icon="@drawable/ic_action_help"
-          android:title="@string/action_help" 
+    <item android:id="@+id/action_sync"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/action_sync" 
           android:showAsAction="never"/>
     
     <!-- Restore from Remote server -->

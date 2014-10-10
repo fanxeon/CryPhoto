@@ -62,12 +62,13 @@ public final class R {
     public static final class id {
         public static final int SingleView=0x7f0a0001;
         public static final int action_discard=0x7f0a0018;
-        public static final int action_help=0x7f0a0015;
+        public static final int action_help=0x7f0a0019;
         public static final int action_photo=0x7f0a0013;
         public static final int action_restore=0x7f0a0016;
         public static final int action_search=0x7f0a0012;
         public static final int action_settings=0x7f0a0014;
         public static final int action_share=0x7f0a0017;
+        public static final int action_sync=0x7f0a0015;
         public static final int btnDB=0x7f0a0007;
         public static final int btnDownload=0x7f0a000c;
         public static final int btnServerRemove=0x7f0a000d;
@@ -109,7 +110,7 @@ public final class R {
     public static final class string {
         public static final int action_check_updates=0x7f070010;
         public static final int action_contacts=0x7f07000f;
-        public static final int action_discard=0x7f070013;
+        public static final int action_discard=0x7f070014;
         public static final int action_help=0x7f07000c;
         /**  Unused Strings 
          */
@@ -123,8 +124,9 @@ public final class R {
         public static final int action_settings=0x7f070001;
         /**  Indivdual View Values 
          */
-        public static final int action_share=0x7f070012;
-        public static final int action_test=0x7f070014;
+        public static final int action_share=0x7f070013;
+        public static final int action_sync=0x7f070011;
+        public static final int action_test=0x7f070015;
         /**  Activity titles 
          */
         public static final int activity_location_found=0x7f070008;
@@ -133,21 +135,21 @@ public final class R {
          */
         public static final int btn_send_message=0x7f070007;
         public static final int button_send=0x7f070004;
-        public static final int decrease=0x7f07001c;
+        public static final int decrease=0x7f07001d;
         public static final int edit_message=0x7f070003;
         /**  New CAB Values 
          */
-        public static final int helloTextView=0x7f070015;
+        public static final int helloTextView=0x7f070016;
         public static final int hello_world=0x7f070006;
-        public static final int increase=0x7f07001b;
-        public static final int menu_context_condensed_decrease=0x7f07001a;
-        public static final int menu_context_condensed_increase=0x7f070018;
-        public static final int menu_context_decrease=0x7f070019;
-        public static final int menu_context_increase=0x7f070017;
-        public static final int menu_context_title=0x7f070016;
+        public static final int increase=0x7f07001c;
+        public static final int menu_context_condensed_decrease=0x7f07001b;
+        public static final int menu_context_condensed_increase=0x7f070019;
+        public static final int menu_context_decrease=0x7f07001a;
+        public static final int menu_context_increase=0x7f070018;
+        public static final int menu_context_title=0x7f070017;
         /**  Search  
          */
-        public static final int search_hint=0x7f070011;
+        public static final int search_hint=0x7f070012;
         public static final int title_activity_display_message=0x7f070005;
         public static final int title_activity_tester=0x7f070002;
     }
