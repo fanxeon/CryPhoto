@@ -47,6 +47,7 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -176,16 +177,16 @@ public class GridActivity extends Activity implements OnNavigationListener {
 	    });
 	    
 	    /** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
-	    /*mHelloTextView = (TextView) findViewById (R.id.action_test);
-	    mHelloTextView.setOnLongClickListener(new OnLongClickListener(){
-	    	@Override
-	    	public boolean onLongClick(View v){
+	    gridview.setOnItemLongClickListener(new OnItemLongClickListener(){
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
 	    		MyActionModeCallback callback = new MyActionModeCallback();
 	    		mActionMode = startActionMode (callback);
 	    		mActionMode.setTitle(R.string.menu_context_title);
 	    		return true;
 			}
-	    });*/
+	    });
 	}
 
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
