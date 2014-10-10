@@ -232,14 +232,17 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					//Share method
 					return true;
 				case R.id.action_discard:
-					discard(STRING_ID);
+					//Developing
+					int IDD = item.getItemId();
+					String IDDDD = String.valueOf(IDD);
+					discard(IDDDD);
 					return true;
 			}
 			return false;
 		}
 		// --------- PROBLEMS -----------//
-		private void discard(String stringId) {
-			int n = DatabaseManager.getInstance(getApplicationContext()).deletePhoto(stringId);
+		private void discard(String IDDDD) {
+			int n = DatabaseManager.getInstance(getApplicationContext()).deletePhoto(IDDDD);
 			
 			if( n > 0 )
 				Toast.makeText(getApplicationContext(), "Photo deleted.", Toast.LENGTH_LONG).show();
@@ -319,7 +322,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	    builder.setView(view);  
 	    builder.setPositiveButton("Save", this);  
 	    builder.setNegativeButton("Cancel", this);
-	    DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
+	    //DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 	    builder.create().show();  
 	    //int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
 	}

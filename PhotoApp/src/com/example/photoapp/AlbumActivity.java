@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 public class AlbumActivity extends Activity implements OnNavigationListener, OnClickListener {
 	private ActionBar actionBar;
@@ -112,7 +114,21 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		// TODO Auto-generated method stub
+		if (itemPosition == 0){ // Album
+			Toast.makeText(getApplicationContext(), "Album", Toast.LENGTH_SHORT).show();
+
+		}
+		else if (itemPosition == 1){ // Grid
+			Toast.makeText(getApplicationContext(), "Grid", Toast.LENGTH_SHORT).show();
+    		Intent intent2 = new Intent(this, GridActivity.class);
+    		startActivity(intent2);
+		}
+		else if (itemPosition == 2){ // recents dates
+			Toast.makeText(getApplicationContext(), "recents dates", Toast.LENGTH_SHORT).show();
+		}
+		else if (itemPosition == 3){ // Particular date
+			Toast.makeText(getApplicationContext(), "Particular date", Toast.LENGTH_SHORT).show();
+		}
 		return false;
 	}
 
