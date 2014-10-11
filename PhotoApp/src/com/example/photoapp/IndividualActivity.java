@@ -40,6 +40,7 @@ public class IndividualActivity extends Activity {
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
 	     imageView.setBackgroundColor(Color.BLACK);
+
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
@@ -62,6 +63,11 @@ public class IndividualActivity extends Activity {
 		 
 		 imageView.setImageBitmap(photoDetails.getBitmap());
 		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
+		 
+	     // -- Text view for Description --//
+	     TextView textView = (TextView) findViewById(R.id.Description);
+	     textView.setText(photoDetails.getDescription());
+	     // -- END --//
 	     //imageView.setImageResource(GridActivity.images[position]);
 		
 //		// Create the text view
