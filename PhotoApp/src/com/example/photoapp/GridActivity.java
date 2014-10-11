@@ -588,6 +588,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 						//>>>>>>>>>>>>>>>>>>>>>>>>
 						getList().add(newPhotoID);
 						imgadapter.notifyDataSetChanged();
+						getList().cl
 					}
 				}
 			});
@@ -621,6 +622,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		{
 			//super(newPhoto);
 			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 75);
+
+			
 			return null;
 		}
 		@Override
