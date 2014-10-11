@@ -51,8 +51,8 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Grid View", R.drawable.ic_action_view_as_grid));
-		navSpinner.add(new SpinnerNavItem("Recents", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
+		//navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -98,7 +98,7 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+	//-- NOT AVALIABLE YET --//
 	private void add_album() {
 		LayoutInflater li = LayoutInflater.from(this);  
 		View view = li.inflate(R.layout.prompt_view, null);
@@ -123,12 +123,10 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
     		Intent intent2 = new Intent(this, GridActivity.class);
     		startActivity(intent2);
 		}
-		else if (itemPosition == 2){ // recents dates
+		else if (itemPosition == 2){ // T
 			Toast.makeText(getApplicationContext(), "recents dates", Toast.LENGTH_SHORT).show();
 		}
-		else if (itemPosition == 3){ // Particular date
-			Toast.makeText(getApplicationContext(), "Particular date", Toast.LENGTH_SHORT).show();
-		}
+		
 		return false;
 	}
 

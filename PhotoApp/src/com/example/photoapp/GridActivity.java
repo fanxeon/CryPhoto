@@ -162,8 +162,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("Grid View", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Recents", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
+		//navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -316,9 +316,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					return true;
 				case R.id.action_discard:
 					//Developing
-					int IDD = item.getItemId();
-					String IDDDD = String.valueOf(IDD);
-					discard(IDDDD);
+					//int IDD = item.getItemId();
+					//String IDDDD = String.valueOf(IDD);
+					//discard(IDDDD);
 					return true;
 			}
 			return false;
@@ -378,11 +378,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			case R.id.action_add_album:
 				add_album();
 				return true;
-			case R.id.action_restore:
-				// restore action
-				get_album();
-				return true;
-	        case R.id.action_settings:
+			case R.id.action_settings:
 	            openSettings();
 	    		Intent intent = new Intent(this, TesterActivity.class);
 	    		//EditText editText = (EditText) findViewById(R.id.edit_message);
@@ -393,10 +389,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}
 	// -- NEW CONSTRUCTION -- //
-	private void get_album() {
-		// TODO Auto-generated method stub
-		
-	}
 	private void add_album() {
 		LayoutInflater li = LayoutInflater.from(this);  
 		View view = li.inflate(R.layout.prompt_view, null);
