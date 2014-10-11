@@ -37,6 +37,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -246,6 +247,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			
 			if( n > 0 )
 				Toast.makeText(getApplicationContext(), "Photo deleted.", Toast.LENGTH_LONG).show();
+			Log.v("grid delete: ", n + "");
 		}
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
