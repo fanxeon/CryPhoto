@@ -45,11 +45,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 //import android.widget.EditText;
@@ -59,7 +61,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
-	private ImageAdapter imgadapter;
+	protected ImageAdapter imgadapter;
 	//private static ArrayList<String> list;
 	protected static int[] images;
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
@@ -184,7 +186,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
-		gridview.setBackgroundColor(Color.BLACK);
+		//gridview.setBackgroundColor(Color.BLACK);
+		gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
 		gridview.setAdapter(imgadapter);
@@ -205,10 +208,87 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					int position, long id) {
 	    		MyActionModeCallback callback = new MyActionModeCallback();
 	    		mActionMode = startActionMode (callback);
-	    		mActionMode.setTitle(R.string.menu_context_title);
+	    		mActionMode.setTitle("1" + R.string.menu_context_title);
 	    		return true;
 			}
 	    });
+	    
+	    gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+	    gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+	    	private int numOfItemsSelected = 0;
+	        @Override
+	        public void onItemCheckedStateChanged(ActionMode mode, int position,
+	                                              long id, boolean checked) {
+	            // Here you can do something when items are selected/de-selected,
+	            // such as update the title in the CAB
+	        	if(checked)
+	        	{
+	        		numOfItemsSelected++;
+	        		//change the color
+	        		//imgadapter.getView(position, null, get);
+	        		
+	        		
+	        	}	
+	        	else
+	        	{
+	        		numOfItemsSelected--;
+	        	}
+	        	if( numOfItemsSelected <= 1)
+	        	{
+	        		mode.setTitle(numOfItemsSelected + " Item Selected");
+	        	}
+	        	else
+	        	{
+	        		mode.setTitle(numOfItemsSelected + " Items Selected");
+	        	}
+	        		
+
+	        	
+	        }
+
+	        @Override
+	        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+	            // Respond to clicks on the actions in the CAB
+				switch (item.getItemId()){
+				//Should be Share and discard,
+				case R.id.action_share:
+					//Share method
+					return true;
+				case R.id.action_discard:
+					//Developing
+					int IDD = item.getItemId();
+					//String IDDDD = String.valueOf(IDD);
+					//discard(IDDDD);
+					return true;
+	                default:
+	                    return false;
+	            }
+	        }
+
+	        @Override
+	        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+	            // Inflate the menu for the CAB
+	            MenuInflater inflater = mode.getMenuInflater();
+	            inflater.inflate(R.menu.context, menu);
+	            return true;
+	        }
+
+	        @Override
+	        public void onDestroyActionMode(ActionMode mode) {
+	            // Here you can make any necessary updates to the activity when
+	            // the CAB is removed. By default, selected items are deselected/unchecked.
+	        }
+
+	        @Override
+	        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+	            // Here you can perform updates to the CAB due to
+	            // an invalidate() request
+	            return false;
+	        }
+	    });
+	    
+	  
 	}
 
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
