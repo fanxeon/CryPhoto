@@ -625,6 +625,39 @@ public class DatabaseManager
 		return c;
 		
 	}
+	
+	public ArrayList<String> getPhotoIdsForAlbum(String albumName)
+	{
+		ArrayList<String> photoIDs = null;
+		if( albumName != null)
+		{
+			//This where statement for select command
+		
+			String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM + " = '" + albumName + "'";
+
+			SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+			Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				new String[]{PhotoViewerDatabaseOpenHelper.COLUMN_ID}, whereStr, null,
+				null, null, null, null, null);
+
+			if ( cursor.moveToFirst() )
+			{	
+				photoIDs = new ArrayList<String>();
+				do
+				{
+					photoIDs.add( cursor.getString( cursor
+							.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_ID) ) );
+				}
+				while(cursor.moveToNext());
+
+			}
+	
+			cursor.close();
+			db.close();
+		}
+		return photoIDs;
+	}
 
 
 }
