@@ -95,7 +95,7 @@ public class ServerManager
     
     public void showSyncMsg()
     {
-        Toast.makeText(context, "Photo Viewer is synced", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Photo Viewer Synced", Toast.LENGTH_LONG).show();
     }
     
     public void showPhotoRemovedSuccesfullMsg()
@@ -134,7 +134,7 @@ public class ServerManager
 	}
 
     //this method get photo ids from DB, put photo ids in json msg to be sent to server.
-    public synchronized String getPhotoIdsAsJsonMsg()
+    public String getPhotoIdsAsJsonMsg()
     {
     	ArrayList<String> photoIds = DatabaseManager.getInstance(context).getPhotoIDs();
     	

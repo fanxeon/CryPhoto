@@ -14,7 +14,6 @@ import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
 import com.example.server.Callback;
 import com.example.server.DownloadPhotoTask;
-import com.example.server.SyncPhotosTask;
 
 
 import android.annotation.SuppressLint;
@@ -111,7 +110,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	@Override
 	public void onResume() {
 	    super.onResume();  // Always call the superclass method first
-	    //adapter.notifyDataSetChanged();
 	    //initarray(); //this will retrieve string IDs from the database manager
 	    //Toast.makeText(GridActivity.this, "On Resume Called", Toast.LENGTH_SHORT).show();
 	}
@@ -350,47 +348,27 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private void openSync()
 	{
 		//Tesing donwload this should be sync <<<<<<<<<<<<<<<<<----------------
-		SyncPhotosTask syncTask = new SyncPhotosTask(this);
-		syncTask.setCallbackOnTaskFinished(new Callback<ArrayList<String>>() {			
+		DownloadPhotoTask downloadPhotoTask = new DownloadPhotoTask(this);
+		downloadPhotoTask.setCallbackOnTaskFinished(new Callback<Photo>() {			
 			@Override
-			public void OnTaskFinished(ArrayList<String> downloadedPhotoIds) {
-				if(downloadedPhotoIds.size() > 0 )
+			public void OnTaskFinished(Photo downloadedPhoto) {
+				if(downloadedPhoto != null)
 				{	
 					//this method will be called by downloadPhotoTask when it finish downloading
-//					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
-//							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
-//					task.execute(downloadedPhoto.getPhotoID());
+					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
+							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
+					task.execute(downloadedPhoto.getPhotoID());
 					
 //					DatabaseWorker dbWorker = new DatabaseWorker();
 //					dbWorker.execute(newPhoto);						
 					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
-					getList().addAll(downloadedPhotoIds);
+					getList().add(downloadedPhoto.getPhotoID());
 					imgadapter.notifyDataSetChanged();
-					
-//		DownloadPhotoTask downloadPhotoTask = new DownloadPhotoTask(this);
-//		downloadPhotoTask.setCallbackOnTaskFinished(new Callback<Photo>() {			
-//			@Override
-//			public void OnTaskFinished(Photo downloadedPhoto) {
-//				if(downloadedPhoto != null)
-//				{	
-//					//this method will be called by downloadPhotoTask when it finish downloading
-//					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
-//							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
-//					task.execute(downloadedPhoto.getPhotoID());
-//					
-////					DatabaseWorker dbWorker = new DatabaseWorker();
-////					dbWorker.execute(newPhoto);						
-//					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-//					//Add photoId, individualBitmap to Cache and adapter ???????????????????
-//					//>>>>>>>>>>>>>>>>>>>>>>>>
-//					getList().add(downloadedPhoto.getPhotoID());
-//					imgadapter.notifyDataSetChanged();
 				}	
 			}
 		});
-		syncTask.execute();
 	}
 
 	private void openSettings() {
@@ -610,6 +588,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 						//>>>>>>>>>>>>>>>>>>>>>>>>
 						getList().add(newPhotoID);
 						imgadapter.notifyDataSetChanged();
+						getList().cl
 					}
 				}
 			});
