@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -25,6 +27,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 
 	private String TAG = "SyncPhotosTask";
 	private Activity activity;
+	private ArrayList<String> downloadedPhotoIds = new ArrayList<String>();
 
 //	private Notification.Builder nBuilder = null;
 //	private NotificationManager mNotificationManager = null;
@@ -32,6 +35,15 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 //	int notifyID = 2;
 	
 	//boolean isOk = true;
+	private Callback<ArrayList<String>> callbackOnTaskFinished;
+	public void setCallbackOnTaskFinished(Callback<ArrayList<String>> callbackFromActivity)
+	{
+		if( callbackFromActivity != null)
+		{
+			this.callbackOnTaskFinished = callbackFromActivity;
+		}
+		
+	}
 	
 	public SyncPhotosTask(Activity act)
 	{
@@ -58,7 +70,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 	protected ArrayList<String> doInBackground(Void...Void) {
 
 		URL url;
-		int uploadFileSize = 0;
+//		int uploadFileSize = 0;
 //		String photoId = photo[0].getPhotoID();
 		ArrayList<String> photoIds = null;
 		
@@ -76,6 +88,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 				httpConn.setRequestMethod("POST");
 				httpConn.setChunkedStreamingMode(0);
 				httpConn.addRequestProperty("Content-Type","application/json");
+				httpConn.setConnectTimeout(10000);
 				//httpConn.setRequestProperty("Content-Length", "" + 
 			    //          jsonMsgAsStr.length());
 				//Disable gzip compression
@@ -127,7 +140,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 //					{
 //						publishProgress( (int)((numOfBytes*100)/contenLength) );
 //						counter = 0;
-//					}					
+//					}			get(0).equalsIgnoreCase(ServerManager.EMPTY) 		
 				}
 				
 				fromServer.close();												
@@ -144,7 +157,7 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 				photoIds = ServerManager.getInstance(activity.getApplicationContext())
 						.getPhotoIdsFromJsonMsg(jsonMsgFromServer);
 				
-				//ArrayList<String> downloadedPhotoIds = null;
+				this.numberOfExpectedPhotos = photoIds.size();
 				
 				if( !photoIds.get(0).equalsIgnoreCase( ServerManager.EMPTY ) )
 				{
@@ -160,9 +173,10 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 									
 									//this method will be called by downloadPhotoTask when it finish downloading
 						    		//Should we add the downloaded photo to DB here???????????<<<<<<<<<<<<<<<<<<<--------
-						    		DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo,100);
-						    		incrNumOfSuccessfulDownloadPhotos();
-						    		
+						    		DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo,80);
+						    		//incrNumOfSuccessfulDownloadPhotos(photo.getPhotoID());
+						    		downloadedPhotoIds.add(photo.getPhotoID());		
+						    		Log.v("OnTaskFinished sync", photo.getPhotoID());
 						    		//<<<<<<<<<<<<<<<<<<<<<----------------------- HAS to be complete
 						    		//add new downloaded photo id to grid view array each time a photo downloaded
 						    		//this method should be called since each download task for each photo will call it. 
@@ -173,14 +187,35 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 								{
 									
 								}
+								incrementFinishedDownLoadTasks();
+								if( getFinishDownloadTasks() == numberOfExpectedPhotos )
+								{
+									done = true;
+								   	if( callbackOnTaskFinished != null )
+								   	{
+								   		//Log.v("end", downloadedPhotoIds.get(0));
+								   		callbackOnTaskFinished.OnTaskFinished(downloadedPhotoIds);
+								   	}
+									
+								}
+								
 							}
 						});
 					}
+				}
+				else
+				{
+					return photoIds;
 				}
 				
 				
 
 			} 
+			catch (SocketTimeoutException stoe)
+			{
+				return null;
+				
+			}
 			catch (IOException e) 
 			{
 				e.printStackTrace();
@@ -195,36 +230,55 @@ public class SyncPhotosTask extends AsyncTask<Void, Void, ArrayList<String>>//Pr
 		return photoIds;
 	}
 	
-	private int numOfSuccessDownloadPhotos = 0;
-	private  int incrNumOfSuccessfulDownloadPhotos()
-	{
-		numOfSuccessDownloadPhotos++;
-		
-		return numOfSuccessDownloadPhotos;
-	}
+	boolean done = false;
 	
-	private  int getNumOfSuccessfulDownloadPhotos()
-	{		
-		return numOfSuccessDownloadPhotos;
-	}
+	int numberOfExpectedPhotos = 0;
+    int  finishedDownloadsTasks = 0;
+    public synchronized void incrementFinishedDownLoadTasks()
+    {
+    	finishedDownloadsTasks++;
+    }
+    public synchronized int getFinishDownloadTasks()
+    {
+    	return finishedDownloadsTasks;
+    }
+	
+	//private int numOfSuccessDownloadPhotos = 0;
+//	private  int incrNumOfSuccessfulDownloadPhotos(String newPhotoID)
+//	{
+//		numOfSuccessDownloadPhotos++;
+//		//downloadedPhotoIds.add(newPhotoID);		
+//		return numOfSuccessDownloadPhotos;
+//	}
+//	
+//	private  int getNumOfSuccessfulDownloadPhotos()
+//	{		
+//		return numOfSuccessDownloadPhotos;
+//	}
 
 	@Override
 	protected void onPostExecute(ArrayList<String> photoIds) 
 	{
 		super.onPostExecute(photoIds);
-	   	if( photoIds.get(0).equalsIgnoreCase(ServerManager.EMPTY) )
+	   	if( photoIds == null)
     	{
 	   		ServerManager.getInstance(activity.getApplicationContext()).showUnavailbeServerMsg();
     	}
-    	else if ( (!photoIds.get(0).equalsIgnoreCase(ServerManager.EMPTY)) && (photoIds.size() != getNumOfSuccessfulDownloadPhotos()) )
+    	else if ( (!photoIds.get(0).equalsIgnoreCase(ServerManager.EMPTY)) && (photoIds.size() > downloadedPhotoIds.size()) )
     	{
-	   		ServerManager.getInstance(activity.getApplicationContext()).showUnableToSyncMsg();
+	   		//ServerManager.getInstance(activity.getApplicationContext()).showUnableToSyncMsg();
     		
     	}
     	else
     	{
 	   		ServerManager.getInstance(activity.getApplicationContext()).showSyncMsg();		
     	}
+//	   	if( this.callbackOnTaskFinished != null )
+//	   	{
+//	   		//Log.v("end", downloadedPhotoIds.get(0));
+//	   		this.callbackOnTaskFinished.OnTaskFinished(downloadedPhotoIds);
+//	   	}
+	
 	}
 	
     @Override
