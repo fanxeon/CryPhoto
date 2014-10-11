@@ -146,7 +146,7 @@ public class DownloadPhotoTask extends AsyncTask<String, Integer, Photo>//Progre
 				//Log.v("Json msg:" , jsonMsg);
 			    photo = ServerManager.getInstance(activity.getApplicationContext()).getPhotoFromJsonMsg(jsonMsg);
 		    	Log.v("Task bitmap" , photo.getPhotoID());
-		    	DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo, 80);
+		    	//DatabaseManager.getInstance(activity.getApplicationContext()).addPhoto(photo, 80);
 				
 			} 
 			catch (IOException e) 

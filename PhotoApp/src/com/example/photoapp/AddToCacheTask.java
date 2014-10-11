@@ -33,6 +33,17 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		this.context = context;
 		this.cache = cache;
 	}
+	
+//	public AddToCacheTask(Context context, ImageCache cache) 
+//	{
+//		// Use a WeakReference to ensure the ImageView can be garbage collected
+//		//imageViewReference = new WeakReference<ImageView>(imageView);
+//		this.reqWidth = reqWidth;
+//		this.reqHeight = reqHeight;
+//		this.context = context;
+//		this.cache = cache;
+//	}
+
 	public AddToCacheTask(Context context, ImageCache cache, Bitmap bitmap) 
 	{
 		// Use a WeakReference to ensure the ImageView can be garbage collected
