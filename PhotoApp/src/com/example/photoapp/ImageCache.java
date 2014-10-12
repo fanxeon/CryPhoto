@@ -5,6 +5,9 @@ package com.example.photoapp;
 //import com.example.android.displayingbitmaps.util.ImageCache.RetainFragment;
 
 import java.io.ByteArrayInputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 //import com.example.android.displayingbitmaps.util.ImageCache.RetainFragment;
 
@@ -136,8 +139,19 @@ public class ImageCache {
 		}
 		else
 		{
+			adjustMemCache(array);
 			return false;
 		}
+	}
+	
+	private void adjustMemCache(byte[] array)
+	{
+		Map<String,byte[]> map = memCache.snapshot();
+		Set<String> set = map.keySet();
+		Iterator<String> itr = set.iterator();
+		String newkey = (String )itr.next();
+		memCache.remove(newkey);
+		isSpaceAvail(array);		
 	}
 
 	public boolean addBitmapToMemoryCache(String key, byte[] array) 

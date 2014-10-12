@@ -92,4 +92,13 @@ public class FetchFromCacheTask extends AsyncTask<String,Void,Bitmap> {
 		}
 		//		     Once complete, see if ImageView is still around and set bitmap
 	}
+		
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
 }
