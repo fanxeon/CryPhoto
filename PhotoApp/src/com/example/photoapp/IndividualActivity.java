@@ -2,6 +2,8 @@ package com.example.photoapp;
 
 import java.util.ArrayList;
 
+import utils.Utils;
+
 import com.example.photo.Photo;
 import com.example.photoapp.R;
 import com.example.photoapp.R.id;
@@ -60,7 +62,7 @@ public class IndividualActivity extends Activity {
 	        final int longest = (height > width ? height : width) / 2;
 		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
 					.getPhoto(position, longest, longest);
-		 
+
 		 imageView.setImageBitmap(photoDetails.getBitmap());
 		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 		 
@@ -150,13 +152,17 @@ public class IndividualActivity extends Activity {
 		
 		if( n > 0 )
 			Toast.makeText(getApplicationContext(), "Photo deleted.", Toast.LENGTH_LONG).show();
-		
-		Intent intent = new Intent(this, GridActivity.class);
-		//EditText editText = (EditText) findViewById(R.id.edit_message);
-		//String message = editText.getText().toString();
-		intent.putExtra("deleted", photoDetails.getPhotoID());
-		//intent.putStringArrayListExtra(STRING_LIST, getList());
-		startActivity(intent);
+
+		Utils.setIndividualPhotoDeleted(true);
+		Utils.list.remove(photoDetails.getPhotoID());
+//		Intent intent = new Intent(this, GridActivity.class);
+//		//EditText editText = (EditText) findViewById(R.id.edit_message);
+//		//String message = editText.getText().toString();
+//		intent.putExtra("deleted", photoDetails.getPhotoID());
+//		//intent.putStringArrayListExtra(STRING_LIST, getList());
+//		startActivity(intent);
+
+		finish();
 		
 		// TODO Auto-generated method stub
 		

@@ -1,6 +1,7 @@
 package com.example.photoapp;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
@@ -120,7 +121,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		//		{
 		//			System.out.println("Compressed the bitmap down to JPEG");
 		//			//Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), images[i]);
-		//			String string = ""+position;
+		//			String string = ""+position;CompressFormat
 		//			System.out.println("Attempting to add bitmap to cache");
 		//			byte[] array = os.toByteArray();
 		//			System.out.println("The size of the bitmap is now "+(array.length/1024));
@@ -133,11 +134,13 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		{
 			int bytes = bitmap.getByteCount();
 			//or we can calculate bytes this way. Use a different value than 4 if you don't use 32bit images.
-			//int bytes = b.getWidth()*b.getHeight()*4; 
-
-			ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
-			bitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
-			array = buffer.array();
+			//int bytes = b.getWidth()*b.getHeight()*4;
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+			//ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
+			//bitmap.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
+			//array = buffer.array();
+			array = os.toByteArray();
 		}
 		
 		if (array != null)

@@ -53,6 +53,15 @@ public class Utils
 		int px = d.intValue();
 		return px;
 	}
+	private static boolean deleted = false;
+	public static boolean isIndividualPhotoDeleted()
+	{
+		return deleted;
+	}
+	
+	public static void setIndividualPhotoDeleted(boolean deleted) {
+		Utils.deleted = deleted;
+	}
 	
 	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
 			int length, int reqWidth, int reqHeight) {
@@ -207,6 +216,10 @@ public class Utils
 		options.inJustDecodeBounds = false;
 		return BitmapFactory.decodeByteArray(array,0,array.length, options);
 
+	}
+
+	public static void setDeleted(boolean deleted) {
+		Utils.deleted = deleted;
 	}
 
 }
