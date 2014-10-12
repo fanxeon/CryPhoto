@@ -15,7 +15,7 @@
       
     <!-- Add new Album -->
     <item android:id="@+id/action_add_album"
-          android:icon="@drawable/ic_action_photo"
+          android:icon="@drawable/ic_action_add_to_queue"
           android:title="@string/action_add_album"
           android:showAsAction="ifRoom" />
     
@@ -23,17 +23,12 @@
     <item android:id="@+id/action_sync"
           android:icon="@drawable/ic_action_refresh"
           android:title="@string/action_sync" 
-          android:showAsAction="never"/>
+          android:showAsAction="ifRoom"/>
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:icon="@drawable/ic_action_settings"
           android:showAsAction="ifRoom" />
-    
-    <!-- Restore from Remote server -->
-    <item android:id="@+id/action_restore"
-          android:icon="@drawable/ic_action_refresh"
-          android:title="@string/action_restore"
-          android:showAsAction="never" />
+
 </menu>

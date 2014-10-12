@@ -404,28 +404,39 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	    builder.setTitle("Enter an Album name");  
 	    
 	    builder.setView(view);  
-	    builder.setPositiveButton("Save", this);  
+	    builder.setPositiveButton("Save", new DialogInterface.OnClickListener(){
+	    	public void onClick(DialogInterface dialog, int which) {
+	    		if(which == Dialog.BUTTON_POSITIVE){  
+	    			   
+	    	        AlertDialog ad = (AlertDialog) dialog;  
+	    	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
+	    	        
+	    	        String albumName =  t.getText().toString();
+	    	        DatabaseManager.getInstance(getApplicationContext()).insertAlbum(albumName);
+	    		}
+	    	}
+	    });  
 	    builder.setNegativeButton("Cancel", this);
 	    //DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 	    builder.create().show();  
 	    //int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
 	}
-	// -- NEW CONSTRUCTION -- //
-	@Override
-	public void onClick(DialogInterface dialog, int which) {
-	   if(which == Dialog.BUTTON_POSITIVE){  
-		   
-	        AlertDialog ad = (AlertDialog) dialog;  
-	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
-	        
-	        String albumName =  t.getText().toString();
-	        DatabaseManager.getInstance(getApplicationContext()).insertAlbum(albumName);
-	        Toast.makeText(this, t.getText().toString(), Toast.LENGTH_LONG)  
-	             .show();
-	        
-	    }  
-	}
-	// -- END -- //
+//	// -- NEW CONSTRUCTION -- //
+//	@Override
+//	public void onClick(DialogInterface dialog, int which) {
+//	   if(which == Dialog.BUTTON_POSITIVE){  
+//		   
+//	        AlertDialog ad = (AlertDialog) dialog;  
+//	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
+//	        
+//	        String albumName =  t.getText().toString();
+//	        DatabaseManager.getInstance(getApplicationContext()).insertAlbum(albumName);
+//	        Toast.makeText(this, t.getText().toString(), Toast.LENGTH_LONG)  
+//	             .show();
+//	        
+//	    }  
+//	}
+//	// -- END -- //
 	// -- END -- //
 	private void openSync()
 	{
@@ -563,19 +574,18 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		if (itemPosition == 0){ // Grid
-			Toast.makeText(getApplicationContext(), "Grid", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getApplicationContext(), "Grid", Toast.LENGTH_SHORT).show();
+			return true;
 
 		}
-		else if (itemPosition == 1){ // Album
-			Toast.makeText(getApplicationContext(), "Album", Toast.LENGTH_SHORT).show();
+		else if (itemPosition == 1){ //album
+			//Toast.makeText(getApplicationContext(), "Album", Toast.LENGTH_SHORT).show();
     		Intent intent2 = new Intent(this, AlbumActivity.class);
     		startActivity(intent2);
+    		return true;
 		}
-		else if (itemPosition == 2){ // recents dates
+		else if (itemPosition == 2){ // recents times
 			Toast.makeText(getApplicationContext(), "recents dates", Toast.LENGTH_SHORT).show();
-		}
-		else if (itemPosition == 3){ // Particular date
-			Toast.makeText(getApplicationContext(), "Particular date", Toast.LENGTH_SHORT).show();
 		}
 		
 		return true;
@@ -737,6 +747,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			super.onPostExecute(result);
 			Toast.makeText(getApplicationContext(), "Photo saved.", Toast.LENGTH_SHORT).show();
 		}
+	}
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
