@@ -637,8 +637,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private String descriptionStr = null;
 	private String albumSelection = null;
 	int indx = 0;
+	Bitmap gridBitmap = null;
 	ArrayList<String> albumList ;
-	
+	AlertDialog.Builder albumDialog;
+	Bitmap individualBitmap = null;
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
@@ -647,27 +649,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		{
 			//GridView gridview = (GridView) findViewById(R.id.gridview);
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-			// -- NEW CONSTRUCTION @ Fan-- //
-			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
-			final AlertDialog.Builder albumDialog = new AlertDialog.Builder(this);
-			//final String[] albumArray = albumList.toArray(new String[albumList.size()]);
-			//final EditText input2 = new EditText(this);
-			//input2.setInputType(InputType.TYPE_CLASS_TEXT);
-			//albumDialog.setView(input2);
-			
-			albumDialog.setTitle("Select an Album")
-						.setIcon(android.R.drawable.ic_dialog_alert)
-						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
-								new DialogInterface.OnClickListener() {  
-                                @Override 
-                                public void onClick(DialogInterface dialog, int which) {
-                                	//albumSelection = albumArray[which];
-                                	indx = which - 1;
-                                	dialog.dismiss();
-                                }  
-                            });
-
-			// -- END -- //
 			descriptionDialog.setTitle("Enter description");
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -682,7 +663,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				public void onClick(DialogInterface dialog, int which) {
 					descriptionStr = input.getText().toString();
 
-					Bitmap gridBitmap = 
+				    gridBitmap = 
 							Utils.getGridBitmapFromFile(photoPath, getApplicationContext());
 					
 					if( gridBitmap != null)
@@ -694,22 +675,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 //						int width = size.x;
 //						int height = size.y;
 						//Ignore bitmap colonm since we are using gridBitmap for both<<<<<<------
-						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
+					    individualBitmap = Utils.getBitmapFromFile(photoPath);
 						//Bitmap individualBitmap = null;
 	
 						
-						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
-								,getImageCache(getFragmentManager()), gridBitmap);
-						task.execute(newPhotoID);						
-						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
-								gridBitmap, albumList.get(indx),false);
-						DatabaseWorker dbWorker = new DatabaseWorker();
-						dbWorker.execute(newPhoto);						
-						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-						//Add photoId, individualBitmap to Cache and adapter ???????????????????
-						//>>>>>>>>>>>>>>>>>>>>>>>>
-						getList().add(newPhotoID);
-						imgadapter.notifyDataSetChanged();
 						albumDialog.show();
 					}
 				}
@@ -722,6 +691,46 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				}
 			});
 			descriptionDialog.show();
+			
+			// -- NEW CONSTRUCTION @ Fan-- //
+			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+		    
+			albumDialog = new AlertDialog.Builder(this);
+			Log.v("Album before", indx + "");
+			//final String[] albumArray = albumList.toArray(new String[albumList.size()]);
+			//final EditText input2 = new EditText(this);
+			//input2.setInputType(InputType.TYPE_CLASS_TEXT);
+			//albumDialog.setView(input2);
+			
+			albumDialog.setTitle("Select an Album")
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 0 ,  
+								new DialogInterface.OnClickListener() {  
+                                @Override 
+                                public void onClick(DialogInterface dialog, int which) {
+                                	//albumSelection = albumArray[which];
+                                	indx = which;
+                                	
+            						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
+            								,getImageCache(getFragmentManager()), gridBitmap);
+            						task.execute(newPhotoID);						
+            						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
+            								gridBitmap, albumList.get(indx),false);
+            						indx = 0;
+            						DatabaseWorker dbWorker = new DatabaseWorker();
+            						dbWorker.execute(newPhoto);						
+            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            						//Add photoId, individualBitmap to Cache and adapter ???????????????????
+            						//>>>>>>>>>>>>>>>>>>>>>>>>
+            						getList().add(newPhotoID);
+            						imgadapter.notifyDataSetChanged();
+
+                                	dialog.dismiss();
+                                }  
+                            });
+			
+
+			// -- END -- //
 			
 			
 			

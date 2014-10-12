@@ -133,7 +133,7 @@ public class ImageAdapter extends BaseAdapter{
 				System.out.println("The value of view width and height is now " + px + "," + px);
 				imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-				imageView.setBackgroundColor(Color.WHITE);
+				imageView.setBackgroundColor(Color.BLACK);
 				int pdx = convertDpToPixel(5,mContext);
 				imageView.setPadding(pdx,pdx ,pdx ,pdx );
 //				FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
