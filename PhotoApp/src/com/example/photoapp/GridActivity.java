@@ -323,10 +323,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	  
 	}
 
-	private void doMySearch(String query) {
-		Toast.makeText(getApplicationContext(), query, Toast.LENGTH_LONG).show();
-	}
-
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
 		
 		return ImageCache.getInstance(fragmentManager);
@@ -762,7 +758,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			Log.v("Album before", indx + "");
 		
 			albumDialog.setTitle("Select an Album")
-						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setIcon(R.drawable.ic_action_collection2)
 						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 0 ,  
 								new DialogInterface.OnClickListener() {  
                                 @Override 
