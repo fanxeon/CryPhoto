@@ -119,6 +119,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	}
 	
 	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		if(Utils.isIndividualPhotoDeleted())
+			imgadapter.notifyDataSetChanged();
+		Utils.setIndividualPhotoDeleted(false);
+	}
+	@Override
 	protected void onStop() {
 	    super.onStop();  // Always call the superclass method first
 
@@ -253,7 +261,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				switch (item.getItemId()){
 				//Should be Share and discard,
 				case R.id.action_share:
-					//Share method
+					
 					return true;
 				case R.id.action_discard:
 					//Developing
@@ -670,6 +678,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 						Bitmap individualBitmap = Utils.getBitmapFromFile(photoPath);
 						//Bitmap individualBitmap = null;
 	
+						
 						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
 								,getImageCache(getFragmentManager()), gridBitmap);
 						task.execute(newPhotoID);						
@@ -693,6 +702,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				}
 			});
 			descriptionDialog.show();
+			
+			
+			
 		}
 		//Dialog new options
 				

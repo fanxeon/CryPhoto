@@ -14,7 +14,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	//Database details
 	private static final String DATABASE_NAME = "photoviewerdb";
 	//NOT SURE what version should we use <<<<<<<<<<<<<<<<<<<<<<<<----------------
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 	
 	//Information needed for photos table.
 	protected static final String PHOTOS_TABLE_NAME = "photos";
@@ -72,9 +72,9 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     private void initial(SQLiteDatabase db)
     {
 		ContentValues values = new ContentValues();
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, Photo.NONE);
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, "My album");
 		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
-		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, "test", values);
+		//db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, "test", values);
 
     }
     //This methods will be called whenever the database is open
