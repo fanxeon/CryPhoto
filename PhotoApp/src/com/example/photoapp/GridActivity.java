@@ -76,6 +76,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private TitleNavigationAdapter adapter;
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
+	
+	
 	//-- ACTION BAR END --//
 	
 	
@@ -625,37 +627,44 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	}
 
 	private String descriptionStr = null;
-
+	private String albumSelection = null;
+	int indx = 0;
+	ArrayList<String> albumList ;
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
+		
 		if( resultCode == RESULT_OK )
 		{
 			//GridView gridview = (GridView) findViewById(R.id.gridview);
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-			//Fan - How to retrive album list from database manager
-			ArrayList<String> albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+			// -- NEW CONSTRUCTION @ Fan-- //
+			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+			final AlertDialog.Builder albumDialog = new AlertDialog.Builder(this);
+			//final String[] albumArray = albumList.toArray(new String[albumList.size()]);
+			//final EditText input2 = new EditText(this);
+			//input2.setInputType(InputType.TYPE_CLASS_TEXT);
+			//albumDialog.setView(input2);
+			
+			albumDialog.setTitle("Select an Album")
+						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
+								new DialogInterface.OnClickListener() {  
+                                @Override 
+                                public void onClick(DialogInterface dialog, int which) {
+                                	//albumSelection = albumArray[which];
+                                	indx = which - 1;
+                                	dialog.dismiss();
+                                }  
+                            });
 
-			descriptionDialog.setTitle("Select an album and enter description")
-								//Dialog change @ Fan
-								//Need to implement insert album
-								.setIcon(android.R.drawable.ic_dialog_alert)
-								.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 2,  
-		                            new DialogInterface.OnClickListener() {  
-										//---!!!!!!!  assign photo to an album !!!!!----//
-		                                @Override 
-		                                public void onClick(DialogInterface dialog,  
-		                                        int which) {
-		                                	//DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
-		                                }  
-		                            })  
-								;
-			//END
+			// -- END -- //
+			descriptionDialog.setTitle("Enter description");
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
-			descriptionDialog.setView(input);
-	
-			
+
+			descriptionDialog.setView(input);			
 			//<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 			//Deal with albume option ???????????????
 			//>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -664,7 +673,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					descriptionStr = input.getText().toString();
-					
+
 					Bitmap gridBitmap = 
 							Utils.getGridBitmapFromFile(photoPath, getApplicationContext());
 					
@@ -684,7 +693,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 								,getImageCache(getFragmentManager()), gridBitmap);
 						task.execute(newPhotoID);						
 						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
-								gridBitmap,"My album",false);
+								gridBitmap, albumList.get(indx),false);
 						DatabaseWorker dbWorker = new DatabaseWorker();
 						dbWorker.execute(newPhoto);						
 						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -692,6 +701,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 						//>>>>>>>>>>>>>>>>>>>>>>>>
 						getList().add(newPhotoID);
 						imgadapter.notifyDataSetChanged();
+						albumDialog.show();
 					}
 				}
 			});
@@ -713,6 +723,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}	
 	//END part for taking photos from camera app
+	//NEW CONSTRUCTION
+		
+	//END
+	
 	
 	private class DatabaseWorker extends AsyncTask<Photo, Void , Void>
 	{
