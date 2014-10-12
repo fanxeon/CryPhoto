@@ -10,6 +10,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
@@ -98,7 +100,7 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	//-- NOT AVALIABLE YET --//
+	// -- ADDD_ALBUM --//
 	private void add_album() {
 		LayoutInflater li = LayoutInflater.from(this);  
 		View view = li.inflate(R.layout.prompt_view, null);
@@ -106,8 +108,20 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
 	    builder.setTitle("Enter an Album name");  
 	    
 	    builder.setView(view);  
-	    builder.setPositiveButton("Save", this);  
+	    builder.setPositiveButton("Save", new DialogInterface.OnClickListener(){
+	    	public void onClick(DialogInterface dialog, int which) {
+	    		if(which == Dialog.BUTTON_POSITIVE){  
+	    			   
+	    	        AlertDialog ad = (AlertDialog) dialog;  
+	    	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
+	    	        
+	    	        String albumName =  t.getText().toString();
+	    	        DatabaseManager.getInstance(getApplicationContext()).insertAlbum(albumName);
+	    		}
+	    	}
+	    });  
 	    builder.setNegativeButton("Cancel", this);
+	    //DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 	    builder.create().show();  
 	    //int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
 	}
@@ -124,7 +138,7 @@ public class AlbumActivity extends Activity implements OnNavigationListener, OnC
     		startActivity(intent2);
 		}
 		else if (itemPosition == 2){ // T
-			Toast.makeText(getApplicationContext(), "recents dates", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Times", Toast.LENGTH_SHORT).show();
 		}
 		
 		return false;
