@@ -24,7 +24,7 @@ public class AppStart extends Activity {
 	        ActionBar actionBar = getActionBar();
 	        actionBar.hide(); 
 	        AlphaAnimation aa = new AlphaAnimation(0.3f,1.0f);
-	        aa.setDuration(3000);
+	        aa.setDuration(1500);
 	        view.startAnimation(aa);
 	        aa.setAnimationListener(new AnimationListener()
 	        {

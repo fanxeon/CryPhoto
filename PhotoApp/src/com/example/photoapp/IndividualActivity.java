@@ -1,5 +1,6 @@
 package com.example.photoapp;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import utils.Utils;
@@ -22,6 +23,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +44,8 @@ public class IndividualActivity extends Activity {
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
 	     imageView.setBackgroundColor(Color.BLACK);
-
+	     //Overflow fix
+	     setOverflowShowingAlways();
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
@@ -111,31 +114,21 @@ public class IndividualActivity extends Activity {
 			case R.id.action_sync:
 				// sync action
 				return true;
-			case R.id.action_restore:
-				// check for updates action
-				openRestore();
-				return true;
-	        case R.id.action_settings:
-	            openSettings();
-	    		Intent intent = new Intent(this, TesterActivity.class);
-	    		//EditText editText = (EditText) findViewById(R.id.edit_message);
-	    		//String message = editText.getText().toString();
-	    		startActivity(intent);
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 		//-- ACTION BAR END --//
 	}
-
-	private void openRestore() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void openSettings() {
-		// TODO Auto-generated method stub
-		
-	}
+	private void setOverflowShowingAlways() {  
+		try {  
+			ViewConfiguration config = ViewConfiguration.get(this);  
+			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");  
+			menuKeyField.setAccessible(true);  
+			menuKeyField.setBoolean(config, false);  
+		} catch (Exception e) {  
+			e.printStackTrace();  
+		}  
+	}  
 
 	private void openShare() {
 		Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();

@@ -123,9 +123,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
-		// for Search @ Fan
-		handleIntent(intent);
-		// END
+
 		processExtraData();
 
 	}
@@ -340,10 +338,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			finish();
 			mSearchQuery = null;
 		}
 	}
-
+	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onSearchRequested() {
@@ -438,7 +437,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			onSearchRequested();
+			//onSearchRequested();
 			return true;
 		case R.id.action_photo:
 			// Take photo
