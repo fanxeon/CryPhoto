@@ -73,6 +73,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
+	GridView gridview;
 	protected ImageAdapter imgadapter;
 	//private static ArrayList<String> list;
 	protected static int[] images;
@@ -151,12 +152,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
+		gridview.smoothScrollToPosition(0);
 		if(Utils.isIndividualPhotoDeleted())
 		{
 			imgadapter.notifyDataSetChanged();
 			Utils.setIndividualPhotoDeleted(false);
 		}
 	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();  // Always call the superclass method first
@@ -182,7 +185,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
 
-		processExtraData();
+		//processExtraData();
 
 		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
@@ -227,19 +230,21 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		System.out.println("About to get the grid view by finding it using the id name");
 
 		//get the gridview as defined in the associate xml file
-		GridView gridview = (GridView) findViewById(R.id.gridview);
+		gridview = (GridView) findViewById(R.id.gridview);
 		//gridview.setBackgroundColor(Color.BLACK);
 		gridview.setDrawSelectorOnTop(true);
 		//gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
 		gridview.setAdapter(imgadapter);
+		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
 		//set on item click listener
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				//Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
+				gridview.setSelection(position);
 				Indiview(v,position);
 			}
 		});
@@ -249,6 +254,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				gridview.setSelection(position);
 				MyActionModeCallback callback = new MyActionModeCallback();
 				mActionMode = startActionMode (callback);
 				mActionMode.setTitle("1" + R.string.menu_context_title);
@@ -259,77 +265,140 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
-			private int numOfItemsSelected = 0;
-			@Override
-			public void onItemCheckedStateChanged(ActionMode mode, int position,
-					long id, boolean checked) {
-				// Here you can do something when items are selected/de-selected,
-				// such as update the title in the CAB
-				if(checked)
-				{
-					numOfItemsSelected++;
-					//change the color
-					//imgadapter.getView(position, null, get);
+//			private int numOfItemsSelected = 0;
+//			@Override
+//			public void onItemCheckedStateChanged(ActionMode mode, int position,
+//					long id, boolean checked) {
+//				// Here you can do something when items are selected/de-selected,
+//				// such as update the title in the CAB
+//				if(checked)
+//				{
+//					numOfItemsSelected++;
+//					//change the color
+//					//imgadapter.getView(position, null, get);
+//
+//
+//				}	
+//				else
+//				{
+//					numOfItemsSelected--;
+//				}
+//				if( numOfItemsSelected <= 1)
+//				{
+//					mode.setTitle(numOfItemsSelected + " Item Selected");
+//				}
+//				else
+//				{
+//					mode.setTitle(numOfItemsSelected + " Items Selected");
+//				}
+//
+//
+//
+//			}
+//
+//			@Override
+//			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//				// Respond to clicks on the actions in the CAB
+//				switch (item.getItemId()){
+//				//Should be Share and discard,
+//				case R.id.action_share:
+//
+//					return true;
+//				case R.id.action_discard:
+//					//Developing
+//					int IDD = item.getItemId();
+//					//String IDDDD = String.valueOf(IDD);
+//					//discard(IDDDD);
+//					return true;
+//				default:
+//					return false;
+//				}
+//			}
+//
+//			@Override
+//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//				// Inflate the menu for the CAB
+//				MenuInflater inflater = mode.getMenuInflater();
+//				inflater.inflate(R.menu.context, menu);
+//				return true;
+//			}
+//
+//			@Override
+//			public void onDestroyActionMode(ActionMode mode) {
+//				// Here you can make any necessary updates to the activity when
+//				// the CAB is removed. By default, selected items are deselected/unchecked.
+//			}
+//
+//			@Override
+//			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//				// Here you can perform updates to the CAB due to
+//				// an invalidate() request
+//				return false;
+//			}
+//		});
+		
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+            mode.setTitle("Select Items");
+            mode.setSubtitle("One item selected");
+            return true;
+
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
 
 
-				}	
-				else
-				{
-					numOfItemsSelected--;
-				}
-				if( numOfItemsSelected <= 1)
-				{
-					mode.setTitle(numOfItemsSelected + " Item Selected");
-				}
-				else
-				{
-					mode.setTitle(numOfItemsSelected + " Items Selected");
-				}
+            int selectCount = gridview.getCheckedItemCount();
+            switch (selectCount) {
+            case 1:
+                mode.setSubtitle("One item selected");
+
+                break;
+            default:
+                mode.setSubtitle("" + selectCount + " items selected");
+
+                break;
+            }
+
+            return true;
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position,
+                long id, boolean checked) {
+            // TODO Auto-generated method stub
 
 
 
-			}
+            int selectCount = gridview.getCheckedItemCount();
+            switch (selectCount) {
+            case 1:
+                mode.setSubtitle("One item selected");
+                break;
+            default:
+                mode.setSubtitle("" + selectCount + " items selected");
+                break;
+            }
 
-			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				// Respond to clicks on the actions in the CAB
-				switch (item.getItemId()){
-				//Should be Share and discard,
-				case R.id.action_share:
-
-					return true;
-				case R.id.action_discard:
-					//Developing
-					int IDD = item.getItemId();
-					//String IDDDD = String.valueOf(IDD);
-					//discard(IDDDD);
-					return true;
-				default:
-					return false;
-				}
-			}
-
-			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				// Inflate the menu for the CAB
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.context, menu);
-				return true;
-			}
-
-			@Override
-			public void onDestroyActionMode(ActionMode mode) {
-				// Here you can make any necessary updates to the activity when
-				// the CAB is removed. By default, selected items are deselected/unchecked.
-			}
-
-			@Override
-			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				// Here you can perform updates to the CAB due to
-				// an invalidate() request
-				return false;
-			}
-		});
+        }
+    });
 
 
 	}
