@@ -352,6 +352,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
 
+        	MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context, menu);
+//			return true;
             mode.setTitle("Select Items");
             mode.setSubtitle("One item selected");
             return true;
@@ -362,20 +365,33 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // TODO Auto-generated method stub
 
+        	 int selectCount = gridview.getCheckedItemCount();
+             switch (selectCount) {
+             case 1:
+                 mode.setSubtitle("One item selected");
 
-            int selectCount = gridview.getCheckedItemCount();
-            switch (selectCount) {
-            case 1:
-                mode.setSubtitle("One item selected");
+                 break;
+             default:
+                 mode.setSubtitle("" + selectCount + " items selected");
 
-                break;
-            default:
-                mode.setSubtitle("" + selectCount + " items selected");
+                 break;
+             }
+             
+        	switch (item.getItemId()){
+			//Should be Share and discard,
+			case R.id.action_share:
 
-                break;
-            }
-
-            return true;
+				return true;
+			case R.id.action_discard:
+				//Developing
+				int IDD = item.getItemId();
+				//String IDDDD = String.valueOf(IDD);
+				//discard(IDDDD);
+				return true;
+			default:
+				return false;
+			}
+        	
         }
 
         @Override
