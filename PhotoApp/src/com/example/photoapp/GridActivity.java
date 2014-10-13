@@ -47,6 +47,7 @@ import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,6 +59,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
@@ -261,6 +263,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		});
 
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
 //			private int numOfItemsSelected = 0;
@@ -336,6 +339,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 //		});
 		
 
+			
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             // TODO Auto-generated method stub
@@ -365,7 +369,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             // TODO Auto-generated method stub
 
+        	//actionList.clear();
         	 int selectCount = gridview.getCheckedItemCount();
+        	 //gridview.getItemAtPosition(gridview.getCheckedItemPosition());
              switch (selectCount) {
              case 1:
                  mode.setSubtitle("One item selected");
@@ -377,16 +383,24 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                  break;
              }
              
+//            SparseBooleanArray sparseBooleanArray = gridview.getCheckedItemPositions();
+//            for (int i = 0;  i < sparseBooleanArray.size(); i++)
+//            {
+//            	if( sparseBooleanArray.get(i) == true)
+//            	{
+//            		String id = getList().get(i);
+//            		actionList.add(id);
+//            	}
+//            }
+       	   //Toast.makeText(getApplicationContext(), "action list after = " + actionList.get(0), Toast.LENGTH_SHORT).show();
         	switch (item.getItemId()){
 			//Should be Share and discard,
 			case R.id.action_share:
 
 				return true;
 			case R.id.action_discard:
-				//Developing
-				int IDD = item.getItemId();
-				//String IDDDD = String.valueOf(IDD);
-				//discard(IDDDD);
+				discardPhotos();
+				mode.finish();
 				return true;
 			default:
 				return false;
@@ -394,13 +408,47 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         	
         }
 
+        private void discardPhotos()
+        {
+        	int numOfPhotos = actionList.size();
+        	if( numOfPhotos > 0 )
+        	{
+        		getList().removeAll(actionList);
+        		DatabaseManager.getInstance(getApplicationContext()).deletePhotos(actionList);
+        		actionList.clear();
+        		if ( numOfPhotos == 1)
+        	       	   Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
+        		else
+     	       	   Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
+
+
+        	
+        		//imgadapter.notifyDataSetChanged();
+        	}
+        
+        }
+//        ImageView im ;
         @Override
         public void onItemCheckedStateChanged(ActionMode mode, int position,
                 long id, boolean checked) {
             // TODO Auto-generated method stub
 
 
+       	    //Toast.makeText(getApplicationContext(), position + "checked: " + checked, Toast.LENGTH_SHORT).show();
+//   	    	im = (ImageView) gridview.getChildAt(position); 
+       	    if(checked)
+       	    {
+       	    	actionList.add(getList().get(position));
+                //Toast.makeText(getApplicationContext(), "Added = " + actionList.get(actionList.size()-1), Toast.LENGTH_SHORT).show();
 
+       	    }
+       	    else
+       	    {
+       	    	actionList.remove(getList().get(position));
+                //Toast.makeText(getApplicationContext(), "removed = " + actionList.size(), Toast.LENGTH_SHORT).show();
+      	    }       	    	
+       	    
+       	    
             int selectCount = gridview.getCheckedItemCount();
             switch (selectCount) {
             case 1:
@@ -450,6 +498,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		return ImageCache.getInstance(fragmentManager);
 	}
 
+	ArrayList<String> actionList = new ArrayList<String>();
+	
 	class MyActionModeCallback implements ActionMode.Callback{
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
