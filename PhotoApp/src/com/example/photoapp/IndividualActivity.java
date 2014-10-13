@@ -68,8 +68,9 @@ public class IndividualActivity extends Activity {
 		 
 	     // -- Text view for Description --//
 	     TextView textView = (TextView) findViewById(R.id.Description);
-	     //textView.setText(photoDetails.getDescription());
-	     textView.setText(photoDetails.getAlbum());
+
+	     textView.setText(photoDetails.getDescription() + " @ " + photoDetails.getAlbum());
+	     //textView.setText(photoDetails.getAlbum());
 	     // -- END --//
 	     //imageView.setImageResource(GridActivity.images[position]);
 		
@@ -141,7 +142,8 @@ public class IndividualActivity extends Activity {
 		//Photo testPhotoToServer = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
 
 		UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(this);
-		uploadPhotoTask.execute(photoDetails);
+//		uploadPhotoTask.execute(photoDetails);
+		uploadPhotoTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), photoDetails);
 
 		// TODO Auto-generated method stub
 		

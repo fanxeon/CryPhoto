@@ -2,7 +2,9 @@ package com.example.photoapp;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import utils.Utils;
 
@@ -22,10 +24,13 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -34,10 +39,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -45,14 +52,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.DatePicker;
+import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 //import android.widget.EditText;
 
@@ -67,7 +78,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
 	private ActionMode mActionMode;
 	//-- END --//
-	
+	Menu mMenu;
 	//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 	private ActionBar actionBar;
 	// Title navigation Spinner data
@@ -77,8 +88,22 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
 	
-	
 	//-- ACTION BAR END --//
+	// On Actitvity Result declaration
+	private String descriptionStr = null;
+	int indx = 0;
+	Bitmap gridBitmap = null;
+	ArrayList<String> albumList ;
+	AlertDialog.Builder albumDialog;
+	Bitmap individualBitmap = null;
+	// Date picker
+	private static int mStartYear, mEndYear;
+	private static int mStartMonth, mEndMonth;
+	private static int mStartDay, mEndDay;
+	private static String mStartingDate = "";
+	private static String mEndDate = "";
+	// Search String
+	private static String mSearchQuery = null;
 	
 	
 	public static void getActivityManager(Context context)
@@ -97,6 +122,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
+		// for Search @ Fan
+	    handleIntent(intent);
+	    // END
 		processExtraData();
 		
 	}
@@ -169,17 +197,20 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		// Spinner title navigation data
 		navSpinner = new ArrayList<SpinnerNavItem>();
-		navSpinner.add(new SpinnerNavItem("Grid View", R.drawable.ic_action_view_as_grid));
+		navSpinner.add(new SpinnerNavItem("All", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
-		//navSpinner.add(new SpinnerNavItem("Particular dates", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Within a week", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Within a month", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
-
-
+		setOverflowShowingAlways(); 
+		handleIntent(getIntent());
+		// -- new --//
+		// -- end --//
 		// Changing the action bar icon
 		// actionBar.setIcon(R.drawable.ico_actionbar);
 		//-- ACTION BAR END --//
@@ -299,7 +330,34 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	    
 	  
 	}
+	//For SEARCH SEARCH SEARCH
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			  mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
+		      Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
+		      // Reset : temp for test
+		      mSearchQuery = null;
+		    }
+	}
 
+	@SuppressLint("NewApi")
+	@Override
+	public boolean onSearchRequested() {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+	        MenuItem mi = mMenu.findItem(R.id.action_search);
+	        if(mi.isActionViewExpanded()){
+	            mi.collapseActionView();
+	        } else{
+	            mi.expandActionView();
+	        }
+	    } else{
+	        //onOptionsItemSelected(mMenu.findItem(R.id.search));
+	    }
+	    return super.onSearchRequested();
+	}
+	// END 
+
+	// END
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
 		
 		return ImageCache.getInstance(fragmentManager);
@@ -325,9 +383,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					return true;
 				case R.id.action_discard:
 					//Developing
-					//int IDD = item.getItemId();
-					//String IDDDD = String.valueOf(IDD);
-					//discard(IDDDD);
+					int IDD = item.getItemId();
+					String IDDDD = String.valueOf(IDD);
+					discard(IDDDD);
 					return true;
 			}
 			return false;
@@ -351,6 +409,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		 // Inflate the menu items for use in the action bar
+		mMenu = menu;
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main_action_bar, menu);
 		
@@ -361,6 +420,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				.getActionView();
 		searchView.setSearchableInfo(searchManager
 				.getSearchableInfo(getComponentName()));
+		
 		// ACTION BAR END
 	    return super.onCreateOptionsMenu(menu);
 	}
@@ -374,7 +434,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				openSearch();
+				onSearchRequested();
 				return true;
 			case R.id.action_photo:
 				// Take photo
@@ -397,7 +457,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				return super.onOptionsItemSelected(item);
 		}
 	}
-	// -- NEW CONSTRUCTION -- //
+	// Add an new album //
 	private void add_album() {
 		LayoutInflater li = LayoutInflater.from(this);  
 		View view = li.inflate(R.layout.prompt_view, null);
@@ -422,23 +482,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	    builder.create().show();  
 	    //int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
 	}
-//	// -- NEW CONSTRUCTION -- //
-//	@Override
-//	public void onClick(DialogInterface dialog, int which) {
-//	   if(which == Dialog.BUTTON_POSITIVE){  
-//		   
-//	        AlertDialog ad = (AlertDialog) dialog;  
-//	        EditText t = (EditText) ad.findViewById(R.id.editText_prompt);  
-//	        
-//	        String albumName =  t.getText().toString();
-//	        DatabaseManager.getInstance(getApplicationContext()).insertAlbum(albumName);
-//	        Toast.makeText(this, t.getText().toString(), Toast.LENGTH_LONG)  
-//	             .show();
-//	        
-//	    }  
-//	}
-//	// -- END -- //
-	// -- END -- //
+
 	private void openSync()
 	{
 		//Tesing donwload this should be sync <<<<<<<<<<<<<<<<<----------------
@@ -482,7 +526,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				}	
 			}
 		});
-		syncTask.execute();
+		syncTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), null);
 	}
 
 	private void openSettings() {
@@ -495,6 +539,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	{
 		// TODO Auto-generated method stub
 		Context context = getApplicationContext();
+		
 		Toast.makeText(context, "Test Search Toast !!!", Toast.LENGTH_SHORT).show();	
 	}
 	/**
@@ -571,29 +616,87 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		Utils.list = list;
 	}
 	
-	//DROP - DOWN Menu listner @ Fan
+
+	public void update()
+	{
+		imgadapter.notifyDataSetChanged();
+	}
+	// Dealing with Samsung phones menu problem
+	private void setOverflowShowingAlways() {  
+	    try {  
+	        ViewConfiguration config = ViewConfiguration.get(this);  
+	        Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");  
+	        menuKeyField.setAccessible(true);  
+	        menuKeyField.setBoolean(config, false);  
+	    } catch (Exception e) {  
+	        e.printStackTrace();  
+	    }  
+	}  
+	/**=======================
+	 * Drop down menu listener
+	 * =======================
+	 */
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		if (itemPosition == 0){ // Grid
-			//Toast.makeText(getApplicationContext(), "Grid", Toast.LENGTH_SHORT).show();
+		AlertDialog.Builder albumListDialog = new AlertDialog.Builder(this);
+		AlertDialog.Builder timesDialog = new AlertDialog.Builder(this);
+		if (itemPosition == 0){ // All
+
 			return true;
 
 		}
-		else if (itemPosition == 1){ //album
-			//Toast.makeText(getApplicationContext(), "Album", Toast.LENGTH_SHORT).show();
-    		Intent intent2 = new Intent(this, AlbumActivity.class);
-    		startActivity(intent2);
+		else if (itemPosition == 1){ //Albums
+			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+			albumListDialog.setTitle("Albums")
+						.setIcon(R.drawable.ic_action_collection2)
+						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
+								new DialogInterface.OnClickListener() {  
+                                @Override 
+                                public void onClick(DialogInterface dialog, int which) {
+                                	/**>>> Add Methods to respond selecting albums <<<**/
+                                	
+                        			Toast.makeText(getApplicationContext(), "User select an '" + albumList.get(which)+ "' Album", Toast.LENGTH_SHORT).show();
+                                	update();//Delete it when methods add
+                                	
+                                	/**>>> END <<<**/
+                                	dialog.dismiss();
+                                }  
+                            });
+			albumListDialog.show();
     		return true;
 		}
-		else if (itemPosition == 2){ // recents times
-			Toast.makeText(getApplicationContext(), "recents dates", Toast.LENGTH_SHORT).show();
+		else if (itemPosition == 2){ // Times(Custom date range)
+			Toast.makeText(getApplicationContext(), "Times", Toast.LENGTH_SHORT).show();
+		    DialogFragment endDate = new DatePickerFragment2();
+		    endDate.show(getFragmentManager(), "datePicker");
+		    
+		    DialogFragment startDate = new DatePickerFragment();
+		    startDate.show(getFragmentManager(), "datePicker");
+		    
+        	/**>>> Add Methods to respond Times(Custom date range)<<<**/
+          	update();//Delete it when methods add
+        	
+        	/**>>> END <<<**/
+		    
 		}
-		
+		else if (itemPosition == 3){ // A week
+        	/**>>> Add Methods to respond Times(Custom date range)<<<**/
+          	update();//Delete it when methods add
+			Toast.makeText(getApplicationContext(), "User select 'Within a week'", Toast.LENGTH_SHORT).show();
+        	/**>>> END <<<**/
+		}
+		else if (itemPosition == 4){ // A month
+        	/**>>> Add Methods to respond Times(Custom date range)<<<**/
+          	update();//Delete it when methods add
+			Toast.makeText(getApplicationContext(), "User select 'Within a month'", Toast.LENGTH_SHORT).show();
+        	/**>>> END <<<**/
+		}
 		return true;
 	}
-	//END
-	
-
+	/**===========================
+	 * Drop down menu listener END
+	 * ===========================
+	 */
 	//START part for taking photos from camera app
 	String photoPath = null; 
 	String newPhotoID = null;
@@ -633,13 +736,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}
 
-	private String descriptionStr = null;
-	private String albumSelection = null;
-	int indx = 0;
-	Bitmap gridBitmap = null;
-	ArrayList<String> albumList ;
-	AlertDialog.Builder albumDialog;
-	Bitmap individualBitmap = null;
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
@@ -691,18 +787,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			});
 			descriptionDialog.show();
 			
-			// -- NEW CONSTRUCTION @ Fan-- //
+			// -- Get Album list on Capture view-- //
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 		    
 			albumDialog = new AlertDialog.Builder(this);
 			Log.v("Album before", indx + "");
-			//final String[] albumArray = albumList.toArray(new String[albumList.size()]);
-			//final EditText input2 = new EditText(this);
-			//input2.setInputType(InputType.TYPE_CLASS_TEXT);
-			//albumDialog.setView(input2);
-			
+		
 			albumDialog.setTitle("Select an Album")
-						.setIcon(android.R.drawable.ic_dialog_alert)
+						.setIcon(R.drawable.ic_action_collection2)
 						.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 0 ,  
 								new DialogInterface.OnClickListener() {  
                                 @Override 
@@ -712,18 +804,17 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                                 	
             						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
             								,getImageCache(getFragmentManager()), gridBitmap);
-            						task.execute(newPhotoID);						
+            						task.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhotoID);						
             						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
             								gridBitmap, albumList.get(indx),false);
             						indx = 0;
             						DatabaseWorker dbWorker = new DatabaseWorker();
-            						dbWorker.execute(newPhoto);						
+            						dbWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhoto);						
             						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             						//Add photoId, individualBitmap to Cache and adapter ???????????????????
             						//>>>>>>>>>>>>>>>>>>>>>>>>
             						getList().add(newPhotoID);
             						imgadapter.notifyDataSetChanged();
-
                                 	dialog.dismiss();
                                 }  
                             });
@@ -775,5 +866,59 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		
 	}
+	// NEW CONSTRUCTION - date Picker
+	public static class DatePickerFragment extends DialogFragment
+    				implements DatePickerDialog.OnDateSetListener {
+		DatePickerDialog datePicker;
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+
+			int year = c.get(Calendar.YEAR);
+			int month = c.get(Calendar.MONTH);
+			int day = c.get(Calendar.DAY_OF_MONTH);
+			datePicker = new DatePickerDialog(getActivity(),this,year,month,day);
+			datePicker.setTitle("Start date");
+			// Create a new instance of DatePickerDialog and return it
+			return datePicker;
+		}
+		
+		public void onDateSet(DatePicker view, int year, int month, int day) {
+		      	mStartYear = year;
+	            mStartMonth = month - 1;
+	            mStartDay = day;
+	            mStartingDate = mStartDay + "/" + mStartMonth + "/" + mStartYear;
+	            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
+		}
+	}
+	public static class DatePickerFragment2 extends DialogFragment
+					implements DatePickerDialog.OnDateSetListener {
+		DatePickerDialog datePicker;
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+	
+			int year = c.get(Calendar.YEAR);
+			int month = c.get(Calendar.MONTH);
+			int day = c.get(Calendar.DAY_OF_MONTH);
+			
+			datePicker = new DatePickerDialog(getActivity(),this,year,month,day);
+			datePicker.setTitle("End Date");
+			// Create a new instance of DatePickerDialog and return it
+			return datePicker;
+		}
+		
+		public void onDateSet(DatePicker view, int year, int month, int day) {
+	      	mEndYear = year;
+	        mEndMonth = month - 1;
+	        mEndDay = day;
+	        mEndDate = mEndDay + "/" + mEndMonth + "/" + mEndYear;
+	        Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+		}
+}
+	// END
 
 }

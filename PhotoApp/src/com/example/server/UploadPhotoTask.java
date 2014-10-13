@@ -74,7 +74,9 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
 				httpConn.setDoInput(true);
 				httpConn.setUseCaches(false);
 				httpConn.setRequestMethod("POST");
-				httpConn.setChunkedStreamingMode(0);
+				httpConn.setChunkedStreamingMode(0);				
+				httpConn.setConnectTimeout(10000);
+
 				httpConn.addRequestProperty("Content-Type","application/json");
 				//httpConn.setRequestProperty("Content-Length", "" + 
 			    //          jsonMsgAsStr.length());

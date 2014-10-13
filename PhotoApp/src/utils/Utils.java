@@ -1,6 +1,8 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.example.photoapp.R;
 
@@ -20,6 +22,17 @@ public class Utils
 	public final static int GRID_VIEW_HOR_SPACING = 1;
 	public final static int GRID_VIEW_VER_SPACING = 1;
 	public static ArrayList<String> list;
+	
+	private static ThreadPoolExecutor threadPoolExecutor = null;
+	
+	public synchronized static ThreadPoolExecutor getThreadPoolExecutorInstance()
+	{
+		if( threadPoolExecutor == null )
+			threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+		//threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
+
+		return threadPoolExecutor;
+	}
 	
 	public static Bitmap getBitmapFromFile(String filePath)
 	{
