@@ -201,9 +201,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("All", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Within a week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Within a month", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
+		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -925,12 +925,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-		      	mStartYear = year * 10000;
-	            mStartMonth = (month + 1) * 100;
-	            mStartDay = day;
-	            
-	            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
-	            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
+	      	mStartYear = year * 10000;
+            mStartMonth = (month + 1) * 100;
+            mStartDay = day;
+            
+            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	public static class DatePickerFragment2 extends DialogFragment
