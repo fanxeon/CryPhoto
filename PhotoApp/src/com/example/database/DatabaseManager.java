@@ -374,6 +374,31 @@ public class DatabaseManager
 
 		return photoIDs;
 	}
+//	public ArrayList<Photo> getPhotosDescription()
+//	{
+//		ArrayList<Photo> photoIDs = new ArrayList<Photo>();
+//
+//		SQLiteDatabase db = dbHelper.getReadableDatabase();	
+//		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_ID
+//				, PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION};
+//
+//		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+//				projection, null, null,
+//				null, null, null, null, null);
+//
+//		if ( cursor.moveToFirst() )
+//		{
+//			do
+//			{
+//				photoIDs.add( cursor.getString( cursor
+//						.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_ID) ) );
+//			}
+//			while(cursor.moveToNext());
+//
+//		}
+//
+//		return photoIDs;
+//	}
 
 	//This method will be called by cache object.
 	public Bitmap getBitmap(String photoID, int reqWidth, int reqHeight)

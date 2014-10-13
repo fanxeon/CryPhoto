@@ -490,7 +490,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				}	
 			}
 		});
-		syncTask.execute();
+		syncTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), null);
 	}
 
 	private void openSettings() {
@@ -768,12 +768,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                                 	
             						AddToCacheTask task = new AddToCacheTask(getApplicationContext()
             								,getImageCache(getFragmentManager()), gridBitmap);
-            						task.execute(newPhotoID);						
+            						task.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhotoID);						
             						Photo newPhoto = new Photo(newPhotoID , descriptionStr, individualBitmap , 
             								gridBitmap, albumList.get(indx),false);
             						indx = 0;
             						DatabaseWorker dbWorker = new DatabaseWorker();
-            						dbWorker.execute(newPhoto);						
+            						dbWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhoto);						
             						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             						//Add photoId, individualBitmap to Cache and adapter ???????????????????
             						//>>>>>>>>>>>>>>>>>>>>>>>>
