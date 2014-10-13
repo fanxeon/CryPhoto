@@ -142,7 +142,8 @@ public class IndividualActivity extends Activity {
 		//Photo testPhotoToServer = DatabaseManager.getInstance(this).getPhoto(tempPhotoIDTest);
 
 		UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(this);
-		uploadPhotoTask.execute(photoDetails);
+//		uploadPhotoTask.execute(photoDetails);
+		uploadPhotoTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), photoDetails);
 
 		// TODO Auto-generated method stub
 		
