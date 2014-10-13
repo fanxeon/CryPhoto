@@ -887,10 +887,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 		
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-		      	mStartYear = year;
-	            mStartMonth = month - 1;
+		      	mStartYear = year * 10000;
+	            mStartMonth = (month + 1) * 100;
 	            mStartDay = day;
-	            mStartingDate = mStartDay + "/" + mStartMonth + "/" + mStartYear;
+	            
+	            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
 	            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
@@ -913,10 +914,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 		
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-	      	mEndYear = year;
-	        mEndMonth = month - 1;
+	      	mEndYear = year * 10000;
+	        mEndMonth = (month + 1) * 100;
 	        mEndDay = day;
-	        mEndDate = mEndDay + "/" + mEndMonth + "/" + mEndYear;
+	        mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
 	        Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
 		}
 }
