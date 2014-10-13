@@ -20,7 +20,7 @@
 		       android:layout_height="wrap_content"
 		       android:textColor="#FFFFFF"
 		       android:background="#000000"
-		       android:gravity="right"
+		       android:gravity="center"
 		       android:layout_alignParentBottom="true"/>
    	</RelativeLayout>
  

@@ -89,7 +89,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private TitleNavigationAdapter adapter;
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
-
+	private String nn = null;
 	//-- ACTION BAR END --//
 	// On Actitvity Result declaration
 	private String descriptionStr = null;
@@ -123,9 +123,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
-		// for Search @ Fan
-		handleIntent(intent);
-		// END
+
 		processExtraData();
 
 	}
@@ -204,9 +202,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("All", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Within a week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Within a month", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
+		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -408,10 +406,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			finish();
 			mSearchQuery = null;
 		}
 	}
-
+	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onSearchRequested() {
@@ -506,7 +505,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			onSearchRequested();
+			//onSearchRequested();
 			return true;
 		case R.id.action_photo:
 			// Take photo
@@ -994,11 +993,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			mStartYear = year;
-			mStartMonth = month - 1;
-			mStartDay = day;
-			mStartingDate = mStartYear + mStartMonth + mStartDay + "_000000" ;
-			Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
+	      	mStartYear = year * 10000;
+            mStartMonth = (month + 1) * 100;
+            mStartDay = day;
+            
+            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	public static class DatePickerFragment2 extends DialogFragment
@@ -1020,11 +1020,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			mEndYear = year;
-			mEndMonth = month - 1;
-			mEndDay = day;
-			mEndDate = mStartYear + mStartMonth + mStartDay + "_000000";
-			Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+	      	mEndYear = year * 10000;
+	        mEndMonth = (month + 1) * 100;
+	        mEndDay = day;
+	        mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
+	        Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	// END
