@@ -21,21 +21,4 @@
           android:title="@string/action_discard"
           android:showAsAction="ifRoom" />
     
-    <!-- Add new Album -->
-    <item android:id="@+id/action_add_album"
-          android:icon="@drawable/ic_action_photo"
-          android:title="@string/action_add_album"
-          android:showAsAction="ifRoom" />
-    
-    <!-- Sync -->
-    <item android:id="@+id/action_sync"
-          android:icon="@drawable/ic_action_refresh"
-          android:title="@string/action_sync" 
-          android:showAsAction="never"/>
-    
-    <!-- Restore from Remote server -->
-    <item android:id="@+id/action_restore"
-          android:icon="@drawable/ic_action_refresh"
-          android:title="@string/action_restore"
-          android:showAsAction="never" />
 </menu>

@@ -73,6 +73,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
+	GridView gridview;
 	protected ImageAdapter imgadapter;
 	//private static ArrayList<String> list;
 	protected static int[] images;
@@ -88,7 +89,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private TitleNavigationAdapter adapter;
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
-
+	private String nn = null;
 	//-- ACTION BAR END --//
 	// On Actitvity Result declaration
 	private String descriptionStr = null;
@@ -105,8 +106,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private static String mEndDate = "";
 	// Search String
 	private static String mSearchQuery = null;
-
-
+	
 	public static void getActivityManager(Context context)
 	{
 		ActivityManager result = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -123,9 +123,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
-		// for Search @ Fan
-		handleIntent(intent);
-		// END
+
 		processExtraData();
 
 	}
@@ -138,7 +136,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
 			imgadapter.notifyDataSetChanged();
 		}
-
 	}
 
 	@Override
@@ -153,12 +150,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
+		gridview.smoothScrollToPosition(0);
 		if(Utils.isIndividualPhotoDeleted())
 		{
 			imgadapter.notifyDataSetChanged();
 			Utils.setIndividualPhotoDeleted(false);
 		}
 	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();  // Always call the superclass method first
@@ -184,7 +183,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
 
-		processExtraData();
+		//processExtraData();
 
 		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
@@ -203,9 +202,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner = new ArrayList<SpinnerNavItem>();
 		navSpinner.add(new SpinnerNavItem("All", R.drawable.ic_action_view_as_grid));
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Times", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Within a week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Within a month", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
+		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -229,18 +228,21 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		System.out.println("About to get the grid view by finding it using the id name");
 
 		//get the gridview as defined in the associate xml file
-		GridView gridview = (GridView) findViewById(R.id.gridview);
+		gridview = (GridView) findViewById(R.id.gridview);
 		//gridview.setBackgroundColor(Color.BLACK);
-		gridview.setSelector(R.drawable.grid_color_selector);
+		gridview.setDrawSelectorOnTop(true);
+		//gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
 		gridview.setAdapter(imgadapter);
+		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
 		//set on item click listener
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				//Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
+				gridview.setSelection(position);
 				Indiview(v,position);
 			}
 		});
@@ -250,6 +252,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				gridview.setSelection(position);
 				MyActionModeCallback callback = new MyActionModeCallback();
 				mActionMode = startActionMode (callback);
 				mActionMode.setTitle("1" + R.string.menu_context_title);
@@ -260,77 +263,156 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
-			private int numOfItemsSelected = 0;
-			@Override
-			public void onItemCheckedStateChanged(ActionMode mode, int position,
-					long id, boolean checked) {
-				// Here you can do something when items are selected/de-selected,
-				// such as update the title in the CAB
-				if(checked)
-				{
-					numOfItemsSelected++;
-					//change the color
-					//imgadapter.getView(position, null, get);
+//			private int numOfItemsSelected = 0;
+//			@Override
+//			public void onItemCheckedStateChanged(ActionMode mode, int position,
+//					long id, boolean checked) {
+//				// Here you can do something when items are selected/de-selected,
+//				// such as update the title in the CAB
+//				if(checked)
+//				{
+//					numOfItemsSelected++;
+//					//change the color
+//					//imgadapter.getView(position, null, get);
+//
+//
+//				}	
+//				else
+//				{
+//					numOfItemsSelected--;
+//				}
+//				if( numOfItemsSelected <= 1)
+//				{
+//					mode.setTitle(numOfItemsSelected + " Item Selected");
+//				}
+//				else
+//				{
+//					mode.setTitle(numOfItemsSelected + " Items Selected");
+//				}
+//
+//
+//
+//			}
+//
+//			@Override
+//			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//				// Respond to clicks on the actions in the CAB
+//				switch (item.getItemId()){
+//				//Should be Share and discard,
+//				case R.id.action_share:
+//
+//					return true;
+//				case R.id.action_discard:
+//					//Developing
+//					int IDD = item.getItemId();
+//					//String IDDDD = String.valueOf(IDD);
+//					//discard(IDDDD);
+//					return true;
+//				default:
+//					return false;
+//				}
+//			}
+//
+//			@Override
+//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//				// Inflate the menu for the CAB
+//				MenuInflater inflater = mode.getMenuInflater();
+//				inflater.inflate(R.menu.context, menu);
+//				return true;
+//			}
+//
+//			@Override
+//			public void onDestroyActionMode(ActionMode mode) {
+//				// Here you can make any necessary updates to the activity when
+//				// the CAB is removed. By default, selected items are deselected/unchecked.
+//			}
+//
+//			@Override
+//			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//				// Here you can perform updates to the CAB due to
+//				// an invalidate() request
+//				return false;
+//			}
+//		});
+		
 
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+            return false;
+        }
 
-				}	
-				else
-				{
-					numOfItemsSelected--;
-				}
-				if( numOfItemsSelected <= 1)
-				{
-					mode.setTitle(numOfItemsSelected + " Item Selected");
-				}
-				else
-				{
-					mode.setTitle(numOfItemsSelected + " Items Selected");
-				}
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // TODO Auto-generated method stub
 
+        }
 
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
 
-			}
+        	MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context, menu);
+//			return true;
+            mode.setTitle("Select Items");
+            mode.setSubtitle("One item selected");
+            return true;
 
-			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				// Respond to clicks on the actions in the CAB
-				switch (item.getItemId()){
-				//Should be Share and discard,
-				case R.id.action_share:
+        }
 
-					return true;
-				case R.id.action_discard:
-					//Developing
-					int IDD = item.getItemId();
-					//String IDDDD = String.valueOf(IDD);
-					//discard(IDDDD);
-					return true;
-				default:
-					return false;
-				}
-			}
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
 
-			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				// Inflate the menu for the CAB
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.context, menu);
+        	 int selectCount = gridview.getCheckedItemCount();
+             switch (selectCount) {
+             case 1:
+                 mode.setSubtitle("One item selected");
+
+                 break;
+             default:
+                 mode.setSubtitle("" + selectCount + " items selected");
+
+                 break;
+             }
+             
+        	switch (item.getItemId()){
+			//Should be Share and discard,
+			case R.id.action_share:
+
 				return true;
-			}
-
-			@Override
-			public void onDestroyActionMode(ActionMode mode) {
-				// Here you can make any necessary updates to the activity when
-				// the CAB is removed. By default, selected items are deselected/unchecked.
-			}
-
-			@Override
-			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				// Here you can perform updates to the CAB due to
-				// an invalidate() request
+			case R.id.action_discard:
+				//Developing
+				int IDD = item.getItemId();
+				//String IDDDD = String.valueOf(IDD);
+				//discard(IDDDD);
+				return true;
+			default:
 				return false;
 			}
-		});
+        	
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position,
+                long id, boolean checked) {
+            // TODO Auto-generated method stub
+
+
+
+            int selectCount = gridview.getCheckedItemCount();
+            switch (selectCount) {
+            case 1:
+                mode.setSubtitle("One item selected");
+                break;
+            default:
+                mode.setSubtitle("" + selectCount + " items selected");
+                break;
+            }
+
+        }
+    });
 
 
 	}
@@ -340,10 +422,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			finish();
 			mSearchQuery = null;
 		}
 	}
-
+	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onSearchRequested() {
@@ -438,7 +521,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			onSearchRequested();
+			//onSearchRequested();
 			return true;
 		case R.id.action_photo:
 			// Take photo
@@ -619,12 +702,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public static void setList(ArrayList<String> list) {
 		Utils.list = list;
 	}
-
-
+	
 	public void update()
 	{
 		imgadapter.notifyDataSetChanged();
 	}
+	
 	// Dealing with Samsung phones menu problem
 	private void setOverflowShowingAlways() {  
 		try {  
@@ -926,11 +1009,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			mStartYear = year;
-			mStartMonth = month - 1;
-			mStartDay = day;
-			mStartingDate = mStartYear + mStartMonth + mStartDay + "_000000" ;
-			Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
+	      	mStartYear = year * 10000;
+            mStartMonth = (month + 1) * 100;
+            mStartDay = day;
+            
+            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	public static class DatePickerFragment2 extends DialogFragment
@@ -952,11 +1036,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			mEndYear = year;
-			mEndMonth = month - 1;
-			mEndDay = day;
-			mEndDate = mStartYear + mStartMonth + mStartDay + "_000000";
-			Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+	      	mEndYear = year * 10000;
+	        mEndMonth = (month + 1) * 100;
+	        mEndDay = day;
+	        mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
+	        Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	// END

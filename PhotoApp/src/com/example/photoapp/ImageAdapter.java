@@ -2,7 +2,6 @@ package com.example.photoapp;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -16,8 +15,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ImageAdapter extends BaseAdapter{
-
+public class ImageAdapter extends BaseAdapter
+{
+	
 	private Context mContext;
 	//private int[] images;
 	private ArrayList<String> list;
@@ -125,7 +125,8 @@ public class ImageAdapter extends BaseAdapter{
 	}
 	
 	private static FetchFromCacheTask getBitmapWorkerTask(ImageView imageView) {
-		   if (imageView != null) {
+		   
+		if (imageView != null) {
 		       final Drawable drawable = imageView.getDrawable();
 		       if (drawable instanceof AsyncDrawable) {
 		           final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
@@ -140,7 +141,8 @@ public class ImageAdapter extends BaseAdapter{
 	    final FetchFromCacheTask fetchTask = getBitmapWorkerTask(imageView);
 
 	    if (fetchTask != null) {
-	        final String bitmapData = fetchTask.getPosition();
+	    
+	    	final String bitmapData = fetchTask.getPosition();
 	        // If bitmapData is not yet set or it differs from the new data
 	        if (bitmapData.equals("") || !(bitmapData.equals(position))) {
 	            // Cancel previous task
