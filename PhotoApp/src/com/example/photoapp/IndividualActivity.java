@@ -70,6 +70,8 @@ public class IndividualActivity extends Activity {
 	     TextView textView = (TextView) findViewById(R.id.Description);
 	     //textView.setText(photoDetails.getDescription());
 	     textView.setText(photoDetails.getAlbum());
+	     
+	     
 	     // -- END --//
 	     //imageView.setImageResource(GridActivity.images[position]);
 		
