@@ -105,7 +105,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	// Search String
 	private static String mSearchQuery = null;
 	
-	
 	public static void getActivityManager(Context context)
     {
       ActivityManager result = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -227,7 +226,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//get the gridview as defined in the associate xml file
 		GridView gridview = (GridView) findViewById(R.id.gridview);
 		//gridview.setBackgroundColor(Color.BLACK);
-		gridview.setSelector(R.drawable.grid_color_selector);
+		gridview.setDrawSelectorOnTop(true);
+		//gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
 		imgadapter = new ImageAdapter(this,cache);
 		gridview.setAdapter(imgadapter);
@@ -616,11 +616,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		Utils.list = list;
 	}
 	
-
 	public void update()
 	{
 		imgadapter.notifyDataSetChanged();
 	}
+	
 	// Dealing with Samsung phones menu problem
 	private void setOverflowShowingAlways() {  
 	    try {  

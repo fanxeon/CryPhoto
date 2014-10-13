@@ -35,7 +35,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 		this.cache = cache;
 	}
 	
-//	public AddToCacheTask(Context context, ImageCache cache) 
+//	public AddToCacheTask(Context context, ImageCache cache)
 //	{
 //		// Use a WeakReference to ensure the ImageView can be garbage collected
 //		//imageViewReference = new WeakReference<ImageView>(imageView);
@@ -173,6 +173,7 @@ public class AddToCacheTask extends AsyncTask<String,Void,Boolean> {
 	@Override
 	protected void onPostExecute(Boolean addedTocache) 
 	{
+		
 		if (addedTocache)
 		{
 			//added to cache, so do something
