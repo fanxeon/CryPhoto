@@ -109,7 +109,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
 			imgadapter.notifyDataSetChanged();
 		}
-		
 	}
 	
 	@Override

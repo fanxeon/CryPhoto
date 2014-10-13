@@ -2,7 +2,6 @@ package com.example.photoapp;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -16,8 +15,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-public class ImageAdapter extends BaseAdapter{
-
+public class ImageAdapter extends BaseAdapter
+{
+	
 	private Context mContext;
 	//private int[] images;
 	private ArrayList<String> list;
