@@ -39,6 +39,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -77,7 +78,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
 	private ActionMode mActionMode;
 	//-- END --//
-	
+	Menu mMenu;
 	//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 	private ActionBar actionBar;
 	// Title navigation Spinner data
@@ -86,6 +87,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private TitleNavigationAdapter adapter;
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
+	
 	//-- ACTION BAR END --//
 	// On Actitvity Result declaration
 	private String descriptionStr = null;
@@ -100,6 +102,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private static int mStartDay, mEndDay;
 	private static String mStartingDate = "";
 	private static String mEndDate = "";
+	// Search String
+	private static String mSearchQuery = null;
 	
 	
 	public static void getActivityManager(Context context)
@@ -118,6 +122,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// TODO Auto-generated method stub
 		super.onNewIntent(intent);
 		setIntent(intent);
+		// for Search @ Fan
+	    handleIntent(intent);
+	    // END
 		processExtraData();
 		
 	}
@@ -202,7 +209,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
 		setOverflowShowingAlways(); 
-
+		handleIntent(getIntent());
+		// -- new --//
+		// -- end --//
 		// Changing the action bar icon
 		// actionBar.setIcon(R.drawable.ico_actionbar);
 		//-- ACTION BAR END --//
@@ -322,7 +331,34 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	    
 	  
 	}
+	//For SEARCH SEARCH SEARCH
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			  mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
+		      Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
+		      // Reset : temp for test
+		      mSearchQuery = null;
+		    }
+	}
 
+	@SuppressLint("NewApi")
+	@Override
+	public boolean onSearchRequested() {
+	    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+	        MenuItem mi = mMenu.findItem(R.id.action_search);
+	        if(mi.isActionViewExpanded()){
+	            mi.collapseActionView();
+	        } else{
+	            mi.expandActionView();
+	        }
+	    } else{
+	        //onOptionsItemSelected(mMenu.findItem(R.id.search));
+	    }
+	    return super.onSearchRequested();
+	}
+	// END 
+
+	// END
 	private ImageCache getImageCache(FragmentManager fragmentManager) {
 		
 		return ImageCache.getInstance(fragmentManager);
@@ -374,6 +410,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		 // Inflate the menu items for use in the action bar
+		mMenu = menu;
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main_action_bar, menu);
 		
@@ -398,7 +435,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				openSearch();
+				onSearchRequested();
 				return true;
 			case R.id.action_photo:
 				// Take photo
@@ -605,7 +642,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		AlertDialog.Builder albumListDialog = new AlertDialog.Builder(this);
 		AlertDialog.Builder timesDialog = new AlertDialog.Builder(this);
 		if (itemPosition == 0){ // All
-			update();
+
 			return true;
 
 		}
