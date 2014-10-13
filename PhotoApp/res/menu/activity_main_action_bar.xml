@@ -17,18 +17,18 @@
     <item android:id="@+id/action_add_album"
           android:icon="@drawable/ic_action_add_to_queue"
           android:title="@string/action_add_album"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="ifRoom|collapseActionView" />
     
     <!-- Sync -->
     <item android:id="@+id/action_sync"
           android:icon="@drawable/ic_action_refresh"
           android:title="@string/action_sync" 
-          android:showAsAction="ifRoom"/>
+          android:showAsAction="ifRoom|collapseActionView"/>
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:icon="@drawable/ic_action_settings"
-          android:showAsAction="ifRoom" />
+          android:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

@@ -59,4 +59,7 @@
         <item>Recents</item>
         <item>Particular Dates</item>
     </string-array>
+
+    <string name="title_activity_search_results">SearchResultsActivity</string>
+
 </resources>
