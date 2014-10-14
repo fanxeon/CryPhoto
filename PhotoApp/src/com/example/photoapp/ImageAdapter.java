@@ -17,7 +17,7 @@ import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter
 {
-	
+
 	private Context mContext;
 	//private int[] images;
 	private ArrayList<String> list;
@@ -108,6 +108,51 @@ public class ImageAdapter extends BaseAdapter
 		return 0;
 	}
 
+	public void replaceList(ArrayList<String> positions)
+	{
+		synchronized(list)
+		{
+			list.addAll(positions);
+		}
+	}
+
+	public void addSingleToList(String id)
+	{
+		synchronized(list)
+		{
+			list.add(id);
+		}
+	}
+
+	public void addManyToList(ArrayList<String> positions)
+	{
+		synchronized(list)
+		{
+			list.addAll(list.size() -1, positions);
+		}
+	}
+
+	public void removeManyFromList(int[] positions)
+	{
+		int i;
+		for(i=0; i < positions.length; i++)
+		{
+			synchronized(list)
+			{
+				list.remove(positions[i]);
+			}
+		}
+	}
+
+	public void removeSingle(int position)
+	{
+		//int i;
+		synchronized(list)
+		{
+			list.remove(position);
+		}
+	}
+
 	static class AsyncDrawable extends BitmapDrawable 
 	{
 		private final WeakReference<FetchFromCacheTask> FetchTaskReference;
@@ -123,51 +168,51 @@ public class ImageAdapter extends BaseAdapter
 			return FetchTaskReference.get();
 		}
 	}
-	
+
 	private static FetchFromCacheTask getBitmapWorkerTask(ImageView imageView) {
-		   
+
 		if (imageView != null) {
-		       final Drawable drawable = imageView.getDrawable();
-		       if (drawable instanceof AsyncDrawable) {
-		           final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-		           return asyncDrawable.getFetchTask();
-		       }
-		    }
-		    return null;
+			final Drawable drawable = imageView.getDrawable();
+			if (drawable instanceof AsyncDrawable) {
+				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+				return asyncDrawable.getFetchTask();
+			}
 		}
-	
+		return null;
+	}
+
 	public boolean cancelPotentialWork(String position, ImageView imageView) 
 	{
-	    final FetchFromCacheTask fetchTask = getBitmapWorkerTask(imageView);
+		final FetchFromCacheTask fetchTask = getBitmapWorkerTask(imageView);
 
-	    if (fetchTask != null) {
-	    
-	    	final String bitmapData = fetchTask.getPosition();
-	        // If bitmapData is not yet set or it differs from the new data
-	        if (bitmapData.equals("") || !(bitmapData.equals(position))) {
-	            // Cancel previous task
-	            fetchTask.cancel(true);
-	        } else {
-	            // The same work is already in progress
-	            return false;
-	        }
-	    }
-	    // No task associated with the ImageView, or an existing task was cancelled
-	    return true;
+		if (fetchTask != null) {
+
+			final String bitmapData = fetchTask.getPosition();
+			// If bitmapData is not yet set or it differs from the new data
+			if (bitmapData.equals("") || !(bitmapData.equals(position))) {
+				// Cancel previous task
+				fetchTask.cancel(true);
+			} else {
+				// The same work is already in progress
+				return false;
+			}
+		}
+		// No task associated with the ImageView, or an existing task was cancelled
+		return true;
 	}
 
 	public void loadBitmap(String position, ImageView imageView) 
 	{
-	    if (cancelPotentialWork(position, imageView)) 
-	    {
-	        final FetchFromCacheTask task = new FetchFromCacheTask(imageView,mContext,cache);
-	        BitmapDrawable drw = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.empty_photo);
-	        final AsyncDrawable asyncDrawable = new AsyncDrawable(mContext.getResources(),drw.getBitmap(),task);
-	        imageView.setImageDrawable(asyncDrawable);
-	        task.execute(position);
-	    }
+		if (cancelPotentialWork(position, imageView)) 
+		{
+			final FetchFromCacheTask task = new FetchFromCacheTask(imageView,mContext,cache);
+			BitmapDrawable drw = (BitmapDrawable) mContext.getResources().getDrawable(R.drawable.empty_photo);
+			final AsyncDrawable asyncDrawable = new AsyncDrawable(mContext.getResources(),drw.getBitmap(),task);
+			imageView.setImageDrawable(asyncDrawable);
+			task.execute(position);
+		}
 	}
-	
+
 	public static int convertDpToPixel(int dp, Context context)
 	{
 		Resources resources = context.getResources();
@@ -180,6 +225,7 @@ public class ImageAdapter extends BaseAdapter
 
 	// create a new ImageView for each item referenced by the Adapter
 	public View getView(int position, View convertView, ViewGroup parent) {
+
 		ImageView imageView;
 
 		if (convertView == null) 
@@ -191,7 +237,7 @@ public class ImageAdapter extends BaseAdapter
 			System.out.println("The value of view width and height is now " + px + "," + px);
 			imageView.setLayoutParams(new GridView.LayoutParams(px,px));
 			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-			imageView.setBackgroundColor(Color.WHITE);
+			//imageView.setBackgroundColor(Color.WHITE);
 			int pdx = convertDpToPixel(5,mContext);
 			imageView.setPadding(pdx,pdx ,pdx ,pdx );
 		} 
@@ -203,8 +249,8 @@ public class ImageAdapter extends BaseAdapter
 		//set the image resource for the image view
 		//first check whether available in the cache
 		loadBitmap(list.get(position),imageView);
-//		FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
-//		fetchtask.execute(list.get(position));
+		//		FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, mContext, cache);
+		//		fetchtask.execute(list.get(position));
 		//			boolean done = false;
 		//			while(!done)
 		//			{
