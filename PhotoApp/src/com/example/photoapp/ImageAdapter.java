@@ -21,7 +21,7 @@ public class ImageAdapter extends BaseAdapter
 	private Context mContext;
 	//private int[] images;
 	private ArrayList<String> list;
-	private ArrayList<String> templist = new ArrayList<String>();
+	private ArrayList<String> templist;
 	private ImageCache cache;
 	boolean replaced = false;
 	
