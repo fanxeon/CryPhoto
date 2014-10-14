@@ -30,7 +30,7 @@ import com.example.photoapp.R;
  */
 public class ServerManager 
 {
-	public static final String SERVER_URL_BASE = "192.168.43.184:8199";
+	public static final String SERVER_URL_BASE = "192.168.1.2:8199";
 	public static final String UPLOAD_PHOTO_PATH = "/uploadphoto";
 	public static final String DOWNLOAD_PHOTO_PATH = "/downloadphoto";
 	public static final String REMOVE_PHOTO_PATH = "/removephoto";

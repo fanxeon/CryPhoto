@@ -459,6 +459,36 @@ public class DatabaseManager
 
 		return photoBitmap;
 	}
+	
+	public boolean isSavedOnServer(String photoID)
+	{
+		boolean saved = false;
+		String saveOnServerStr = Photo.NO;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER};
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, whereStr, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{	
+			saveOnServerStr = 
+					cursor.getString(cursor
+							.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER));
+
+		}
+
+		if( saveOnServerStr.equalsIgnoreCase(Photo.YES))
+			saved = true;
+		
+		cursor.close();
+
+		return saved;
+	}
 
 	public Bitmap getGridBitmap(String photoID)
 	{

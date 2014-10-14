@@ -34,6 +34,33 @@ public class Utils
 		return threadPoolExecutor;
 	}
 	
+	private static ArrayList<Boolean> notifyIdList = null;
+	private static final boolean AVAILABLE = true;
+	private static final boolean BUSY = false;
+	
+	private static int notifyId = 1;
+	public synchronized static int generateNotifyId()
+	{
+		return notifyId++;
+	}
+//	public  synchronized static int  getNotfiyId()
+//	{
+//		if( notifyIdList == null)
+//		{
+//			notifyIdList = new ArrayList<Boolean>();
+//			for(int i=0; i < 10; i++)
+//			{
+//				notifyIdList.add(AVAILABLE);
+//			}
+//			notifyIdList.set(0, BUSY);
+//			return 0;			
+//		}
+//		return 0;
+//	}
+//	private synchronized static void releaseNotifyId(int notifyId)
+//	{
+//		
+//	}
 	public static Bitmap getBitmapFromFile(String filePath)
 	{
 //		final BitmapFactory.Options options = new BitmapFactory.Options();

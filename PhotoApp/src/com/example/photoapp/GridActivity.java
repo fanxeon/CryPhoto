@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import utils.Utils;
 
@@ -17,7 +18,9 @@ import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
 import com.example.server.Callback;
 import com.example.server.DownloadPhotoTask;
+import com.example.server.ServerManager;
 import com.example.server.SyncPhotosTask;
+import com.example.server.UploadPhotoTask;
 
 
 import android.annotation.SuppressLint;
@@ -396,7 +399,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         	switch (item.getItemId()){
 			//Should be Share and discard,
 			case R.id.action_share:
-
+				uploadPhotos();
+				mode.finish();
 				return true;
 			case R.id.action_discard:
 				discardPhotos();
@@ -407,7 +411,29 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			}
         	
         }
+        private void uploadPhotos()
+        {
+           	int numOfPhotos = actionList.size();
+        	if( numOfPhotos > 0 )
+        	{
+        		
+        		UploadPhotoMultipleSelectionWorker uploadMultiWorker = 
+        				new UploadPhotoMultipleSelectionWorker( (ArrayList<String>)actionList.clone() );
+        		
+        		uploadMultiWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), null);
+//        		if ( numOfPhotos == 1)
+//        	       	   Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
+//        		else
+//     	       	   Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
+        		actionList.clear();
 
+
+        	
+        		//imgadapter.notifyDataSetChanged();
+        	}
+        	
+        	
+        }
         private void discardPhotos()
         {
         	int numOfPhotos = actionList.size();
@@ -981,12 +1007,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					//            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
-					            						try {
-															Thread.sleep(1000);
-														} catch (InterruptedException e) {
-															// TODO Auto-generated catch block
-															e.printStackTrace();
-														}
+		            						
+					try {						
+						Thread.sleep(1000);
+						} catch (InterruptedException e) {
+								e.printStackTrace();
+						}
 					dialog.dismiss();
 				}  
 			});
@@ -1010,6 +1036,60 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	//END
 
+	private class UploadPhotoMultipleSelectionWorker extends AsyncTask<Void, Void, Void>
+	{
+		private ArrayList<String> photoIds = new ArrayList<String>();
+		//private boolean isSomePhotosAlreadySaved = false;
+		private int numPhotoAlreadySavedOnServer = 0;
+		public UploadPhotoMultipleSelectionWorker(ArrayList<String> photoIdsToUpload) 
+		{
+			photoIds = photoIdsToUpload;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			
+			for(String photoId : photoIds )
+			{
+				if( photoId != null )
+				{
+					if( !DatabaseManager.getInstance(getApplicationContext()).isSavedOnServer(photoId))
+					{
+							UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(GridActivity.this);
+							uploadPhotoTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),
+									DatabaseManager.getInstance(getApplicationContext()).getPhoto(photoId));
+					}
+					else
+					{
+						//isSomePhotosAlreadySaved = true;
+						numPhotoAlreadySavedOnServer++;
+					}
+				}
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(numPhotoAlreadySavedOnServer > 0)
+			{
+				if(numPhotoAlreadySavedOnServer == 1)
+				{
+					Toast.makeText(getApplicationContext(), "Photo already saved on server."
+							, Toast.LENGTH_SHORT).show();
+				}			
+				else if(numPhotoAlreadySavedOnServer == photoIds.size())
+					Toast.makeText(getApplicationContext(), "Photos already saved on server."
+						, Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(getApplicationContext(), "Some photos already saved on server."
+							, Toast.LENGTH_SHORT).show();
+			}
+
+		}
+		
+	}
 
 	private class DatabaseWorker extends AsyncTask<Photo, Void , Void>
 	{
