@@ -824,11 +824,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		intent.putExtra(STRING_ID, getList().get(position));
 		//intent.putStringArrayListExtra(STRING_LIST, getList());
 		//Animation
-		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
 		startActivity(intent);
 		//Animation
-		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
 	private ArrayList<String> initarray()
@@ -901,7 +898,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		else if (itemPosition == 1){ //Albums
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
-			.setIcon(R.drawable.ic_action_collection2)
+			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
 					new DialogInterface.OnClickListener() {  
 				@Override 
@@ -929,23 +926,27 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-
 			/**>>> END <<<**/
+			return true;
 
 		}
 		else if (itemPosition == 3){ // A week
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a week'", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
+			
 			/**>>> END <<<**/
+			return true;
 		}
 		else if (itemPosition == 4){ // A month
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a month'", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			/**>>> END <<<**/
+			return true;
 		}
 		return true;
+
 	}
 	/**===========================
 	 * Drop down menu listener END

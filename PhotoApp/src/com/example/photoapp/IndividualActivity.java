@@ -43,7 +43,6 @@ public class IndividualActivity extends Activity {
 		
 		String position = intent.getExtras().getString(GridActivity.STRING_ID);
 		//ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
-		
 		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
@@ -69,7 +68,8 @@ public class IndividualActivity extends Activity {
 	        final int longest = (height > width ? height : width) / 2;
 		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
 					.getPhoto(position, longest, longest);
-
+		 
+		 this.getActionBar().setTitle(photoDetails.getPhotoID());
 		 imageView.setImageBitmap(photoDetails.getBitmap());
 		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 		 
