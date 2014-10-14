@@ -50,16 +50,16 @@ public class CacheWorkerTask extends AsyncTask<String,Void,Boolean> {
 	protected Boolean doInBackground(String... params) 
 	{
 		position = params[0];
-		ArrayList<String> list = GridActivity.getList();
-		Iterator<String> itr = list.iterator();
-		
-		while(itr.hasNext())
-		{
-			String strid = itr.next();
-			ImageView imageView = null;
-			FetchFromCacheTask task = new FetchFromCacheTask(imageView, context, cache);
-			task.execute(strid);
-		}
+////
+//		Iterator<String> itr = list.iterator();
+//		
+//		while(itr.hasNext())
+//		{
+//			String strid = itr.next();
+//			ImageView imageView = null;
+//			FetchFromCacheTask task = new FetchFromCacheTask(imageView, context, cache);
+//			task.execute(strid);
+//		}
 		
 		//images = context.getResources().getIntArray(R.array.ImgRef);
 		//data = params[0];
