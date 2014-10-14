@@ -7,6 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import utils.Utils;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,8 +31,9 @@ public class DownloadPhotoTask extends AsyncTask<String, Integer, Photo>//Progre
 	private Notification.Builder nBuilder = null;
 	private NotificationManager mNotificationManager = null;
 	//Id can be change for each download or just one.<<<<<<<<<<<----------
-	int notifyID = 1;
-	
+//	int notifyID = 1;
+	int notifyID = Utils.generateNotifyId();
+
 	private Callback<Photo> callbackOnTaskFinished;
 	public void setCallbackOnTaskFinished(Callback<Photo> callbackFromActivity)
 	{

@@ -34,6 +34,33 @@ public class Utils
 		return threadPoolExecutor;
 	}
 	
+	private static ArrayList<Boolean> notifyIdList = null;
+	private static final boolean AVAILABLE = true;
+	private static final boolean BUSY = false;
+	
+	private static int notifyId = 1;
+	public synchronized static int generateNotifyId()
+	{
+		return notifyId++;
+	}
+//	public  synchronized static int  getNotfiyId()
+//	{
+//		if( notifyIdList == null)
+//		{
+//			notifyIdList = new ArrayList<Boolean>();
+//			for(int i=0; i < 10; i++)
+//			{
+//				notifyIdList.add(AVAILABLE);
+//			}
+//			notifyIdList.set(0, BUSY);
+//			return 0;			
+//		}
+//		return 0;
+//	}
+//	private synchronized static void releaseNotifyId(int notifyId)
+//	{
+//		
+//	}
 	public static Bitmap getBitmapFromFile(String filePath)
 	{
 //		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -75,6 +102,9 @@ public class Utils
 	public static void setIndividualPhotoDeleted(boolean deleted) {
 		Utils.deleted = deleted;
 	}
+	
+	public static int widthAtDp = 150;
+	public static int hieghtAtDp = 150;
 	
 	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
 			int length, int reqWidth, int reqHeight) {
@@ -211,10 +241,11 @@ public class Utils
 	public static Bitmap getGridBitmapFromByteArray(byte[] array, Context context)
 	{
 		
-		int reqWidthdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
-		int reqHeightdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
-		int reqWidth = convertDpToPixel(reqWidthdp, context);
-		int reqHeight = convertDpToPixel(reqHeightdp, context);
+		int reqWidth = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
+		int reqHeight = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
+		
+		//int reqWidth = convertDpToPixel(reqWidthdp, context);
+		//int reqHeight = convertDpToPixel(reqHeightdp, context);
 
 		//First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import utils.Utils;
 
@@ -19,7 +20,9 @@ import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
 import com.example.server.Callback;
 import com.example.server.DownloadPhotoTask;
+import com.example.server.ServerManager;
 import com.example.server.SyncPhotosTask;
+import com.example.server.UploadPhotoTask;
 
 
 import android.annotation.SuppressLint;
@@ -219,7 +222,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
 		setOverflowShowingAlways(); 
-		handleIntent(getIntent());
 		// -- new --//
 		// -- end --//
 		// Changing the action bar icon
@@ -244,6 +246,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		imgadapter = new ImageAdapter(this,cache);		
 		setList(getList(this.getFragmentManager()));
 		gridview.setAdapter(imgadapter);
+		
+		handleIntent(getIntent());
+
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
 		
@@ -351,73 +356,114 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 
 
+        
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+        	MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context, menu);
+//			return true;
+            mode.setTitle("Select Items");
+            mode.setSubtitle("One item selected");
+            return true;
+
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
+
+        	//actionList.clear();
+        	 int selectCount = gridview.getCheckedItemCount();
+        	 //gridview.getItemAtPosition(gridview.getCheckedItemPosition());
+             switch (selectCount) {
+             case 1:
+                 mode.setSubtitle("One item selected");
+
+                 break;
+             default:
+                 mode.setSubtitle("" + selectCount + " items selected");
+
+                 break;
+             }
+             
+//            SparseBooleanArray sparseBooleanArray = gridview.getCheckedItemPositions();
+//            for (int i = 0;  i < sparseBooleanArray.size(); i++)
+//            {
+//            	if( sparseBooleanArray.get(i) == true)
+//            	{
+//            		String id = getList().get(i);
+//            		actionList.add(id);
+//            	}
+//            }
+       	   //Toast.makeText(getApplicationContext(), "action list after = " + actionList.get(0), Toast.LENGTH_SHORT).show();
+        	switch (item.getItemId()){
+			//Should be Share and discard,
+			case R.id.action_share:
+				uploadPhotos();
+				mode.finish();
+				return true;
+			case R.id.action_discard:
+				discardPhotos();
+				mode.finish();
+				return true;
+			default:
+				return false;
+			}
+        }
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				// TODO Auto-generated method stub
 				return false;
 			}
+        	
+        
+        private void uploadPhotos()
+        {
+           	int numOfPhotos = actionList.size();
+        	if( numOfPhotos > 0 )
+        	{
+        		
+        		UploadPhotoMultipleSelectionWorker uploadMultiWorker = 
+        				new UploadPhotoMultipleSelectionWorker( (ArrayList<String>)actionList.clone() );
+        		
+        		uploadMultiWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), null);
+//        		if ( numOfPhotos == 1)
+//        	       	   Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
+//        		else
+//     	       	   Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
+        		actionList.clear();
 
-			@Override
-			public void onDestroyActionMode(ActionMode mode) {
+
+        	
+        		//imgadapter.notifyDataSetChanged();
+        	}
+        	
+        	
+        }
+         
+        @Override
+			
+        public void onDestroyActionMode(ActionMode mode) {
 				// TODO Auto-generated method stub
 
 			}
 
-			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				// TODO Auto-generated method stub
+//			@Override
+//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//				// TODO Auto-generated method stub
+//
+//				MenuInflater inflater = mode.getMenuInflater();
+//				inflater.inflate(R.menu.context, menu);
+//				//			return true;
+//				mode.setTitle("Select Items");
+//				mode.setSubtitle("One item selected");
+//				return true;
+//
+//			}
 
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.context, menu);
-				//			return true;
-				mode.setTitle("Select Items");
-				mode.setSubtitle("One item selected");
-				return true;
-
-			}
-
-			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				// TODO Auto-generated method stub
-
-				//actionList.clear();
-				int selectCount = gridview.getCheckedItemCount();
-				//gridview.getItemAtPosition(gridview.getCheckedItemPosition());
-				switch (selectCount) {
-				case 1:
-					mode.setSubtitle("One item selected");
-
-					break;
-				default:
-					mode.setSubtitle("" + selectCount + " items selected");
-
-					break;
-				}
-
-				//            SparseBooleanArray sparseBooleanArray = gridview.getCheckedItemPositions();
-				//            for (int i = 0;  i < sparseBooleanArray.size(); i++)
-				//            {
-				//            	if( sparseBooleanArray.get(i) == true)
-				//            	{
-				//            		String id = getList().get(i);
-				//            		actionList.add(id);
-				//            	}
-				//            }
-				//Toast.makeText(getApplicationContext(), "action list after = " + actionList.get(0), Toast.LENGTH_SHORT).show();
-				switch (item.getItemId()){
-				//Should be Share and discard,
-				case R.id.action_share:
-
-					return true;
-				case R.id.action_discard:
-					discardPhotos();
-					mode.finish();
-					return true;
-				default:
-					return false;
-				}
-
-			}
 
 			private void discardPhotos()
 			{
@@ -497,10 +543,34 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			search();
 			finish();
-			mSearchQuery = null;
+			//mSearchQuery = null;
 		}
 	}
+	private ArrayList<String> idsForSearchResults = new ArrayList<String>();
+    private void search()
+    {
+    	idsForSearchResults.clear();
+    	ArrayList<Photo> photos = DatabaseManager
+    			.getInstance(getApplicationContext()).getPhotosDescriptions();
+    	String keywords = mSearchQuery;
+    	
+        for (Photo photo : photos)
+        {
+            if (!keywords.equals("") && photo.getDescription()!=null
+                && (photo.getDescription().toLowerCase().contains(keywords.toLowerCase()))
+                ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
+            {
+            	idsForSearchResults.add( photo.getPhotoID() ); 
+            	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
+            } 
+        }
+        imgadapter.replaceList(idsForSearchResults);
+        update();
+
+    }
+	
 
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
@@ -1028,6 +1098,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					//            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
+
+		            						
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -1057,6 +1129,60 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	//END
 
+	private class UploadPhotoMultipleSelectionWorker extends AsyncTask<Void, Void, Void>
+	{
+		private ArrayList<String> photoIds = new ArrayList<String>();
+		//private boolean isSomePhotosAlreadySaved = false;
+		private int numPhotoAlreadySavedOnServer = 0;
+		public UploadPhotoMultipleSelectionWorker(ArrayList<String> photoIdsToUpload) 
+		{
+			photoIds = photoIdsToUpload;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			
+			for(String photoId : photoIds )
+			{
+				if( photoId != null )
+				{
+					if( !DatabaseManager.getInstance(getApplicationContext()).isSavedOnServer(photoId))
+					{
+							UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(GridActivity.this);
+							uploadPhotoTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),
+									DatabaseManager.getInstance(getApplicationContext()).getPhoto(photoId));
+					}
+					else
+					{
+						//isSomePhotosAlreadySaved = true;
+						numPhotoAlreadySavedOnServer++;
+					}
+				}
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(numPhotoAlreadySavedOnServer > 0)
+			{
+				if(numPhotoAlreadySavedOnServer == 1)
+				{
+					Toast.makeText(getApplicationContext(), "Photo already saved on server."
+							, Toast.LENGTH_SHORT).show();
+				}			
+				else if(numPhotoAlreadySavedOnServer == photoIds.size())
+					Toast.makeText(getApplicationContext(), "Photos already saved on server."
+						, Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(getApplicationContext(), "Some photos already saved on server."
+							, Toast.LENGTH_SHORT).show();
+			}
+
+		}
+		
+	}
 
 	private class DatabaseWorker extends AsyncTask<Photo, Void , Void>
 	{
@@ -1068,7 +1194,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		protected Void doInBackground(Photo... newPhoto) 
 		{
 			//super(newPhoto);
-			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 75);
+			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 50);
 
 
 			return null;

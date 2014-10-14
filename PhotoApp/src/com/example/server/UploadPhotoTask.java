@@ -12,6 +12,9 @@ import java.text.RuleBasedCollator;
 
 import org.json.JSONObject;
 
+import utils.Utils;
+
+import com.example.database.DatabaseManager;
 import com.example.photo.Photo;
 import com.example.photoapp.R;
 
@@ -31,8 +34,8 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
 	private Notification.Builder nBuilder = null;
 	private NotificationManager mNotificationManager = null;
 	//Id can be change for each download or just one.<<<<<<<<<<<----------
-	int notifyID = 2;
-	
+	int notifyID = Utils.generateNotifyId();
+	//was 2
 	//boolean isOk = true;
 	
 	public UploadPhotoTask(Activity act)
@@ -50,6 +53,7 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
 		.setContentText("Upload in progress")
 		.setSmallIcon(R.drawable.ic_action_upload);
 	
+		
 		mNotificationManager =
 				(NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
 		// mId allows you to update the notification later on.
@@ -154,8 +158,10 @@ public class UploadPhotoTask extends AsyncTask<Photo, Integer, Boolean>//Progres
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-		
+		if(!photo[0].isUploadedToServer())
+			DatabaseManager.getInstance(activity.getApplicationContext()).updateSavedOnServer(photoId, true);
 		return true;
 	}
 	

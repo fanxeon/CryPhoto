@@ -47,39 +47,39 @@ public class DatabaseManager
 		return instance;
 	}
 
-	public long addPhoto(Photo newPhoto)
-	{
-		ContentValues values = new ContentValues();
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
-		//values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION, newPhoto.getDescription());
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM, newPhoto.getAlbum());
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, newPhoto.isUploadedToServerAsYesNO());
-
-		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
-		//Is JPEG a good idea? since it is its compression reduces the data size?????
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
-
-		if(newPhoto.getGridBitmap() != null )
-		{
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
-			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
-		}
-		else
-		{
-
-		}
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
-		db.close();
-
-		return rowID;
-
-	}
-	public long addPhoto(Photo newPhoto, int quality)
+//	public long addPhoto(Photo newPhoto)
+//	{
+//		ContentValues values = new ContentValues();
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
+//		//values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION, newPhoto.getDescription());
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM, newPhoto.getAlbum());
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, newPhoto.isUploadedToServerAsYesNO());
+//
+//		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
+//		//Is JPEG a good idea? since it is its compression reduces the data size?????
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+//		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
+//
+//		if(newPhoto.getGridBitmap() != null )
+//		{
+//			ByteArrayOutputStream os = new ByteArrayOutputStream();
+//			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 80, os);
+//			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
+//		}
+//		else
+//		{
+//
+//		}
+//		SQLiteDatabase db = dbHelper.getWritableDatabase();
+//		long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
+//		db.close();
+//
+//		return rowID;
+//
+//	}
+	public synchronized long addPhoto(Photo newPhoto, int quality)
 	{
 		ContentValues values = new ContentValues();
 		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
@@ -97,11 +97,14 @@ public class DatabaseManager
 		if(newPhoto.getGridBitmap() != null )
 		{
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
+			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, quality, os);
 			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
 		}
 		else
 		{
+//			byte[] data = outputStream.toByteArray();
+//			Bitmap bm = Utils.decodeSampledBitmapFromByteArray(data, 0, data.length, Utils.widthAtDp, Utils.hieghtAtDp);
+			
 
 		}
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -374,31 +377,36 @@ public class DatabaseManager
 
 		return photoIDs;
 	}
-//	public ArrayList<Photo> getPhotosDescription()
-//	{
-//		ArrayList<Photo> photoIDs = new ArrayList<Photo>();
-//
-//		SQLiteDatabase db = dbHelper.getReadableDatabase();	
-//		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_ID
-//				, PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION};
-//
-//		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
-//				projection, null, null,
-//				null, null, null, null, null);
-//
-//		if ( cursor.moveToFirst() )
-//		{
-//			do
-//			{
-//				photoIDs.add( cursor.getString( cursor
-//						.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_ID) ) );
-//			}
-//			while(cursor.moveToNext());
-//
-//		}
-//
-//		return photoIDs;
-//	}
+	public ArrayList<Photo> getPhotosDescriptions()
+	{
+		ArrayList<Photo> photosDescriptions = new ArrayList<Photo>();
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();	
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_ID
+				, PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION};
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, null, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{
+			do
+			{
+				Photo photo = new Photo();
+				photo.setPhotoID(cursor.getString( cursor
+						.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_ID)));
+				photo.setDescription(cursor.getString( cursor
+						.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION)));
+				
+				photosDescriptions.add( photo );
+			}
+			while(cursor.moveToNext());
+
+		}
+
+		return photosDescriptions;
+	}
 
 	//This method will be called by cache object.
 	public Bitmap getBitmap(String photoID, int reqWidth, int reqHeight)
@@ -458,6 +466,36 @@ public class DatabaseManager
 
 
 		return photoBitmap;
+	}
+	
+	public boolean isSavedOnServer(String photoID)
+	{
+		boolean saved = false;
+		String saveOnServerStr = Photo.NO;
+		//This where statement for select command
+		String whereStr = PhotoViewerDatabaseOpenHelper.COLUMN_ID + " = '" + photoID + "'";
+
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		String[] projection = { PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER};
+
+		Cursor cursor = db.query(true, PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME,
+				projection, whereStr, null,
+				null, null, null, null, null);
+
+		if ( cursor.moveToFirst() )
+		{	
+			saveOnServerStr = 
+					cursor.getString(cursor
+							.getColumnIndex(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER));
+
+		}
+
+		if( saveOnServerStr.equalsIgnoreCase(Photo.YES))
+			saved = true;
+		
+		cursor.close();
+
+		return saved;
 	}
 
 	public Bitmap getGridBitmap(String photoID)
