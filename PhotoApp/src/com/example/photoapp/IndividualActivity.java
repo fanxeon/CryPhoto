@@ -46,7 +46,7 @@ public class IndividualActivity extends Activity {
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
 	     imageView.setBackgroundColor(Color.BLACK);
 	     //Overflow fix
-	     setOverflowShowingAlways();
+//	     setOverflowShowingAlways();
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);

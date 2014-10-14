@@ -1110,7 +1110,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		protected Void doInBackground(Photo... newPhoto) 
 		{
 			//super(newPhoto);
-			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 75);
+			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 50);
 
 
 			return null;

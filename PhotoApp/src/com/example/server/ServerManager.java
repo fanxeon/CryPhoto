@@ -30,7 +30,7 @@ import com.example.photoapp.R;
  */
 public class ServerManager 
 {
-	public static final String SERVER_URL_BASE = "192.168.1.2:8199";
+	public static final String SERVER_URL_BASE = "192.168.43.184:8199";
 	public static final String UPLOAD_PHOTO_PATH = "/uploadphoto";
 	public static final String DOWNLOAD_PHOTO_PATH = "/downloadphoto";
 	public static final String REMOVE_PHOTO_PATH = "/removephoto";
@@ -118,6 +118,10 @@ public class ServerManager
 		    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		    photo.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
 			msg.put(Photo.BITMAP_DATA, Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT));
+//			//new grid bitmap
+//			ByteArrayOutputStream os = new ByteArrayOutputStream();
+//			photo.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, 100, os);
+//			msg.put(Photo.GRID_BITMAP_DATA, Base64.encodeToString( os.toByteArray(), Base64.DEFAULT));
 
 			msg.put(Photo.PHOTO_ID, photo.getPhotoID());
 			msg.put(Photo.DESCRIPTION, photo.getDescription());
@@ -132,7 +136,41 @@ public class ServerManager
 		
 		return msg.toString();
 	}
+    //Get photo details from json msg
+ 	public Photo getPhotoFromJsonMsg(String jsonMsg)
+ 	{
+ 		//Log.v("DownloadPhotoTask", "Strinig: " + jsonMsg);
 
+ 		Photo photo = new Photo();
+ 		JSONObject json = null;
+ 		try 
+ 		{
+ 			json = new JSONObject(jsonMsg);
+ 			//Log.v("server manager", json.getString(Photo.BITMAP_DATA));
+ 			byte[] data = Base64.decode(json.getString(Photo.BITMAP_DATA), Base64.DEFAULT);
+ 		    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+ 		    
+// 		    byte[] gridData = Base64.decode(json.getString(Photo.GRID_BITMAP_DATA), Base64.DEFAULT);
+// 		    photo.setGridBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
+
+ 		    photo.setGridBitmap(Utils.getGridBitmapFromByteArray(data, context));
+ 		    
+ 			photo.setPhotoID(json.getString(Photo.PHOTO_ID));
+ 			photo.setDescription((json.getString(Photo.DESCRIPTION)));
+ 			photo.setAlbum(json.getString(Photo.ALBUM));
+ 			photo.setUploadedToServer(true);
+ 			
+
+ 		} 
+ 		catch (JSONException e) 
+ 		{
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+ 		
+ 		return photo;
+ 	}
+ 	
     //this method get photo ids from DB, put photo ids in json msg to be sent to server.
     public synchronized String getPhotoIdsAsJsonMsg()
     {
@@ -200,37 +238,6 @@ public class ServerManager
     	return missingPhotoIds;
     }
     
-    //Get photo details from json msg
-	public Photo getPhotoFromJsonMsg(String jsonMsg)
-	{
-		//Log.v("DownloadPhotoTask", "Strinig: " + jsonMsg);
-
-		Photo photo = new Photo();
-		JSONObject json = null;
-		try 
-		{
-			json = new JSONObject(jsonMsg);
-			//Log.v("server manager", json.getString(Photo.BITMAP_DATA));
-			byte[] data = Base64.decode(json.getString(Photo.BITMAP_DATA), Base64.DEFAULT);
-		    photo.setBitmap( BitmapFactory.decodeByteArray(data, 0, data.length) );	
-
-		    photo.setGridBitmap(Utils.getGridBitmapFromByteArray(data, context));
-		    
-			photo.setPhotoID(json.getString(Photo.PHOTO_ID));
-			photo.setDescription((json.getString(Photo.DESCRIPTION)));
-			photo.setAlbum(json.getString(Photo.ALBUM));
-			photo.setUploadedToServer(true);
-			
-
-		} 
-		catch (JSONException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return photo;
-	}
-	
+ 
 
 }

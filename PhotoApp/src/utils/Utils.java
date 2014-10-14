@@ -103,6 +103,9 @@ public class Utils
 		Utils.deleted = deleted;
 	}
 	
+	public static int widthAtDp = 150;
+	public static int hieghtAtDp = 150;
+	
 	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
 			int length, int reqWidth, int reqHeight) {
 
@@ -238,10 +241,11 @@ public class Utils
 	public static Bitmap getGridBitmapFromByteArray(byte[] array, Context context)
 	{
 		
-		int reqWidthdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
-		int reqHeightdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
-		int reqWidth = convertDpToPixel(reqWidthdp, context);
-		int reqHeight = convertDpToPixel(reqHeightdp, context);
+		int reqWidth = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
+		int reqHeight = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
+		
+		//int reqWidth = convertDpToPixel(reqWidthdp, context);
+		//int reqHeight = convertDpToPixel(reqHeightdp, context);
 
 		//First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
