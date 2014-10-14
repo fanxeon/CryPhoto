@@ -35,6 +35,7 @@ public class AppStart extends Activity {
 	            	intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 	            	startActivity(intent);
 	            	overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
+	            	finish();
 	            }
 	            @Override
 	            public void onAnimationRepeat(Animation animation) {}

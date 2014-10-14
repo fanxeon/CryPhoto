@@ -99,7 +99,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private String descriptionStr = null;
 	int indx = 0;
 	Bitmap gridBitmap = null;
-	ArrayList<String> albumList ;
+	ArrayList<String> albumList = null;
+	String[] albumStringList = null;
 	AlertDialog.Builder albumDialog;
 	Bitmap individualBitmap = null;
 	// Date picker
@@ -622,6 +623,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 		builder.create().show();  
 		//int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
+	}
+	//Get Album List
+	private void get_album(){
+		albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+		albumStringList = albumList.toArray(new String[albumList.size()]);
 	}
 
 	private void openSync()
