@@ -21,15 +21,18 @@ public class ImageAdapter extends BaseAdapter
 	private Context mContext;
 	//private int[] images;
 	private ArrayList<String> list;
+	private ArrayList<String> templist = new ArrayList<String>();
 	private ImageCache cache;
-	private int reqWidth = 300;
-	private int reqHeight = 300;
+	boolean replaced = false;
+	
+//	private int reqWidth = 300;
+//	private int reqHeight = 300;
 
 	// Constructor
 	public ImageAdapter(Context c, ImageCache cache) {
 		mContext = c;
 		//images = GridActivity.images;
-		list = GridActivity.getList();
+		//list = GridActivity.getList();
 		//initarray();
 		this.cache = cache;
 		System.out.println("Just got an instance of the Image Cache");
@@ -37,45 +40,18 @@ public class ImageAdapter extends BaseAdapter
 	}
 
 	//working properly
-	private void putincache()
-	{
-		System.out.println("Attempting to add stuff to cache");
-		int i;
-		for(i=0; i < list.size(); i++)
-		{
-			//Integer pos = Integer.valueOf(list.get(i));
-			//FetchFromCacheTask fttask = new FetchFromCacheTask();
-			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
-			task.execute(list.get(i));
-			boolean done = false;
-			//boolean interrupted = false;
-			//			while(!done)
-			//			{
-			//				try
-			//				{
-			//					boolean b = task.get();
-			//					if(b)
-			//					{
-			//						done = true;
-			//					}
-			//					else
-			//					{
-			//						done = true;
-			//					}
-			//				}
-			//				catch(InterruptedException in)
-			//				{
-			//					//interrupted = false;
-			//					done = false;
-			//				}
-			//				catch(ExecutionException e)
-			//				{
-			//					done = true;
-			//					System.out.println("Encountered an executopn exception");
-			//				}
-			//			}
-		}
-	}
+//	private void putincache()
+//	{
+//		System.out.println("Attempting to add stuff to cache");
+//		int i;
+//		for(i=0; i < list.size(); i++)
+//		{
+//			//Integer pos = Integer.valueOf(list.get(i));
+//			//FetchFromCacheTask fttask = new FetchFromCacheTask();
+//			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
+//			task.execute(list.get(i));
+//		}
+//	}
 
 	//	   private void initarray()
 	//	   {
@@ -95,26 +71,51 @@ public class ImageAdapter extends BaseAdapter
 	//				   };
 	//		   this.images = images;
 	//	   }
+	
+	public ArrayList<String> getList()
+	{
+		return list;
+	}
+	
+	public void setList(ArrayList<String> array)
+	{
+		list = array;
+	}
 
 	public int getCount() {
 		return list.size();
 	}
 
 	public Object getItem(int position) {
-		return null;
+		return list.get(position);
 	}
 
 	public long getItemId(int position) {
 		return 0;
 	}
+	
+	public void getAllList()
+	{
+		if (replaced)
+		{
+			list = templist;
+		}
+	}
+	
+	public void UpdateGridView()
+	{
+		this.notifyDataSetChanged();
+	}
 
 	public void replaceList(ArrayList<String> positions)
 	{
+		templist = (ArrayList<String>) list.clone(); //save the values in the array list
 		synchronized(list)
 		{
 			list.clear();
 			list.addAll(positions);
 		}
+		replaced = true;
 	}
 
 	public void addSingleToList(String id)

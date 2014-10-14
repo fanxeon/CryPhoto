@@ -14,6 +14,7 @@ import utils.Utils;
 import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 import com.example.photoapp.R;
+import com.example.photoapp.ImageCache.RetainFragment;
 import com.example.database.SpinnerNavItem;
 import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
@@ -32,6 +33,7 @@ import android.app.ActivityManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -79,6 +81,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
+	private static final String TAG = "ListTag";
 	GridView gridview;
 	protected ImageAdapter imgadapter;
 	//private static ArrayList<String> list;
@@ -102,7 +105,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private String descriptionStr = null;
 	int indx = 0;
 	Bitmap gridBitmap = null;
-	ArrayList<String> albumList ;
+	ArrayList<String> albumList = null;
+	String[] albumStringList = null;
 	AlertDialog.Builder albumDialog;
 	Bitmap individualBitmap = null;
 	// Date picker
@@ -113,7 +117,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private static String mEndDate = "";
 	// Search String
 	private static String mSearchQuery = null;
-	
+
 	public static void getActivityManager(Context context)
 	{
 		ActivityManager result = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -164,7 +168,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			Utils.setIndividualPhotoDeleted(false);
 		}
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();  // Always call the superclass method first
@@ -192,11 +196,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		//processExtraData();
 
+		final AdapterListFragment mfragment = findOrCreateListFragment(getFragmentManager());
+
 		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
 
-		//this will set up an array with references to images which will be used by the adapter later
-		initarray(); //this will retrieve string IDs from the database manager
 		System.out.println("Just initialized the array of string ids");
 
 		//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
@@ -218,7 +222,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
 		setOverflowShowingAlways(); 
-		handleIntent(getIntent());
 		// -- new --//
 		// -- end --//
 		// Changing the action bar icon
@@ -240,8 +243,15 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setDrawSelectorOnTop(true);
 		//gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
-		imgadapter = new ImageAdapter(this,cache);
+		imgadapter = new ImageAdapter(this,cache);		
+		setList(getList(this.getFragmentManager()));
 		gridview.setAdapter(imgadapter);
+		
+		handleIntent(getIntent());
+
+		//this will set up an array with references to images which will be used by the adapter later
+		//initarray(); //this will retrieve string IDs from the database manager
+		
 		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
@@ -249,7 +259,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				//Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
-				gridview.setSelection(position);
+				//gridview.setSelection(position);
 				Indiview(v,position);
 			}
 		});
@@ -272,91 +282,81 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
-//			private int numOfItemsSelected = 0;
-//			@Override
-//			public void onItemCheckedStateChanged(ActionMode mode, int position,
-//					long id, boolean checked) {
-//				// Here you can do something when items are selected/de-selected,
-//				// such as update the title in the CAB
-//				if(checked)
-//				{
-//					numOfItemsSelected++;
-//					//change the color
-//					//imgadapter.getView(position, null, get);
-//
-//
-//				}	
-//				else
-//				{
-//					numOfItemsSelected--;
-//				}
-//				if( numOfItemsSelected <= 1)
-//				{
-//					mode.setTitle(numOfItemsSelected + " Item Selected");
-//				}
-//				else
-//				{
-//					mode.setTitle(numOfItemsSelected + " Items Selected");
-//				}
-//
-//
-//
-//			}
-//
-//			@Override
-//			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//				// Respond to clicks on the actions in the CAB
-//				switch (item.getItemId()){
-//				//Should be Share and discard,
-//				case R.id.action_share:
-//
-//					return true;
-//				case R.id.action_discard:
-//					//Developing
-//					int IDD = item.getItemId();
-//					//String IDDDD = String.valueOf(IDD);
-//					//discard(IDDDD);
-//					return true;
-//				default:
-//					return false;
-//				}
-//			}
-//
-//			@Override
-//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//				// Inflate the menu for the CAB
-//				MenuInflater inflater = mode.getMenuInflater();
-//				inflater.inflate(R.menu.context, menu);
-//				return true;
-//			}
-//
-//			@Override
-//			public void onDestroyActionMode(ActionMode mode) {
-//				// Here you can make any necessary updates to the activity when
-//				// the CAB is removed. By default, selected items are deselected/unchecked.
-//			}
-//
-//			@Override
-//			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//				// Here you can perform updates to the CAB due to
-//				// an invalidate() request
-//				return false;
-//			}
-//		});
-		
+			//			private int numOfItemsSelected = 0;
+			//			@Override
+			//			public void onItemCheckedStateChanged(ActionMode mode, int position,
+			//					long id, boolean checked) {
+			//				// Here you can do something when items are selected/de-selected,
+			//				// such as update the title in the CAB
+			//				if(checked)
+			//				{
+			//					numOfItemsSelected++;
+			//					//change the color
+			//					//imgadapter.getView(position, null, get);
+			//
+			//
+			//				}	
+			//				else
+			//				{
+			//					numOfItemsSelected--;
+			//				}
+			//				if( numOfItemsSelected <= 1)
+			//				{
+			//					mode.setTitle(numOfItemsSelected + " Item Selected");
+			//				}
+			//				else
+			//				{
+			//					mode.setTitle(numOfItemsSelected + " Items Selected");
+			//				}
+			//
+			//
+			//
+			//			}
+			//
+			//			@Override
+			//			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			//				// Respond to clicks on the actions in the CAB
+			//				switch (item.getItemId()){
+			//				//Should be Share and discard,
+			//				case R.id.action_share:
+			//
+			//					return true;
+			//				case R.id.action_discard:
+			//					//Developing
+			//					int IDD = item.getItemId();
+			//					//String IDDDD = String.valueOf(IDD);
+			//					//discard(IDDDD);
+			//					return true;
+			//				default:
+			//					return false;
+			//				}
+			//			}
+			//
+			//			@Override
+			//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			//				// Inflate the menu for the CAB
+			//				MenuInflater inflater = mode.getMenuInflater();
+			//				inflater.inflate(R.menu.context, menu);
+			//				return true;
+			//			}
+			//
+			//			@Override
+			//			public void onDestroyActionMode(ActionMode mode) {
+			//				// Here you can make any necessary updates to the activity when
+			//				// the CAB is removed. By default, selected items are deselected/unchecked.
+			//			}
+			//
+			//			@Override
+			//			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			//				// Here you can perform updates to the CAB due to
+			//				// an invalidate() request
+			//				return false;
+			//			}
+			//		});
 
-			
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // TODO Auto-generated method stub
-            return false;
-        }
 
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            // TODO Auto-generated method stub
 
-        }
+        
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -412,8 +412,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			default:
 				return false;
 			}
-        	
         }
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+        	
+        
         private void uploadPhotos()
         {
            	int numOfPhotos = actionList.size();
@@ -437,62 +443,100 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
         	
         	
         }
-        private void discardPhotos()
-        {
-        	int numOfPhotos = actionList.size();
-        	if( numOfPhotos > 0 )
-        	{
-        		getList().removeAll(actionList);
-        		DatabaseManager.getInstance(getApplicationContext()).deletePhotos(actionList);
-        		actionList.clear();
-        		if ( numOfPhotos == 1)
-        	       	   Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
-        		else
-     	       	   Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
-
-
-        	
-        		//imgadapter.notifyDataSetChanged();
-        	}
-        
-        }
-//        ImageView im ;
+         
         @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position,
-                long id, boolean checked) {
-            // TODO Auto-generated method stub
+			
+        public void onDestroyActionMode(ActionMode mode) {
+				// TODO Auto-generated method stub
+
+			}
+
+//			@Override
+//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//				// TODO Auto-generated method stub
+//
+//				MenuInflater inflater = mode.getMenuInflater();
+//				inflater.inflate(R.menu.context, menu);
+//				//			return true;
+//				mode.setTitle("Select Items");
+//				mode.setSubtitle("One item selected");
+//				return true;
+//
+//			}
 
 
-       	    //Toast.makeText(getApplicationContext(), position + "checked: " + checked, Toast.LENGTH_SHORT).show();
-//   	    	im = (ImageView) gridview.getChildAt(position); 
-       	    if(checked)
-       	    {
-       	    	actionList.add(getList().get(position));
-                //Toast.makeText(getApplicationContext(), "Added = " + actionList.get(actionList.size()-1), Toast.LENGTH_SHORT).show();
+			private void discardPhotos()
+			{
+				int numOfPhotos = actionList.size();
+				if( numOfPhotos > 0 )
+				{
+					getList().removeAll(actionList);
+					DatabaseManager.getInstance(getApplicationContext()).deletePhotos(actionList);
+					actionList.clear();
+					if ( numOfPhotos == 1)
+						Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
+					else
+						Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
 
-       	    }
-       	    else
-       	    {
-       	    	actionList.remove(getList().get(position));
-                //Toast.makeText(getApplicationContext(), "removed = " + actionList.size(), Toast.LENGTH_SHORT).show();
-      	    }       	    	
-       	    
-       	    
-            int selectCount = gridview.getCheckedItemCount();
-            switch (selectCount) {
-            case 1:
-                mode.setSubtitle("One item selected");
-                break;
-            default:
-                mode.setSubtitle("" + selectCount + " items selected");
-                break;
-            }
 
-        }
-    });
 
+					//imgadapter.notifyDataSetChanged();
+				}
+
+			}
+			//        ImageView im ;
+			@Override
+			public void onItemCheckedStateChanged(ActionMode mode, int position,
+					long id, boolean checked) {
+				// TODO Auto-generated method stub
+
+
+				//Toast.makeText(getApplicationContext(), position + "checked: " + checked, Toast.LENGTH_SHORT).show();
+				//   	    	im = (ImageView) gridview.getChildAt(position); 
+				if(checked)
+				{
+					actionList.add(getList().get(position));
+					//Toast.makeText(getApplicationContext(), "Added = " + actionList.get(actionList.size()-1), Toast.LENGTH_SHORT).show();
+
+				}
+				else
+				{
+					actionList.remove(getList().get(position));
+					//Toast.makeText(getApplicationContext(), "removed = " + actionList.size(), Toast.LENGTH_SHORT).show();
+				}       	    	
+
+
+				int selectCount = gridview.getCheckedItemCount();
+				switch (selectCount) {
+				case 1:
+					mode.setSubtitle("One item selected");
+					break;
+				default:
+					mode.setSubtitle("" + selectCount + " items selected");
+					break;
+				}
+
+			}
+		});
 
 	}
+
+	private static AdapterListFragment findOrCreateListFragment(
+			FragmentManager fm) {
+		// TODO Auto-generated method stub
+		//BEGIN_INCLUDE(find_create_retain_fragment)
+		// Check to see if we have retained the worker fragment.
+		AdapterListFragment mFragment = (AdapterListFragment) fm.findFragmentByTag(TAG);
+
+		// If not retained (or first time running), we need to create and add it.
+		if (mFragment == null) {
+			mFragment = new AdapterListFragment();
+			fm.beginTransaction().add(mFragment, TAG).commitAllowingStateLoss();
+		}
+		//END_INCLUDE(find_create_retain_fragment)
+		return mFragment;
+	}
+
 	//For SEARCH SEARCH SEARCH
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -519,6 +563,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                 ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
             {
             	idsForSearchResults.add( photo.getPhotoID() ); 
+            	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
             } 
         }
         imgadapter.replaceList(idsForSearchResults);
@@ -526,6 +571,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
     }
 	
+
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
@@ -551,7 +597,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	}
 
 	ArrayList<String> actionList = new ArrayList<String>();
-	
+
 	class MyActionModeCallback implements ActionMode.Callback{
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -671,6 +717,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		builder.create().show();  
 		//int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
 	}
+	//Get Album List
+	private void get_album(){
+		albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+		albumStringList = albumList.toArray(new String[albumList.size()]);
+	}
 
 	private void openSync()
 	{
@@ -774,16 +825,16 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//intent.putStringArrayListExtra(STRING_LIST, getList());
 		//Animation
 		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-		
+
 		startActivity(intent);
 		//Animation
 		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
-	private void initarray()
+	private ArrayList<String> initarray()
 	{
 		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
-		setList(db.getPhotoIDs());		
+		return db.getPhotoIDs();		
 		//		   this.images = getResources().getIntArray(R.array.ImgRef);
 		//		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
 		//				      R.drawable.img3, R.drawable.img1,
@@ -802,19 +853,24 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	}
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 
-	public static ArrayList<String> getList() {
-		return Utils.list;
+	public ArrayList<String> getList() {
+		return imgadapter.getList();
 	}
 
-	public static void setList(ArrayList<String> list) {
-		Utils.list = list;
-	}
+//	public static ArrayList<String> staticGetList()
+//	{
+//		return list;
+//	}
 	
+	public void setList(ArrayList<String> list) {
+		imgadapter.setList(list);;
+	}
+
 	public void update()
 	{
 		imgadapter.notifyDataSetChanged();
 	}
-	
+
 	// Dealing with Samsung phones menu problem
 	private void setOverflowShowingAlways() {  
 		try {  
@@ -825,7 +881,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		} catch (Exception e) {  
 			e.printStackTrace();  
 		}  
-	}  
+	}
+
 	/**=======================
 	 * Drop down menu listener
 	 * =======================
@@ -834,11 +891,13 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		AlertDialog.Builder albumListDialog = new AlertDialog.Builder(this);
 		AlertDialog.Builder timesDialog = new AlertDialog.Builder(this);
+
 		if (itemPosition == 0){ // All
-
+			imgadapter.getAllList();
+			imgadapter.UpdateGridView();
 			return true;
-
 		}
+
 		else if (itemPosition == 1){ //Albums
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
@@ -850,7 +909,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					/**>>> Add Methods to respond selecting albums <<<**/
 
 					Toast.makeText(getApplicationContext(), "User select an '" + albumList.get(which)+ "' Album", Toast.LENGTH_SHORT).show();
-					update();//Delete it when methods add
+					imgadapter.replaceList(DatabaseManager.getInstance(getApplicationContext()).getPhotoIdsForAlbum(albumList.get(which)));
+					imgadapter.UpdateGridView();//Delete it when methods add
 
 					/**>>> END <<<**/
 					dialog.dismiss();
@@ -1007,43 +1067,45 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					DatabaseWorker dbWorker = new DatabaseWorker();
 					dbWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhoto);						
 
-//					boolean done = false;
-//					while(!done)
-//					{
-//						try
-//						{
-//							Boolean b = cacheTask.get();
-//							done = true;
-//						}
-//						catch(InterruptedException in)
-//						{
-//							//interrupted = false;
-//							done = false;
-//						}
-//						catch(ExecutionException e)
-//						{
-//							done = true;
-//							System.out.println("Encountered an executopn exception");
-//						}
-//						catch(Exception e)
-//						{
-//							done = true;
-//							System.out.println("Encountered an exception");
-//						}
-//					}
+					//					boolean done = false;
+					//					while(!done)
+					//					{
+					//						try
+					//						{
+					//							Boolean b = cacheTask.get();
+					//							done = true;
+					//						}
+					//						catch(InterruptedException in)
+					//						{
+					//							//interrupted = false;
+					//							done = false;
+					//						}
+					//						catch(ExecutionException e)
+					//						{
+					//							done = true;
+					//							System.out.println("Encountered an executopn exception");
+					//						}
+					//						catch(Exception e)
+					//						{
+					//							done = true;
+					//							System.out.println("Encountered an exception");
+					//						}
+					//					}
 
-//					imgadapter.notifyDataSetChanged();
+					//					imgadapter.notifyDataSetChanged();
 
 
 					//            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
+
 		            						
-					try {						
+					try {
 						Thread.sleep(1000);
-						} catch (InterruptedException e) {
-								e.printStackTrace();
-						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					dialog.dismiss();
 				}  
 			});
@@ -1170,12 +1232,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-	      	mStartYear = year * 10000;
-            mStartMonth = (month + 1) * 100;
-            mStartDay = day;
-            
-            mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
-            Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
+			mStartYear = year * 10000;
+			mStartMonth = (month + 1) * 100;
+			mStartDay = day;
+
+			mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+			Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	public static class DatePickerFragment2 extends DialogFragment
@@ -1197,13 +1259,68 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-	      	mEndYear = year * 10000;
-	        mEndMonth = (month + 1) * 100;
-	        mEndDay = day;
-	        mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
-	        Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+			mEndYear = year * 10000;
+			mEndMonth = (month + 1) * 100;
+			mEndDay = day;
+			mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
+			Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
 		}
 	}
 	// END
 
+	/**
+	 * A simple non-UI Fragment that stores a single Object and is retained over configuration
+	 * changes. It will be used to retain the ImageCache object.
+	 */
+	public static class AdapterListFragment extends Fragment {
+
+		private ArrayList<String> list;
+
+		/**
+		 * Empty constructor as per the Fragment documentation
+		 */
+		public AdapterListFragment() {}
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+
+			// Make sure this Fragment is retained over a configuration change
+			setRetainInstance(true);
+		}
+
+		/**
+		 * Store a single object in this Fragment.
+		 *
+		 * @param object The object to store
+		 */
+		public void setList(ArrayList<String> list) {
+			this.list = list;
+		}
+
+		/**
+		 * Get the stored object.
+		 *
+		 * @return The stored object
+		 */
+		public ArrayList<String> getList() {
+			return list;
+		}
+	}
+	
+	public ArrayList<String> getList(FragmentManager fragmentManager)
+	{
+		// Search for, or create an instance of the non-UI RetainFragment
+		final AdapterListFragment mFragment = findOrCreateListFragment(fragmentManager);
+
+		// See if we already have an ImageCache stored in RetainFragment
+		ArrayList<String> list = mFragment.getList();
+
+		// No existing ImageCache, create one and store it in RetainFragment
+		if (list == null) {
+			list = initarray();
+		}
+		
+		return list;
+	}
 }
