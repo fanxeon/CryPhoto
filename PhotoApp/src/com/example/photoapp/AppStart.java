@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.widget.TextView;
 
 public class AppStart extends Activity {
 
@@ -34,12 +35,24 @@ public class AppStart extends Activity {
 	            	intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 	            	startActivity(intent);
 	            	overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
+	            	finish();
 	            }
 	            @Override
 	            public void onAnimationRepeat(Animation animation) {}
 	            @Override
 	            public void onAnimationStart(Animation animation) {}
 	                                                                          
+	        });
+	        TextView textView = (TextView) findViewById(R.id.textView2);
+	        textView.setOnClickListener(new TextView.OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(AppStart.this, GridActivity.class);
+	            	intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+	            	startActivity(intent);
+	            	overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
+				}
 	        });
 	        
 	}

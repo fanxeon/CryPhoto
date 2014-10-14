@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import utils.Utils;
@@ -95,12 +96,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
 	private String nn = null;
+	private List<Integer> Animlists = new ArrayList<Integer>();
 	//-- ACTION BAR END --//
 	// On Actitvity Result declaration
 	private String descriptionStr = null;
 	int indx = 0;
 	Bitmap gridBitmap = null;
-	ArrayList<String> albumList ;
+	ArrayList<String> albumList = null;
+	String[] albumStringList = null;
 	AlertDialog.Builder albumDialog;
 	Bitmap individualBitmap = null;
 	// Date picker
@@ -209,7 +212,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
 		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage2));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -265,6 +268,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				MyActionModeCallback callback = new MyActionModeCallback();
 				mActionMode = startActionMode (callback);
 				mActionMode.setTitle("1" + R.string.menu_context_title);
+
 				return true;
 			}
 		});
@@ -642,6 +646,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 		builder.create().show();  
 		//int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
+	}
+	//Get Album List
+	private void get_album(){
+		albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
+		albumStringList = albumList.toArray(new String[albumList.size()]);
 	}
 
 	private void openSync()
