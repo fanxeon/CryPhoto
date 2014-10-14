@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -95,6 +96,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
 	private String nn = null;
+	private List<Integer> Animlists = new ArrayList<Integer>();
 	//-- ACTION BAR END --//
 	// On Actitvity Result declaration
 	private String descriptionStr = null;
@@ -261,6 +263,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				MyActionModeCallback callback = new MyActionModeCallback();
 				mActionMode = startActionMode (callback);
 				mActionMode.setTitle("1" + R.string.menu_context_title);
+
 				return true;
 			}
 		});
