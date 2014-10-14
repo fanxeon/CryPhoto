@@ -1309,7 +1309,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}
 	
-	public ArrayList<String> getList(FragmentManager fragmentManager)
+    ArrayList<String> getList(FragmentManager fragmentManager)
 	{
 		// Search for, or create an instance of the non-UI RetainFragment
 		final AdapterListFragment mFragment = findOrCreateListFragment(fragmentManager);
