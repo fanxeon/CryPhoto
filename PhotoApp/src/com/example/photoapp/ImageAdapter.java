@@ -112,6 +112,7 @@ public class ImageAdapter extends BaseAdapter
 	{
 		synchronized(list)
 		{
+			list.clear();
 			list.addAll(positions);
 		}
 	}

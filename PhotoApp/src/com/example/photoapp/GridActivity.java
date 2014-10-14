@@ -499,10 +499,32 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			search();
 			finish();
-			mSearchQuery = null;
+			//mSearchQuery = null;
 		}
 	}
+	private ArrayList<String> idsForSearchResults = new ArrayList<String>();
+    private void search()
+    {
+    	idsForSearchResults.clear();
+    	ArrayList<Photo> photos = DatabaseManager
+    			.getInstance(getApplicationContext()).getPhotosDescriptions();
+    	String keywords = mSearchQuery;
+    	
+        for (Photo photo : photos)
+        {
+            if (!keywords.equals("") && photo.getDescription()!=null
+                && (photo.getDescription().toLowerCase().contains(keywords.toLowerCase()))
+                ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
+            {
+            	idsForSearchResults.add( photo.getPhotoID() ); 
+            } 
+        }
+        imgadapter.replaceList(idsForSearchResults);
+        update();
+
+    }
 	
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
