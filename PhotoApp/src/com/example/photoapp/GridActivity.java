@@ -426,6 +426,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = null;
 		}
 	}
+	
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
