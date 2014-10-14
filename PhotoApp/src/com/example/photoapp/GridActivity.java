@@ -208,7 +208,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
 		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
 		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage2));
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
