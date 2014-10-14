@@ -500,6 +500,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = null;
 		}
 	}
+	
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
 	@Override
@@ -746,7 +747,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//String message = editText.getText().toString();
 		intent.putExtra(STRING_ID, getList().get(position));
 		//intent.putStringArrayListExtra(STRING_LIST, getList());
+		//Animation
+		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		
 		startActivity(intent);
+		//Animation
+		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
 	private void initarray()

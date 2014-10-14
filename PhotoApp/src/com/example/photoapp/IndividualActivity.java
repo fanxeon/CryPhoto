@@ -37,6 +37,7 @@ public class IndividualActivity extends Activity {
 		//setContentView(R.layout.activity_display_message);
 		setContentView(R.layout.activity_display_message);
 		Intent intent = getIntent();
+		
 		String position = intent.getExtras().getString(GridActivity.STRING_ID);
 		//ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
 		
