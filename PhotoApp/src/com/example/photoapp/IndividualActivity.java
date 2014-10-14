@@ -15,6 +15,8 @@ import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -24,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -112,14 +115,24 @@ public class IndividualActivity extends Activity {
 				// Delete current image
 				discard();
 				return true;
-			case R.id.action_sync:
-				// sync action
+			case R.id.action_getPhotoInfo:
+				// info
+				getPhotoInfo();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 		//-- ACTION BAR END --//
 	}
+	private void getPhotoInfo() {
+		AlertDialog.Builder infoDialog =  new AlertDialog.Builder(this);
+		infoDialog.setTitle(photoDetails.getPhotoID());
+		infoDialog.setMessage("Album : " + photoDetails.getAlbum() + "\nUpload : " 
+						+ photoDetails.isUploadedToServerAsYesNO());
+		infoDialog.show();
+		
+	}
+
 	private void setOverflowShowingAlways() {  
 		try {  
 			ViewConfiguration config = ViewConfiguration.get(this);  
