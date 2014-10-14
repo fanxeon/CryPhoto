@@ -22,6 +22,8 @@
         android:text=" Photo App"
         android:textSize ="50dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#ffffff" />
+        android:onClick="Tuan"
+        android:textColor="#ffffff"
+        android:clickable="true"  />
                                                      
 </LinearLayout>
