@@ -620,7 +620,18 @@ public class DatabaseManager
 		}
 		return numRows;	
 	}
-	
+
+	public int deletePhotos(ArrayList<String> photoIds)
+	{
+		int n = 0;
+		for( String photoID : photoIds )
+		{
+			if( deletePhoto(photoID) != 0)
+				n++;
+		}
+		return n;
+	}
+
 	public int updateSavedOnServer(String photoId, boolean isSaved)
 	{
 		int c = 0;
