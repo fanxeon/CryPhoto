@@ -3,8 +3,11 @@ package com.example.photoapp;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -113,8 +116,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private static int mStartYear, mEndYear;
 	private static int mStartMonth, mEndMonth;
 	private static int mStartDay, mEndDay;
-	private static String mStartingDate = "";
-	private static String mEndDate = "";
+	private String mStartingDate = "";
+	private String mEndDate = "";
 	// Search String
 	private static String mSearchQuery = null;
 
@@ -129,25 +132,25 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//return result;
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		super.onNewIntent(intent);
-		setIntent(intent);
-
-		processExtraData();
-
-	}
-	private void processExtraData()
-	{
-		Intent intent = getIntent();
-		//do something
-		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
-		{
-			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
-			imgadapter.notifyDataSetChanged();
-		}
-	}
+//	@Override
+//	protected void onNewIntent(Intent intent) {
+//		// TODO Auto-generated method stub
+//		super.onNewIntent(intent);
+//		//setIntent(intent);
+//
+//		//processExtraData();
+//
+//	}
+//	private void processExtraData()
+//	{
+//		Intent intent = getIntent();
+//		//do something
+//		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
+//		{
+//			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
+//			imgadapter.notifyDataSetChanged();
+//		}
+//	}
 
 	@Override
 	public void onResume() {
@@ -541,7 +544,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
-			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
 			search();
 			finish();
@@ -924,12 +927,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			DialogFragment endDate = new DatePickerFragment2();
 			endDate.show(getFragmentManager(), "datePicker");
 
+			
 			DialogFragment startDate = new DatePickerFragment();
 			startDate.show(getFragmentManager(), "datePicker");
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			update();//Delete it when methods add
-
+			//update();//Delete it when methods add
 			/**>>> END <<<**/
 
 		}
@@ -947,6 +950,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 		return true;
 	}
+//	private final String START_DATE_TAG = "startdate";
+//	private final String END_DATE_TAG = "enddate";
+
 	/**===========================
 	 * Drop down menu listener END
 	 * ===========================
@@ -1213,7 +1219,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	}
 	// NEW CONSTRUCTION - date Picker
-	public static class DatePickerFragment extends DialogFragment
+	public class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 		DatePickerDialog datePicker;
 
@@ -1236,11 +1242,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mStartMonth = (month + 1) * 100;
 			mStartDay = day;
 
-			mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+			mStartingDate = mStartYear + mStartMonth + mStartDay + "_000000" ;
 			Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
-	public static class DatePickerFragment2 extends DialogFragment
+	public  class DatePickerFragment2 extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 		DatePickerDialog datePicker;
 		@Override
@@ -1262,11 +1268,53 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mEndYear = year * 10000;
 			mEndMonth = (month + 1) * 100;
 			mEndDay = day;
-			mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
+			mEndDate = mEndYear + mEndMonth + mEndDay + "_000000";
 			Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+			listByCustomDatesRange();
 		}
 	}
 	// END
+	private ArrayList<String> listByCustomDateList = null;
+  private  void listByCustomDatesRange () //throws ParseException
+  {
+	  
+	  listByCustomDateList = new ArrayList<>();
+	  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
+		Date startDate = null;
+		Date endDate = null;
+		Date tempDate = null;
+
+		
+		try 
+		{
+			startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
+			endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
+			if ( startDate.after(endDate))
+			{
+				tempDate = startDate;
+				startDate = endDate;
+				endDate = tempDate;
+			}
+			
+	      for( String photoId : getList())
+	      {
+	    	  
+	    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+	
+	      
+	          if (endDate.after(photoDate) && startDate.before(photoDate))
+	          {
+	              listByCustomDateList.add(photoId);  
+	          }	          
+	      }
+          imgadapter.replaceList(listByCustomDateList);
+          update();
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+  }
 
 	/**
 	 * A simple non-UI Fragment that stores a single Object and is retained over configuration

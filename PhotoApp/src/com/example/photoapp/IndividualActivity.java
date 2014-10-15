@@ -156,7 +156,8 @@ public class IndividualActivity extends Activity {
 		
 	}
 
-	private void discard() {
+	private void discard() 
+	{
 		int n = DatabaseManager.getInstance(getApplicationContext()).deletePhoto(photoDetails.getPhotoID());
 		
 		if( n > 0 )

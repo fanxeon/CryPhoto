@@ -24,7 +24,7 @@ import android.content.Context;
  */
 public class PhotoManager 
 {
-	public final String TIME_STAMP_FORMAT = "yyyyMMdd_HHmmss";
+	public  static final String TIME_STAMP_FORMAT = "yyyyMMdd_HHmmss";
 	private final String AUTONUMBER_PHOTO_FILE_NAME = "auto_num_photo_file";
 	private final String AUTONUMBER_ALBUM_FILE_NAME = "auto_num_album_file";
 	

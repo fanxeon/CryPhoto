@@ -20,7 +20,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	//Database details
 	private static final String DATABASE_NAME = "photoviewerdb";
 	//NOT SURE what version should we use <<<<<<<<<<<<<<<<<<<<<<<<----------------
-	private static final int DATABASE_VERSION = 9;
+	private static final int DATABASE_VERSION = 10;
 	
 	//Information needed for photos table.
 	protected static final String PHOTOS_TABLE_NAME = "photos";
@@ -107,7 +107,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 		int resInt = R.drawable.plant;
 		Bitmap bm = BitmapFactory.decodeResource(context.getResources(), resInt);
 		Bitmap gridBm = Utils.getGridBitmapFromResource(resInt, context);
-		photo.setPhotoID("20140521_000000");
+		photo.setPhotoID("20141015_000000");
 		photo.setAlbum("My album");
 		photo.setDescription("Beutiful plant");
 		photo.setUploadedToServer(false);
@@ -119,7 +119,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	    resInt = R.drawable.electricstorm;
 		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
 		gridBm = Utils.getGridBitmapFromResource(resInt, context);
-		photo.setPhotoID("20141001_000000");
+		photo.setPhotoID("20101015_000000");
 		photo.setAlbum("My album");
 		photo.setDescription("Beutiful electric storm");
 		photo.setUploadedToServer(false);
@@ -131,7 +131,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	    resInt = R.drawable.gateafternoon;
 		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
 		gridBm = Utils.getGridBitmapFromResource(resInt, context);
-		photo.setPhotoID("20100801_000000");
+		photo.setPhotoID("20101112_000000");
 		photo.setAlbum("My album");
 		photo.setDescription("Golden gate");
 		photo.setUploadedToServer(false);
@@ -143,7 +143,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 	    resInt = R.drawable.fallsunrise;
 		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
 		gridBm = Utils.getGridBitmapFromResource(resInt, context);
-		photo.setPhotoID("20140402_000000");
+		photo.setPhotoID("20130402_000000");
 		photo.setAlbum("My album");
 		photo.setDescription("Nice sunrise in the fall");
 		photo.setUploadedToServer(false);
