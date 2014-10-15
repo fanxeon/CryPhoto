@@ -21,12 +21,6 @@
 		    android:verticalSpacing="@dimen/grid_view_ver_spacing"
 		    android:listSelector="@drawable/grid_color_selector">
 		</GridView>
-		
-	    <CheckBox
-			android:id="@+id/check"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:visibility="gone"
-			android:clickable="false"
-		/>
+
+
 </RelativeLayout>

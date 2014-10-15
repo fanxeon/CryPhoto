@@ -75,6 +75,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 //import android.widget.EditText;
@@ -295,23 +296,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setListNavigationCallbacks(adapter, this);
 		
 		setOverflowShowingAlways(); 
-		// -- new --//
-		// -- end --//
-		// Changing the action bar icon
-		// actionBar.setIcon(R.drawable.ico_actionbar);
-		//-- ACTION BAR END --//
-
-		//set up drop-down menu
-		//create an array adapter which will supply views for the drop down menu
-		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
-		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
-
-		//sets up the up button on the action bar for the user to navigate backwards
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		actionBar.setSelectedNavigationItem(navigation_list_position);
-		handleIntent(getIntent());
-
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
 
@@ -340,6 +326,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				return true;
 			}
 		});
+		
 
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		//gridview.setOnItemSelectedListener()
@@ -532,13 +519,34 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			//Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
-			search();
-			finish();
+			//search();
+			//finish();
 			//mSearchQuery = null;
 		}
 	}
 	private ArrayList<String> idsForSearchResults = new ArrayList<String>();
     private void search()
+    {
+    	idsForSearchResults.clear();
+    	ArrayList<Photo> photos = DatabaseManager
+    			.getInstance(getApplicationContext()).getPhotosDescriptions();
+    	String keywords = mSearchQuery;
+    	
+        for (Photo photo : photos)
+        {
+            if (!keywords.equals("") && photo.getDescription()!=null
+                && (photo.getDescription().toLowerCase().contains(keywords.toLowerCase()))
+                ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
+            {
+            	idsForSearchResults.add( photo.getPhotoID() ); 
+            	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
+            } 
+        }
+        imgadapter.replaceList(idsForSearchResults);
+        update();
+
+    }
+    private void search2()
     {
     	idsForSearchResults.clear();
     	ArrayList<Photo> photos = DatabaseManager
@@ -637,15 +645,13 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main_action_bar, menu);
 
-		// ACTION BAR IMPLMENTATION
-		// Associate searchable configuration with the SearchView
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
-				.getActionView();
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
-
-		// ACTION BAR END
+		//SEARCH WIDGET
+//		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
+//				.getActionView();
+//		searchView.setSearchableInfo(searchManager
+//				.getSearchableInfo(getComponentName()));
+//		handleIntent(getIntent());
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -658,7 +664,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			//onSearchRequested();
+			openSearch();			
 			return true;
 		case R.id.action_photo:
 			// Take photo
@@ -677,6 +683,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			//EditText editText = (EditText) findViewById(R.id.edit_message);
 			//String message = editText.getText().toString();
 			startActivity(intent);
+			//
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -766,10 +773,23 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	private void openSearch() 
 	{
-		// TODO Auto-generated method stub
-		Context context = getApplicationContext();
-
-		Toast.makeText(context, "Test Search Toast !!!", Toast.LENGTH_SHORT).show();	
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);  
+		builder.setTitle("Search by Description");  
+		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_TEXT);
+		builder.setView(input);	
+		builder.setPositiveButton("Search", new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int which) {
+				if(which == Dialog.BUTTON_POSITIVE){  
+					mSearchQuery = input.getText().toString();
+					search();
+				}
+			}
+		});  
+		builder.setNegativeButton("Cancel", this);
+		
+		builder.show();
+		
 	}
 	/**
 	 * Async task to load the data from server
