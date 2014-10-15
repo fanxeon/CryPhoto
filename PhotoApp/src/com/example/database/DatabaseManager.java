@@ -702,7 +702,7 @@ public class DatabaseManager
 	
 	public ArrayList<String> getPhotoIdsForAlbum(String albumName)
 	{
-		ArrayList<String> photoIDs = null;
+		ArrayList<String> photoIDs = new ArrayList<>();
 		if( albumName != null)
 		{
 			//This where statement for select command
@@ -717,7 +717,7 @@ public class DatabaseManager
 
 			if ( cursor.moveToFirst() )
 			{	
-				photoIDs = new ArrayList<String>();
+				//photoIDs = new ArrayList<String>();
 				do
 				{
 					photoIDs.add( cursor.getString( cursor

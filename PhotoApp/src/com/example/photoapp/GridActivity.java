@@ -965,22 +965,24 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 //			startDate.show(getFragmentManager(), "datePicker");
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			//update();//Delete it when methods add
 			update();//Delete it when methods add
+			//update();//Delete it when methods add
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 2;
 			/**>>> END <<<**/
 			return true;
 
 		}
-		else if (itemPosition == 3){ // A week
+		else if (itemPosition == 3){ // Last week
 			
-			//Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
-			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			update();//Delete it when methods add
-
-			//Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
+			try {
+				listByLastWeek();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//setting this member to remember the list item number. used when changing view orientation
+			//update();
 			navigation_list_position = 3;
 			/**>>> END <<<**/
 			return true;
@@ -988,12 +990,19 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		else if (itemPosition == 4){ // A month
 			//navigation_list_position = 4;
 			//Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
+			try {
+				listByLastMonth();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			update();//Delete it when methods add
+			//update();//Delete it when methods add
 		
 			//Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 4;
+			return true;
 			/**>>> END <<<**/
 		}
 		else
@@ -1326,47 +1335,138 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}
 	// END
-	private ArrayList<String> listByCustomDateList = null;
-  private  void listByCustomDatesRange () //throws ParseException
-  {
-	  
-	  listByCustomDateList = new ArrayList<>();
-	  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
-		Date startDate = null;
-		Date endDate = null;
-		Date tempDate = null;
+	private ArrayList<String> listByLastWeekList = null;
+	private void listByLastWeek() throws ParseException
+	{
+		listByLastWeekList = new ArrayList<String>();
+	       
+		Date today = new Date();
+	    int dayValue ;
+	    ArrayList<String> ids = DatabaseManager.getInstance(getApplicationContext()).getPhotoIDs();
+	        
+	    for(String photoId : ids)//getList())
+	    {
 
-		
-		try 
-		{
-			startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
-			endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
-			if ( startDate.after(endDate))
-			{
-				tempDate = startDate;
-				startDate = endDate;
-				endDate = tempDate;
-			}
-			
-	      for( String photoId : getList())
-	      {
-	    	  
-	    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+	        dayValue =  daysDifferences(today,stringToDate(photoId));
+	               
+//	          if (dayValue<2)
+//	              yesterday.add(dateToSring(o.getDate()));
+	          if (dayValue<8)
+	        	  listByLastWeekList.add(photoId );
+//	          if (dayValue<31)
+//	              lastMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue<91)
+//	              threeMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue>90)
+//	              older.add(dateToSring(o.getDate()));
+	         
+	     }
+        imgadapter.replaceList(listByLastWeekList);
+        update();	
+	}
 	
-	      
-	          if (endDate.after(photoDate) && startDate.before(photoDate))
-	          {
-	              listByCustomDateList.add(photoId);  
-	          }	          
-	      }
-          imgadapter.replaceList(listByCustomDateList);
-          update();
+	private ArrayList<String> listByLastMonthList = null;
+	private void listByLastMonth() throws ParseException
+	{
+		listByLastMonthList = new ArrayList<String>();
+	       
+		Date today = new Date();
+	    int dayValue ;
+	        
+	    ArrayList<String> ids = DatabaseManager.getInstance(getApplicationContext()).getPhotoIDs();
+	    
+	    for(String photoId : ids)
+	    {
 
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	        dayValue =  daysDifferences(today,stringToDate(photoId));
+	               
+//	          if (dayValue<2)
+//	              yesterday.add(dateToSring(o.getDate()));
+//	          if (dayValue<8)
+//	        	  listByLastWeekList.add(photoId );
+	          if (dayValue<31)
+	        	  listByLastMonthList.add(photoId);
+//	          if (dayValue<91)
+//	              threeMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue>90)
+//	              older.add(dateToSring(o.getDate()));
+	         
+	     }
+        imgadapter.replaceList(listByLastMonthList);
+        update();	
+	}   
+	
+	
+	public static String dateToSring (Date inputDate)
+    {
+    	return new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).format(inputDate);
+    }
+    
+    public static Date stringToDate (String inputString) throws ParseException
+    {
+       return new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(inputString);
+    }
+    
+    public static int daysDifferences (Date currentDate , Date lastDate)
+    {
+        int dayValue ;
+        long diff = currentDate.getTime() - lastDate.getTime();
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+        
+        if ((diffDays==0))
+            dayValue =1;
+        else if (diffDays>0 && diffDays<7)
+            dayValue=7;
+        else if (diffDays>=7 && diffDays<30)
+            dayValue=30;
+        else if (diffDays>=30 && diffDays<90)
+            dayValue=90;
+        else
+            dayValue=365;
+       return dayValue;       
+    }
 
-  }
+	private ArrayList<String> listByCustomDateList = null;
+	  private  void listByCustomDatesRange () //throws ParseException
+	  {
+		  
+		  listByCustomDateList = new ArrayList<>();
+		  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
+			Date startDate = null;
+			Date endDate = null;
+			Date tempDate = null;
+	
+			
+			try 
+			{
+				startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
+				endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
+				if ( startDate.after(endDate))
+				{
+					tempDate = startDate;
+					startDate = endDate;
+					endDate = tempDate;
+				}
+				
+		      for( String photoId : getList())
+		      {
+		    	  
+		    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+		
+		      
+		          if (endDate.after(photoDate) && startDate.before(photoDate))
+		          {
+		              listByCustomDateList.add(photoId);  
+		          }	          
+		      }
+	          imgadapter.replaceList(listByCustomDateList);
+	          update();
+	
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+	
+	  }
 
 	/**
 	 * A simple non-UI Fragment that stores a single Object and is retained over configuration
