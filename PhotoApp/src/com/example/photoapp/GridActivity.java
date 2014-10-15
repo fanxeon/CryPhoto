@@ -827,11 +827,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		intent.putExtra(STRING_ID, getList().get(position));
 		//intent.putStringArrayListExtra(STRING_LIST, getList());
 		//Animation
-		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
 		startActivity(intent);
 		//Animation
-		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
 	private ArrayList<String> initarray()
@@ -933,22 +930,28 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			//update();//Delete it when methods add
+			update();//Delete it when methods add
 			/**>>> END <<<**/
+			return true;
 
 		}
 		else if (itemPosition == 3){ // A week
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a week'", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
+			
 			/**>>> END <<<**/
+			return true;
 		}
 		else if (itemPosition == 4){ // A month
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a month'", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			/**>>> END <<<**/
+			return true;
 		}
 		return true;
+
 	}
 //	private final String START_DATE_TAG = "startdate";
 //	private final String END_DATE_TAG = "enddate";
