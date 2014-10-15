@@ -205,6 +205,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		if (state != null)
 		{
 			list = state.getStringArrayList(LIST_NAME);
+			System.out.println("Size of list being returned is "+list.size());
 			navigation_list_position = state.getInt(NAVIGATION_LIST_POSITION_KEY);
 			savedstate = true;
 		}
@@ -221,7 +222,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		// Save the user's current game state
 		//public final static String LIST_NAME = "AdapterList";
-		savedInstanceState.putStringArrayList(LIST_NAME, list);
+		savedInstanceState.putStringArrayList(LIST_NAME, imgadapter.getList());
+		System.out.println("Length of list being saved to state is "+list.size());
 		savedInstanceState.putInt(NAVIGATION_LIST_POSITION_KEY, navigation_list_position);
 		savedInstanceState.putBoolean(SAVED_INSTANCE_STATE, true);
 
@@ -256,6 +258,21 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		ImageCache cache = getImageCache(this.getFragmentManager());
 
 		System.out.println("Just initialized the array of string ids");
+		
+		System.out.println("About to get the grid view by finding it using the id name");
+
+		//get the gridview as defined in the associate xml file
+		gridview = (GridView) findViewById(R.id.gridview);
+		//gridview.setBackgroundColor(Color.BLACK);
+		gridview.setDrawSelectorOnTop(true);
+		//gridview.setSelector(R.drawable.grid_color_selector);
+		//set the adapter for the grid view
+		imgadapter = new ImageAdapter(this,cache);
+		imgadapter.setList(list);
+		//setList(getList(this.getFragmentManager()));
+		//	setList(initarray());
+		//setList(initarray(savedInstanceState));
+		gridview.setAdapter(imgadapter);
 
 		//-- ACTION BAR IMPLMENTATION DECLARATION @ Fan --//
 		actionBar = getActionBar();
@@ -275,7 +292,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				navSpinner);
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
-		actionBar.setSelectedNavigationItem(navigation_list_position);
 		
 		setOverflowShowingAlways(); 
 		// -- new --//
@@ -291,21 +307,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		//sets up the up button on the action bar for the user to navigate backwards
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
-		System.out.println("About to get the grid view by finding it using the id name");
 
-		//get the gridview as defined in the associate xml file
-		gridview = (GridView) findViewById(R.id.gridview);
-		//gridview.setBackgroundColor(Color.BLACK);
-		gridview.setDrawSelectorOnTop(true);
-		//gridview.setSelector(R.drawable.grid_color_selector);
-		//set the adapter for the grid view
-		imgadapter = new ImageAdapter(this,cache);
-		imgadapter.setList(list);
-		//setList(getList(this.getFragmentManager()));
-		//	setList(initarray());
-		//setList(initarray(savedInstanceState));
-		gridview.setAdapter(imgadapter);
-		
+		actionBar.setSelectedNavigationItem(navigation_list_position);
 		handleIntent(getIntent());
 
 		//this will set up an array with references to images which will be used by the adapter later
@@ -872,14 +875,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			//imgadapter.getAllList();
 			imgadapter.setListToAll();
 			imgadapter.UpdateGridView();
-			Toast.makeText(GridActivity.this, "item Position is 0", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(GridActivity.this, "item Position is 0", Toast.LENGTH_SHORT).show();
 			navigation_list_position = 0;
 			return true;
 		}
 
 		else if (itemPosition == 1){ //Albums
 			
-			Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
 			.setIcon(R.drawable.ic_action_collection2)
@@ -909,7 +912,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				{
 					//savedstate = true and position = 1
 					//need to remember the album
-					imgadapter.UpdateGridView();
+					//imgadapter.UpdateGridView();
 				}
 				else
 				{
@@ -922,14 +925,44 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 		else if (itemPosition == 2){ // Times(Custom date range)
 			
-			Toast.makeText(GridActivity.this, "item Position is 2", Toast.LENGTH_SHORT).show();
-			Toast.makeText(getApplicationContext(), "Times", Toast.LENGTH_SHORT).show();
-			DialogFragment endDate = new DatePickerFragment2();
-			endDate.show(getFragmentManager(), "datePicker");
+			//Toast.makeText(GridActivity.this, "item Position is 2", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getApplicationContext(), "Times", Toast.LENGTH_SHORT).show();
+			if(savedstate == false)
+			{
 
+				DialogFragment endDate = new DatePickerFragment2();
+				endDate.show(getFragmentManager(), "datePicker");
+				
+				DialogFragment startDate = new DatePickerFragment();
+				startDate.show(getFragmentManager(), "datePicker");
+			}
+			else
+			{
+				//savedstate = true; i.e. an orientation was performed
+				if(navigation_list_position == 2)
+				{
+					//savedstate = true and position = 1
+					//need to remember the album
+					//imgadapter.UpdateGridView();
+				}
+				else
+				{
+					//savedstate = true and position != 1
+
+					DialogFragment endDate = new DatePickerFragment2();
+					endDate.show(getFragmentManager(), "datePicker");
+					
+					DialogFragment startDate = new DatePickerFragment();
+					startDate.show(getFragmentManager(), "datePicker");
+				}
+			}
 			
-			DialogFragment startDate = new DatePickerFragment();
-			startDate.show(getFragmentManager(), "datePicker");
+//			DialogFragment endDate = new DatePickerFragment2();
+//			endDate.show(getFragmentManager(), "datePicker");
+//
+//			
+//			DialogFragment startDate = new DatePickerFragment();
+//			startDate.show(getFragmentManager(), "datePicker");
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			//update();//Delete it when methods add
@@ -942,33 +975,32 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 		else if (itemPosition == 3){ // A week
 			
-			Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
 
-			Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 3;
 			/**>>> END <<<**/
 			return true;
 		}
 		else if (itemPosition == 4){ // A month
-			navigation_list_position = 4;
-			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
+			//navigation_list_position = 4;
+			//Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
 		
-			Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 4;
 			/**>>> END <<<**/
 		}
 		else
 		{
-			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
+			Toast.makeText(GridActivity.this, "item Position is unknown", Toast.LENGTH_SHORT).show();
 		}
 		return true;
-
 	}
 //	private final String START_DATE_TAG = "startdate";
 //	private final String END_DATE_TAG = "enddate";
