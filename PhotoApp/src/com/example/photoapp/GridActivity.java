@@ -58,7 +58,6 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,7 +75,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 //import android.widget.EditText;
@@ -200,28 +198,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// and we want to be sure the current note progress isn't lost.
 
 	}
-	// exit alert
-	private long exitTime = 0; 
-	 
-	@Override 
-	public boolean onKeyDown(int keyCode, KeyEvent event) { 
-		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){ 
-			imgadapter.setListToAll();
-			imgadapter.UpdateGridView();
-			//Toast.makeText(GridActivity.this, "item Position is 0", Toast.LENGTH_SHORT).show();
-			navigation_list_position = 0;
-			if((System.currentTimeMillis()-exitTime) > 2000){ 
-				Toast.makeText(getApplicationContext(), "Press back agian to exit Photo App", Toast.LENGTH_SHORT).show(); 
-				exitTime = System.currentTimeMillis(); 
-			} else {
-				finish(); 
-				System.exit(0); 
-			} 
-				return true; 
-		} 
-		return super.onKeyDown(keyCode, event); 
-	} 
-	//END
+
+
 	private void setMembers(Bundle state) {
 		// TODO Auto-generated method stub
 		if (state != null)
@@ -316,11 +294,26 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setListNavigationCallbacks(adapter, this);
 		
 		setOverflowShowingAlways(); 
-		
+		// -- new --//
+		// -- end --//
+		// Changing the action bar icon
+		// actionBar.setIcon(R.drawable.ico_actionbar);
+		//-- ACTION BAR END --//
+
+		//set up drop-down menu
+		//create an array adapter which will supply views for the drop down menu
+		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
+		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
+
+		//sets up the up button on the action bar for the user to navigate backwards
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
+
 		actionBar.setSelectedNavigationItem(navigation_list_position);
+		//handleIntent(getIntent());
+
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
-		actionBar.setDisplayHomeAsUpEnabled(false);
+
 		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
@@ -346,12 +339,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				return true;
 			}
 		});
-		
 
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-	
+
         
 
         @Override
@@ -539,8 +531,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
 			//Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
-			//search();
-			//finish();
+			search();
+			finish();
 			//mSearchQuery = null;
 		}
 	}
@@ -563,10 +555,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
             } 
         }
         if (idsForSearchResults.size() == 0){
-        	Toast.makeText(getApplicationContext(), "No results found", Toast.LENGTH_SHORT).show();
-        	
+        	Toast.makeText(getApplicationContext(),"Results not found", Toast.LENGTH_LONG).show();
+        	onRestart();
         } else {
-	    	imgadapter.replaceList(idsForSearchResults);
+	        imgadapter.replaceList(idsForSearchResults);
 	        update();
         }
     }
@@ -648,13 +640,15 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main_action_bar, menu);
 
-		//SEARCH WIDGET
+		// ACTION BAR IMPLMENTATION
+		// Associate searchable configuration with the SearchView
 //		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 //		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
 //				.getActionView();
 //		searchView.setSearchableInfo(searchManager
 //				.getSearchableInfo(getComponentName()));
-//		handleIntent(getIntent());
+
+		// ACTION BAR END
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -667,7 +661,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			openSearch();			
+			openSearch();
 			return true;
 		case R.id.action_photo:
 			// Take photo
@@ -686,7 +680,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			//EditText editText = (EditText) findViewById(R.id.edit_message);
 			//String message = editText.getText().toString();
 			startActivity(intent);
-			//
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -776,23 +769,23 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	private void openSearch() 
 	{
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);  
-		builder.setTitle("Search by Description");  
-		final EditText input = new EditText(this);
-		input.setInputType(InputType.TYPE_CLASS_TEXT);
-		builder.setView(input);	
-		builder.setPositiveButton("Search", new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int which) {
-				if(which == Dialog.BUTTON_POSITIVE){  
-					mSearchQuery = input.getText().toString();
-					search();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);  
+			builder.setTitle("Search by Description");  
+			final EditText input = new EditText(this);
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			builder.setView(input);	
+			builder.setPositiveButton("Search", new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which) {
+					if(which == Dialog.BUTTON_POSITIVE){  
+						mSearchQuery = input.getText().toString();
+						search();
+					}
 				}
-			}
-		});  
-		builder.setNegativeButton("Cancel", this);
-		
-		builder.show();
-		
+			});  
+			builder.setNegativeButton("Cancel", this);
+			
+			builder.show();
+	
 	}
 	/**
 	 * Async task to load the data from server
@@ -989,22 +982,24 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 //			startDate.show(getFragmentManager(), "datePicker");
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			//update();//Delete it when methods add
 			update();//Delete it when methods add
+			//update();//Delete it when methods add
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 2;
 			/**>>> END <<<**/
 			return true;
 
 		}
-		else if (itemPosition == 3){ // A week
+		else if (itemPosition == 3){ // Last week
 			
-			//Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
-			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			update();//Delete it when methods add
-
-			//Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
+			try {
+				listByLastWeek();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//setting this member to remember the list item number. used when changing view orientation
+			//update();
 			navigation_list_position = 3;
 			/**>>> END <<<**/
 			return true;
@@ -1012,12 +1007,19 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		else if (itemPosition == 4){ // A month
 			//navigation_list_position = 4;
 			//Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
+			try {
+				listByLastMonth();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
-			update();//Delete it when methods add
+			//update();//Delete it when methods add
 		
 			//Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 4;
+			return true;
 			/**>>> END <<<**/
 		}
 		else
@@ -1350,47 +1352,138 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		}
 	}
 	// END
-	private ArrayList<String> listByCustomDateList = null;
-  private  void listByCustomDatesRange () //throws ParseException
-  {
-	  
-	  listByCustomDateList = new ArrayList<>();
-	  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
-		Date startDate = null;
-		Date endDate = null;
-		Date tempDate = null;
+	private ArrayList<String> listByLastWeekList = null;
+	private void listByLastWeek() throws ParseException
+	{
+		listByLastWeekList = new ArrayList<String>();
+	       
+		Date today = new Date();
+	    int dayValue ;
+	    ArrayList<String> ids = DatabaseManager.getInstance(getApplicationContext()).getPhotoIDs();
+	        
+	    for(String photoId : ids)//getList())
+	    {
 
-		
-		try 
-		{
-			startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
-			endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
-			if ( startDate.after(endDate))
-			{
-				tempDate = startDate;
-				startDate = endDate;
-				endDate = tempDate;
-			}
-			
-	      for( String photoId : getList())
-	      {
-	    	  
-	    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+	        dayValue =  daysDifferences(today,stringToDate(photoId));
+	               
+//	          if (dayValue<2)
+//	              yesterday.add(dateToSring(o.getDate()));
+	          if (dayValue<8)
+	        	  listByLastWeekList.add(photoId );
+//	          if (dayValue<31)
+//	              lastMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue<91)
+//	              threeMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue>90)
+//	              older.add(dateToSring(o.getDate()));
+	         
+	     }
+        imgadapter.replaceList(listByLastWeekList);
+        update();	
+	}
 	
-	      
-	          if (endDate.after(photoDate) && startDate.before(photoDate))
-	          {
-	              listByCustomDateList.add(photoId);  
-	          }	          
-	      }
-          imgadapter.replaceList(listByCustomDateList);
-          update();
+	private ArrayList<String> listByLastMonthList = null;
+	private void listByLastMonth() throws ParseException
+	{
+		listByLastMonthList = new ArrayList<String>();
+	       
+		Date today = new Date();
+	    int dayValue ;
+	        
+	    ArrayList<String> ids = DatabaseManager.getInstance(getApplicationContext()).getPhotoIDs();
+	    
+	    for(String photoId : ids)
+	    {
 
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+	        dayValue =  daysDifferences(today,stringToDate(photoId));
+	               
+//	          if (dayValue<2)
+//	              yesterday.add(dateToSring(o.getDate()));
+//	          if (dayValue<8)
+//	        	  listByLastWeekList.add(photoId );
+	          if (dayValue<31)
+	        	  listByLastMonthList.add(photoId);
+//	          if (dayValue<91)
+//	              threeMonth.add(dateToSring(o.getDate()));
+//	          if (dayValue>90)
+//	              older.add(dateToSring(o.getDate()));
+	         
+	     }
+        imgadapter.replaceList(listByLastMonthList);
+        update();	
+	}   
+	
+	
+	public static String dateToSring (Date inputDate)
+    {
+    	return new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).format(inputDate);
+    }
+    
+    public static Date stringToDate (String inputString) throws ParseException
+    {
+       return new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(inputString);
+    }
+    
+    public static int daysDifferences (Date currentDate , Date lastDate)
+    {
+        int dayValue ;
+        long diff = currentDate.getTime() - lastDate.getTime();
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+        
+        if ((diffDays==0))
+            dayValue =1;
+        else if (diffDays>0 && diffDays<7)
+            dayValue=7;
+        else if (diffDays>=7 && diffDays<30)
+            dayValue=30;
+        else if (diffDays>=30 && diffDays<90)
+            dayValue=90;
+        else
+            dayValue=365;
+       return dayValue;       
+    }
 
-  }
+	private ArrayList<String> listByCustomDateList = null;
+	  private  void listByCustomDatesRange () //throws ParseException
+	  {
+		  
+		  listByCustomDateList = new ArrayList<>();
+		  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
+			Date startDate = null;
+			Date endDate = null;
+			Date tempDate = null;
+	
+			
+			try 
+			{
+				startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
+				endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
+				if ( startDate.after(endDate))
+				{
+					tempDate = startDate;
+					startDate = endDate;
+					endDate = tempDate;
+				}
+				
+		      for( String photoId : getList())
+		      {
+		    	  
+		    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+		
+		      
+		          if (endDate.after(photoDate) && startDate.before(photoDate))
+		          {
+		              listByCustomDateList.add(photoId);  
+		          }	          
+		      }
+	          imgadapter.replaceList(listByCustomDateList);
+	          update();
+	
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+	
+	  }
 
 	/**
 	 * A simple non-UI Fragment that stores a single Object and is retained over configuration
@@ -1447,5 +1540,4 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		return list;
 	}
-
 }
