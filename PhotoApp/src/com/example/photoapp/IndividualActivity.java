@@ -115,10 +115,7 @@ public class IndividualActivity extends Activity {
 				// Delete current image
 				discard();
 				return true;
-			case R.id.action_getPhotoInfo:
-				// info
-				getPhotoInfo();
-				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}
