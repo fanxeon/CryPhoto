@@ -22,15 +22,19 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/Theme.Theme" >
+        <meta-data
+	      android:name="android.app.default_searchable"
+	      android:value=".GridActivity" />
+        
         <activity
             android:name=".AppStart"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name=".GridActivity"
             android:label="@string/app_name" 
@@ -38,19 +42,15 @@
             android:parentActivityName=".AppStart" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".GridActivity" />
+		    <intent-filter>
+		        <action android:name="android.intent.action.SEARCH" />
+		    </intent-filter>
+            <meta-data android:name="android.app.default_searchable" android:value=".GridActivity"/>
+		    <meta-data
+		        android:name="android.app.searchable"
+		        android:resource="@xml/searchable" />
         </activity>
         
         <activity
@@ -76,10 +76,19 @@
             android:label="@string/app_name" >
         </activity>
         <!-- Search results activity -->
-        <activity
-            android:name=".SearchResultsActivity"
-            android:parentActivityName=".GridActivity" >
-        </activity>
+		<activity
+		    android:name=".SearchResultsActivity"
+		    android:label="@string/title_activity_search_results">
+		 
+		    <intent-filter>
+		        <action android:name="android.intent.action.SEARCH" />
+		    </intent-filter>
+		 
+		    <meta-data
+		        android:name="android.app.searchable"
+		        android:resource="@xml/searchable" />
+		</activity>
+
     </application>
 
 </manifest>
