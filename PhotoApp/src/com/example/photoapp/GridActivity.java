@@ -58,6 +58,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -159,6 +160,25 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 //			imgadapter.notifyDataSetChanged();
 //		}
 //	}
+	private long exitTime;  
+    @Override  
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK  
+                && event.getAction() == KeyEvent.ACTION_DOWN) {  
+   
+            if ((System.currentTimeMillis() - exitTime) > 2000)   
+            {  
+                Toast.makeText(getApplicationContext(), "Press Back agian to quit App",  
+                        Toast.LENGTH_SHORT).show();  
+                exitTime = System.currentTimeMillis();
+            } else {  
+                finish();  
+                System.exit(0);  
+            }  
+            return true;  
+        }  
+        return super.dispatchKeyEvent(event);  
+    }  
 
 	@Override
 	public void onResume() {
