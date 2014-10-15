@@ -78,11 +78,19 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 	public final static String STRING_LIST = "string_id_list";
 	public final static String STRING_ID = "string_id";
+	public final static String LIST_NAME = "AdapterList";
 	private static final String TAG = "ListTag";
+	private static final String NAVIGATION_LIST_POSITION_KEY = "navkey";
+	private static final String SAVED_INSTANCE_STATE = "YesSavedIt";
+	
+	private static int navigation_list_position;
+	
+	private boolean savedstate;
+	
 	GridView gridview;
 	protected ImageAdapter imgadapter;
-	//private static ArrayList<String> list;
-	protected static int[] images;
+	private ArrayList<String> list;
+	//protected static int[] images;
 	//-- NEW CONSTRUCTION: Contextual Action Bar Declaration--//
 	private ActionMode mActionMode;
 	//-- END --//
@@ -167,6 +175,16 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();  // Always call the superclass method first
+
+		// Release the Camera because we don't need it when paused
+		// and other activities might need to use it.
+		System.out.println("On Pause Called");
+		//Toast.makeText(GridActivity.this, "On Pause Called", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
 	protected void onStop() {
 		super.onStop();  // Always call the superclass method first
 
@@ -175,10 +193,43 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	}
 
+
+	private void setMembers(Bundle state) {
+		// TODO Auto-generated method stub
+		if (state != null)
+		{
+			list = state.getStringArrayList(LIST_NAME);
+			navigation_list_position = state.getInt(NAVIGATION_LIST_POSITION_KEY);
+			savedstate = true;
+		}
+		else
+		{
+			navigation_list_position = 0;
+			savedstate = false;
+			DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
+			list = db.getPhotoIDs();
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		// Save the user's current game state
+		//public final static String LIST_NAME = "AdapterList";
+		savedInstanceState.putStringArrayList(LIST_NAME, list);
+		savedInstanceState.putInt(NAVIGATION_LIST_POSITION_KEY, navigation_list_position);
+		savedInstanceState.putBoolean(SAVED_INSTANCE_STATE, true);
+
+		// Always call the superclass so it can save the view hierarchy state
+		super.onSaveInstanceState(savedInstanceState);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		System.out.println("Hit the oncreate of grid activity");
+		
+		setMembers(savedInstanceState);
+		
 		try
 		{
 			getActivityManager(getApplicationContext());
@@ -193,7 +244,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		//processExtraData();
 
-		final AdapterListFragment mfragment = findOrCreateListFragment(getFragmentManager());
+		//AdapterListFragment mfragment = findOrCreateListFragment(getFragmentManager());
 
 		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
@@ -218,6 +269,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				navSpinner);
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
+		actionBar.setSelectedNavigationItem(navigation_list_position);
+		
 		setOverflowShowingAlways(); 
 		handleIntent(getIntent());
 		// -- new --//
@@ -241,12 +294,15 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setDrawSelectorOnTop(true);
 		//gridview.setSelector(R.drawable.grid_color_selector);
 		//set the adapter for the grid view
-		imgadapter = new ImageAdapter(this,cache);		
-		setList(getList(this.getFragmentManager()));
+		imgadapter = new ImageAdapter(this,cache);
+		imgadapter.setList(list);
+		//setList(getList(this.getFragmentManager()));
+		//	setList(initarray());
+		//setList(initarray(savedInstanceState));
 		gridview.setAdapter(imgadapter);
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
-		
+
 		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
@@ -276,80 +332,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-			//			private int numOfItemsSelected = 0;
-			//			@Override
-			//			public void onItemCheckedStateChanged(ActionMode mode, int position,
-			//					long id, boolean checked) {
-			//				// Here you can do something when items are selected/de-selected,
-			//				// such as update the title in the CAB
-			//				if(checked)
-			//				{
-			//					numOfItemsSelected++;
-			//					//change the color
-			//					//imgadapter.getView(position, null, get);
-			//
-			//
-			//				}	
-			//				else
-			//				{
-			//					numOfItemsSelected--;
-			//				}
-			//				if( numOfItemsSelected <= 1)
-			//				{
-			//					mode.setTitle(numOfItemsSelected + " Item Selected");
-			//				}
-			//				else
-			//				{
-			//					mode.setTitle(numOfItemsSelected + " Items Selected");
-			//				}
-			//
-			//
-			//
-			//			}
-			//
-			//			@Override
-			//			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-			//				// Respond to clicks on the actions in the CAB
-			//				switch (item.getItemId()){
-			//				//Should be Share and discard,
-			//				case R.id.action_share:
-			//
-			//					return true;
-			//				case R.id.action_discard:
-			//					//Developing
-			//					int IDD = item.getItemId();
-			//					//String IDDDD = String.valueOf(IDD);
-			//					//discard(IDDDD);
-			//					return true;
-			//				default:
-			//					return false;
-			//				}
-			//			}
-			//
-			//			@Override
-			//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			//				// Inflate the menu for the CAB
-			//				MenuInflater inflater = mode.getMenuInflater();
-			//				inflater.inflate(R.menu.context, menu);
-			//				return true;
-			//			}
-			//
-			//			@Override
-			//			public void onDestroyActionMode(ActionMode mode) {
-			//				// Here you can make any necessary updates to the activity when
-			//				// the CAB is removed. By default, selected items are deselected/unchecked.
-			//			}
-			//
-			//			@Override
-			//			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			//				// Here you can perform updates to the CAB due to
-			//				// an invalidate() request
-			//				return false;
-			//			}
-			//		});
-
-
 
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
@@ -761,37 +743,31 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
-	private ArrayList<String> initarray()
+	private ArrayList<String> initarray(Bundle savedInstanceState)
 	{
-		DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
-		return db.getPhotoIDs();		
-		//		   this.images = getResources().getIntArray(R.array.ImgRef);
-		//		   this.images = new int[] { R.drawable.img1, R.drawable.img2,
-		//				      R.drawable.img3, R.drawable.img1,
-		//				      R.drawable.img2, R.drawable.img3,
-		//				      R.drawable.img1, R.drawable.img2,
-		//				      R.drawable.img3, R.drawable.img1,
-		//				      R.drawable.img2, R.drawable.img3,
-		//				      R.drawable.img1, R.drawable.img2,
-		//				      R.drawable.img3, R.drawable.img1,
-		//				      R.drawable.img2, R.drawable.img3,
-		//				      R.drawable.img1, R.drawable.img2,
-		//				      R.drawable.img3, R.drawable.img1,
-		//				      R.drawable.img2, R.drawable.img3,
-		//				   };
-		//this.images = images;
+		// Check whether we're recreating a previously destroyed instance
+		if (savedInstanceState != null) {
+			// Restore value of members from saved state
+			//list = savedInstanceState.getStringArrayList(LIST_NAME);
+		} else {
+			// Probably initialize members with default values for a new instance
+			DatabaseManager db = DatabaseManager.getInstance(this.getApplicationContext());
+			list = db.getPhotoIDs();
+		}
+		return list;
 	}
+
 	//public final static String EXTRA_MESSAGE = "com.example.photoapp.MESSAGE";
 
 	public ArrayList<String> getList() {
 		return imgadapter.getList();
 	}
 
-//	public static ArrayList<String> staticGetList()
-//	{
-//		return list;
-//	}
-	
+	//	public static ArrayList<String> staticGetList()
+	//	{
+	//		return list;
+	//	}
+
 	public void setList(ArrayList<String> list) {
 		imgadapter.setList(list);;
 	}
@@ -823,12 +799,17 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		AlertDialog.Builder timesDialog = new AlertDialog.Builder(this);
 
 		if (itemPosition == 0){ // All
-			imgadapter.getAllList();
+			//imgadapter.getAllList();
+			imgadapter.setListToAll();
 			imgadapter.UpdateGridView();
+			Toast.makeText(GridActivity.this, "item Position is 0", Toast.LENGTH_SHORT).show();
+			navigation_list_position = 0;
 			return true;
 		}
 
 		else if (itemPosition == 1){ //Albums
+			
+			Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
 			.setIcon(R.drawable.ic_action_collection2)
@@ -844,12 +825,34 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 					/**>>> END <<<**/
 					dialog.dismiss();
-				}  
+				}
 			});
-			albumListDialog.show();
+			
+			if(savedstate == false)
+			{
+				albumListDialog.show();
+			}
+			else
+			{
+				//savedstate = true; i.e. an orientation was performed
+				if(navigation_list_position == 1)
+				{
+					//savedstate = true and position = 1
+					//need to remember the album
+					imgadapter.UpdateGridView();
+				}
+				else
+				{
+					//savedstate = true and position != 1
+					albumListDialog.show();
+				}
+			}
+			navigation_list_position = 1;
 			return true;
 		}
 		else if (itemPosition == 2){ // Times(Custom date range)
+			
+			Toast.makeText(GridActivity.this, "item Position is 2", Toast.LENGTH_SHORT).show();
 			Toast.makeText(getApplicationContext(), "Times", Toast.LENGTH_SHORT).show();
 			DialogFragment endDate = new DatePickerFragment2();
 			endDate.show(getFragmentManager(), "datePicker");
@@ -859,21 +862,37 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-
+			
+			//setting this member to remember the list item number. used when changing view orientation
+			navigation_list_position = 2;
 			/**>>> END <<<**/
 
 		}
 		else if (itemPosition == 3){ // A week
+			
+			Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
 			Toast.makeText(getApplicationContext(), "User select 'Within a week'", Toast.LENGTH_SHORT).show();
+			
+			//setting this member to remember the list item number. used when changing view orientation
+			navigation_list_position = 3;
 			/**>>> END <<<**/
 		}
 		else if (itemPosition == 4){ // A month
+			navigation_list_position = 4;
+			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
 			Toast.makeText(getApplicationContext(), "User select 'Within a month'", Toast.LENGTH_SHORT).show();
+			
+			//setting this member to remember the list item number. used when changing view orientation
+			navigation_list_position = 4;
 			/**>>> END <<<**/
+		}
+		else
+		{
+			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
 		}
 		return true;
 	}
@@ -1181,7 +1200,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			return list;
 		}
 	}
-	
+
 	public ArrayList<String> getList(FragmentManager fragmentManager)
 	{
 		// Search for, or create an instance of the non-UI RetainFragment
@@ -1190,11 +1209,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// See if we already have an ImageCache stored in RetainFragment
 		ArrayList<String> list = mFragment.getList();
 
-		// No existing ImageCache, create one and store it in RetainFragment
-		if (list == null) {
-			list = initarray();
-		}
-		
+		//		// No existing ImageCache, create one and store it in RetainFragment
+		//		if (list == null) {
+		//			list = initarray();
+		//		}
+
 		return list;
 	}
 }
