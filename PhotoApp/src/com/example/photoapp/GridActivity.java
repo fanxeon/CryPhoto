@@ -175,6 +175,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.smoothScrollToPosition(0);
 		if(Utils.isIndividualPhotoDeleted())
 		{
+			getList().remove(Utils.getDeletedPhotoID());
 			imgadapter.notifyDataSetChanged();
 			Utils.setIndividualPhotoDeleted(false);
 		}
@@ -309,7 +310,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		actionBar.setSelectedNavigationItem(navigation_list_position);
-		handleIntent(getIntent());
+		//handleIntent(getIntent());
 
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
@@ -554,9 +555,13 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
             	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
             } 
         }
-        imgadapter.replaceList(idsForSearchResults);
-        update();
-
+        if (idsForSearchResults.size() == 0){
+        	Toast.makeText(getApplicationContext(),"Results not found", Toast.LENGTH_LONG).show();
+        	onRestart();
+        } else {
+	        imgadapter.replaceList(idsForSearchResults);
+	        update();
+        }
     }
 	
 
@@ -638,11 +643,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		// ACTION BAR IMPLMENTATION
 		// Associate searchable configuration with the SearchView
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
-				.getActionView();
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
+//		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
+//				.getActionView();
+//		searchView.setSearchableInfo(searchManager
+//				.getSearchableInfo(getComponentName()));
 
 		// ACTION BAR END
 		return super.onCreateOptionsMenu(menu);
@@ -657,7 +662,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
 		case R.id.action_search:
-			//onSearchRequested();
+			openSearch();
 			return true;
 		case R.id.action_photo:
 			// Take photo
@@ -765,10 +770,23 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	private void openSearch() 
 	{
-		// TODO Auto-generated method stub
-		Context context = getApplicationContext();
-
-		Toast.makeText(context, "Test Search Toast !!!", Toast.LENGTH_SHORT).show();	
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);  
+			builder.setTitle("Search by Description");  
+			final EditText input = new EditText(this);
+			input.setInputType(InputType.TYPE_CLASS_TEXT);
+			builder.setView(input);	
+			builder.setPositiveButton("Search", new DialogInterface.OnClickListener(){
+				public void onClick(DialogInterface dialog, int which) {
+					if(which == Dialog.BUTTON_POSITIVE){  
+						mSearchQuery = input.getText().toString();
+						search();
+					}
+				}
+			});  
+			builder.setNegativeButton("Cancel", this);
+			
+			builder.show();
+	
 	}
 	/**
 	 * Async task to load the data from server
@@ -885,7 +903,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			//Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
-			.setIcon(R.drawable.ic_action_collection2)
+			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
 					new DialogInterface.OnClickListener() {  
 				@Override 
