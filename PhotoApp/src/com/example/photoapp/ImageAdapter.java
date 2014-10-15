@@ -2,6 +2,9 @@ package com.example.photoapp;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
+import com.example.database.DatabaseManager;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -92,6 +95,11 @@ public class ImageAdapter extends BaseAdapter
 
 	public long getItemId(int position) {
 		return 0;
+	}
+	
+	public void setListToAll()
+	{
+		list =  DatabaseManager.getInstance(mContext).getPhotoIDs();
 	}
 	
 	public void getAllList()
