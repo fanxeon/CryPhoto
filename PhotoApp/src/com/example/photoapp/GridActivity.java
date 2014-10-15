@@ -320,7 +320,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setSelectedNavigationItem(navigation_list_position);
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
-
+		actionBar.setDisplayHomeAsUpEnabled(false);
 		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
