@@ -1,20 +1,26 @@
 package com.example.database;
 
+import java.io.ByteArrayOutputStream;
+
+import utils.Utils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.app.PhotoViewerApplication;
 import com.example.photo.Photo;
+import com.example.photoapp.R;
 
 public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
 {
 	//Database details
 	private static final String DATABASE_NAME = "photoviewerdb";
 	//NOT SURE what version should we use <<<<<<<<<<<<<<<<<<<<<<<<----------------
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 10;
 	
 	//Information needed for photos table.
 	protected static final String PHOTOS_TABLE_NAME = "photos";
@@ -53,9 +59,11 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     "CREATE TABLE " + ALBUM_TABLE_NAME + " (" + COLUMN_NAME 
     	+ " TEXT PRIMARY KEY," + COLUMN_PHOTOS_NUM + " INTEGER);";
 
+    private Context context;
     PhotoViewerDatabaseOpenHelper(Context context) 
 	{
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		this.context = context;
 	}
 
 	    
@@ -69,14 +77,7 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     	db.execSQL(ALBUM_TABLE_CREATE);
     	initial(db);
 	}
-    private void initial(SQLiteDatabase db)
-    {
-		ContentValues values = new ContentValues();
-		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, "My album");
-		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
-		//db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, "test", values);
 
-    }
     //This methods will be called whenever the database is open
     @Override 
     public void onOpen(SQLiteDatabase db){
@@ -92,5 +93,100 @@ public class PhotoViewerDatabaseOpenHelper extends SQLiteOpenHelper
     	 db.execSQL("DROP TABLE IF EXISTS " + ALBUM_TABLE_NAME);
          onCreate(db);    	
     }
+    
+    private void initial(SQLiteDatabase db)
+    {
+    	int quality = 30;
+		ContentValues values = new ContentValues();
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, "My album");
+		db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, null, values);
+		//db.insert( PhotoViewerDatabaseOpenHelper.ALBUM_TABLE_NAME, "test", values);
+
+		//yyyyMMdd_HHmmss
+		Photo photo = new Photo();
+		int resInt = R.drawable.plant;
+		Bitmap bm = BitmapFactory.decodeResource(context.getResources(), resInt);
+		Bitmap gridBm = Utils.getGridBitmapFromResource(resInt, context);
+		photo.setPhotoID("20141015_000000");
+		photo.setAlbum("My album");
+		photo.setDescription("Beutiful plant");
+		photo.setUploadedToServer(false);
+		photo.setBitmap(bm);
+		photo.setGridBitmap(gridBm);
+		addPhoto(photo, quality, db);
+		
+		photo = new Photo();
+	    resInt = R.drawable.electricstorm;
+		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
+		gridBm = Utils.getGridBitmapFromResource(resInt, context);
+		photo.setPhotoID("20101015_000000");
+		photo.setAlbum("My album");
+		photo.setDescription("Beutiful electric storm");
+		photo.setUploadedToServer(false);
+		photo.setBitmap(bm);
+		photo.setGridBitmap(gridBm);
+		addPhoto(photo, quality, db);
+
+		photo = new Photo();
+	    resInt = R.drawable.gateafternoon;
+		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
+		gridBm = Utils.getGridBitmapFromResource(resInt, context);
+		photo.setPhotoID("20101112_000000");
+		photo.setAlbum("My album");
+		photo.setDescription("Golden gate");
+		photo.setUploadedToServer(false);
+		photo.setBitmap(bm);
+		photo.setGridBitmap(gridBm);
+		addPhoto(photo, quality, db);
+
+		photo = new Photo();
+	    resInt = R.drawable.fallsunrise;
+		bm = BitmapFactory.decodeResource(context.getResources(), resInt);
+		gridBm = Utils.getGridBitmapFromResource(resInt, context);
+		photo.setPhotoID("20130402_000000");
+		photo.setAlbum("My album");
+		photo.setDescription("Nice sunrise in the fall");
+		photo.setUploadedToServer(false);
+		photo.setBitmap(bm);
+		photo.setGridBitmap(gridBm);
+		addPhoto(photo, quality, db);
+
+    }
+
+	private long addPhoto(Photo newPhoto, int quality, SQLiteDatabase db)
+	{
+		ContentValues values = new ContentValues();
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ID, newPhoto.getPhotoID());
+		//values.put(PhotoViewerDatabaseOpenHelper.COLUMN_NAME, newPhoto.getName());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_DESCRIPTION, newPhoto.getDescription());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_ALBUM, newPhoto.getAlbum());
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_IS_UPLOADED_TO_SERVER, newPhoto.isUploadedToServerAsYesNO());
+
+		//Compress the image data for the photo <<<<<<<<<---------Should we handle different format
+		//Is JPEG a good idea? since it is its compression reduces the data size?????
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		newPhoto.getBitmap().compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
+		values.put(PhotoViewerDatabaseOpenHelper.COLUMN_BITMAP, outputStream.toByteArray());
+
+		if(newPhoto.getGridBitmap() != null )
+		{
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			newPhoto.getGridBitmap().compress(Bitmap.CompressFormat.JPEG, quality, os);
+			values.put(PhotoViewerDatabaseOpenHelper.COLUMN_GRID_BITMAP, os.toByteArray());
+		}
+		else
+		{
+//			byte[] data = outputStream.toByteArray();
+//			Bitmap bm = Utils.decodeSampledBitmapFromByteArray(data, 0, data.length, Utils.widthAtDp, Utils.hieghtAtDp);
+			
+
+		}
+		//SQLiteDatabase db = dbHelper.getWritableDatabase();
+		long rowID = db.insert(PhotoViewerDatabaseOpenHelper.PHOTOS_TABLE_NAME, null, values);
+		//db.close();
+
+		return rowID;
+
+	}
 
 }

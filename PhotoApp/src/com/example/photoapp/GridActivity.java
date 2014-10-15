@@ -3,10 +3,14 @@ package com.example.photoapp;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import utils.Utils;
 
@@ -19,7 +23,9 @@ import com.example.photo.Photo;
 import com.example.photo.PhotoManager;
 import com.example.server.Callback;
 import com.example.server.DownloadPhotoTask;
+import com.example.server.ServerManager;
 import com.example.server.SyncPhotosTask;
+import com.example.server.UploadPhotoTask;
 
 
 import android.annotation.SuppressLint;
@@ -118,8 +124,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private static int mStartYear, mEndYear;
 	private static int mStartMonth, mEndMonth;
 	private static int mStartDay, mEndDay;
-	private static String mStartingDate = "";
-	private static String mEndDate = "";
+	private String mStartingDate = "";
+	private String mEndDate = "";
 	// Search String
 	private static String mSearchQuery = null;
 
@@ -134,25 +140,25 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//return result;
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		super.onNewIntent(intent);
-		setIntent(intent);
-
-		processExtraData();
-
-	}
-	private void processExtraData()
-	{
-		Intent intent = getIntent();
-		//do something
-		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
-		{
-			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
-			imgadapter.notifyDataSetChanged();
-		}
-	}
+//	@Override
+//	protected void onNewIntent(Intent intent) {
+//		// TODO Auto-generated method stub
+//		super.onNewIntent(intent);
+//		//setIntent(intent);
+//
+//		//processExtraData();
+//
+//	}
+//	private void processExtraData()
+//	{
+//		Intent intent = getIntent();
+//		//do something
+//		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
+//		{
+//			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
+//			imgadapter.notifyDataSetChanged();
+//		}
+//	}
 
 	@Override
 	public void onResume() {
@@ -272,7 +278,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setSelectedNavigationItem(navigation_list_position);
 		
 		setOverflowShowingAlways(); 
-		handleIntent(getIntent());
 		// -- new --//
 		// -- end --//
 		// Changing the action bar icon
@@ -300,6 +305,9 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//	setList(initarray());
 		//setList(initarray(savedInstanceState));
 		gridview.setAdapter(imgadapter);
+		
+		handleIntent(getIntent());
+
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
 
@@ -333,73 +341,114 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
+        
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // TODO Auto-generated method stub
+
+        	MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context, menu);
+//			return true;
+            mode.setTitle("Select Items");
+            mode.setSubtitle("One item selected");
+            return true;
+
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // TODO Auto-generated method stub
+
+        	//actionList.clear();
+        	 int selectCount = gridview.getCheckedItemCount();
+        	 //gridview.getItemAtPosition(gridview.getCheckedItemPosition());
+             switch (selectCount) {
+             case 1:
+                 mode.setSubtitle("One item selected");
+
+                 break;
+             default:
+                 mode.setSubtitle("" + selectCount + " items selected");
+
+                 break;
+             }
+             
+//            SparseBooleanArray sparseBooleanArray = gridview.getCheckedItemPositions();
+//            for (int i = 0;  i < sparseBooleanArray.size(); i++)
+//            {
+//            	if( sparseBooleanArray.get(i) == true)
+//            	{
+//            		String id = getList().get(i);
+//            		actionList.add(id);
+//            	}
+//            }
+       	   //Toast.makeText(getApplicationContext(), "action list after = " + actionList.get(0), Toast.LENGTH_SHORT).show();
+        	switch (item.getItemId()){
+			//Should be Share and discard,
+			case R.id.action_share:
+				uploadPhotos();
+				mode.finish();
+				return true;
+			case R.id.action_discard:
+				discardPhotos();
+				mode.finish();
+				return true;
+			default:
+				return false;
+			}
+        }
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				// TODO Auto-generated method stub
 				return false;
 			}
+        	
+        
+        private void uploadPhotos()
+        {
+           	int numOfPhotos = actionList.size();
+        	if( numOfPhotos > 0 )
+        	{
+        		
+        		UploadPhotoMultipleSelectionWorker uploadMultiWorker = 
+        				new UploadPhotoMultipleSelectionWorker( (ArrayList<String>)actionList.clone() );
+        		
+        		uploadMultiWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(), null);
+//        		if ( numOfPhotos == 1)
+//        	       	   Toast.makeText(getApplicationContext(), "1 photo deleted.", Toast.LENGTH_SHORT).show();
+//        		else
+//     	       	   Toast.makeText(getApplicationContext(), numOfPhotos + " photos deleted.", Toast.LENGTH_SHORT).show();
+        		actionList.clear();
 
-			@Override
-			public void onDestroyActionMode(ActionMode mode) {
+
+        	
+        		//imgadapter.notifyDataSetChanged();
+        	}
+        	
+        	
+        }
+         
+        @Override
+			
+        public void onDestroyActionMode(ActionMode mode) {
 				// TODO Auto-generated method stub
 
 			}
 
-			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				// TODO Auto-generated method stub
+//			@Override
+//			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//				// TODO Auto-generated method stub
+//
+//				MenuInflater inflater = mode.getMenuInflater();
+//				inflater.inflate(R.menu.context, menu);
+//				//			return true;
+//				mode.setTitle("Select Items");
+//				mode.setSubtitle("One item selected");
+//				return true;
+//
+//			}
 
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.context, menu);
-				//			return true;
-				mode.setTitle("Select Items");
-				mode.setSubtitle("One item selected");
-				return true;
-
-			}
-
-			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				// TODO Auto-generated method stub
-
-				//actionList.clear();
-				int selectCount = gridview.getCheckedItemCount();
-				//gridview.getItemAtPosition(gridview.getCheckedItemPosition());
-				switch (selectCount) {
-				case 1:
-					mode.setSubtitle("One item selected");
-
-					break;
-				default:
-					mode.setSubtitle("" + selectCount + " items selected");
-
-					break;
-				}
-
-				//            SparseBooleanArray sparseBooleanArray = gridview.getCheckedItemPositions();
-				//            for (int i = 0;  i < sparseBooleanArray.size(); i++)
-				//            {
-				//            	if( sparseBooleanArray.get(i) == true)
-				//            	{
-				//            		String id = getList().get(i);
-				//            		actionList.add(id);
-				//            	}
-				//            }
-				//Toast.makeText(getApplicationContext(), "action list after = " + actionList.get(0), Toast.LENGTH_SHORT).show();
-				switch (item.getItemId()){
-				//Should be Share and discard,
-				case R.id.action_share:
-
-					return true;
-				case R.id.action_discard:
-					discardPhotos();
-					mode.finish();
-					return true;
-				default:
-					return false;
-				}
-
-			}
 
 			private void discardPhotos()
 			{
@@ -477,12 +526,36 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			mSearchQuery = intent.getStringExtra(SearchManager.QUERY);
-			Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplicationContext(),"User search '" + mSearchQuery + "'", Toast.LENGTH_LONG).show();
 			// Reset : temp for test
+			search();
 			finish();
-			mSearchQuery = null;
+			//mSearchQuery = null;
 		}
 	}
+	private ArrayList<String> idsForSearchResults = new ArrayList<String>();
+    private void search()
+    {
+    	idsForSearchResults.clear();
+    	ArrayList<Photo> photos = DatabaseManager
+    			.getInstance(getApplicationContext()).getPhotosDescriptions();
+    	String keywords = mSearchQuery;
+    	
+        for (Photo photo : photos)
+        {
+            if (!keywords.equals("") && photo.getDescription()!=null
+                && (photo.getDescription().toLowerCase().contains(keywords.toLowerCase()))
+                ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
+            {
+            	idsForSearchResults.add( photo.getPhotoID() ); 
+            	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
+            } 
+        }
+        imgadapter.replaceList(idsForSearchResults);
+        update();
+
+    }
+	
 
 	// UNUSED ANY MORE
 	@SuppressLint("NewApi")
@@ -736,11 +809,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		intent.putExtra(STRING_ID, getList().get(position));
 		//intent.putStringArrayListExtra(STRING_LIST, getList());
 		//Animation
-		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
 		startActivity(intent);
 		//Animation
-		overridePendingTransition(R.anim.enteralpha, R.anim.exitalpha);
 	}
 
 	private ArrayList<String> initarray(Bundle savedInstanceState)
@@ -857,15 +927,17 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			DialogFragment endDate = new DatePickerFragment2();
 			endDate.show(getFragmentManager(), "datePicker");
 
+			
 			DialogFragment startDate = new DatePickerFragment();
 			startDate.show(getFragmentManager(), "datePicker");
 
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
+			//update();//Delete it when methods add
 			update();//Delete it when methods add
-			
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 2;
 			/**>>> END <<<**/
+			return true;
 
 		}
 		else if (itemPosition == 3){ // A week
@@ -873,19 +945,20 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			Toast.makeText(GridActivity.this, "item Position is 3", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a week'", Toast.LENGTH_SHORT).show();
-			
+
+			Toast.makeText(getApplicationContext(), "User select 'Last week'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 3;
 			/**>>> END <<<**/
+			return true;
 		}
 		else if (itemPosition == 4){ // A month
 			navigation_list_position = 4;
 			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
-			Toast.makeText(getApplicationContext(), "User select 'Within a month'", Toast.LENGTH_SHORT).show();
-			
+		
+			Toast.makeText(getApplicationContext(), "User select 'Last month'", Toast.LENGTH_SHORT).show();
 			//setting this member to remember the list item number. used when changing view orientation
 			navigation_list_position = 4;
 			/**>>> END <<<**/
@@ -895,7 +968,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			Toast.makeText(GridActivity.this, "item Position is 4", Toast.LENGTH_SHORT).show();
 		}
 		return true;
+
 	}
+//	private final String START_DATE_TAG = "startdate";
+//	private final String END_DATE_TAG = "enddate";
+
 	/**===========================
 	 * Drop down menu listener END
 	 * ===========================
@@ -1047,6 +1124,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					//            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
+
+		            						
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -1076,6 +1155,60 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	//END
 
+	private class UploadPhotoMultipleSelectionWorker extends AsyncTask<Void, Void, Void>
+	{
+		private ArrayList<String> photoIds = new ArrayList<String>();
+		//private boolean isSomePhotosAlreadySaved = false;
+		private int numPhotoAlreadySavedOnServer = 0;
+		public UploadPhotoMultipleSelectionWorker(ArrayList<String> photoIdsToUpload) 
+		{
+			photoIds = photoIdsToUpload;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			
+			for(String photoId : photoIds )
+			{
+				if( photoId != null )
+				{
+					if( !DatabaseManager.getInstance(getApplicationContext()).isSavedOnServer(photoId))
+					{
+							UploadPhotoTask uploadPhotoTask = new UploadPhotoTask(GridActivity.this);
+							uploadPhotoTask.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),
+									DatabaseManager.getInstance(getApplicationContext()).getPhoto(photoId));
+					}
+					else
+					{
+						//isSomePhotosAlreadySaved = true;
+						numPhotoAlreadySavedOnServer++;
+					}
+				}
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(numPhotoAlreadySavedOnServer > 0)
+			{
+				if(numPhotoAlreadySavedOnServer == 1)
+				{
+					Toast.makeText(getApplicationContext(), "Photo already saved on server."
+							, Toast.LENGTH_SHORT).show();
+				}			
+				else if(numPhotoAlreadySavedOnServer == photoIds.size())
+					Toast.makeText(getApplicationContext(), "Photos already saved on server."
+						, Toast.LENGTH_SHORT).show();
+				else
+					Toast.makeText(getApplicationContext(), "Some photos already saved on server."
+							, Toast.LENGTH_SHORT).show();
+			}
+
+		}
+		
+	}
 
 	private class DatabaseWorker extends AsyncTask<Photo, Void , Void>
 	{
@@ -1087,7 +1220,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		protected Void doInBackground(Photo... newPhoto) 
 		{
 			//super(newPhoto);
-			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 75);
+			DatabaseManager.getInstance(getApplicationContext()).addPhoto( newPhoto[0], 50);
 
 
 			return null;
@@ -1106,7 +1239,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 	}
 	// NEW CONSTRUCTION - date Picker
-	public static class DatePickerFragment extends DialogFragment
+	public class DatePickerFragment extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 		DatePickerDialog datePicker;
 
@@ -1129,11 +1262,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mStartMonth = (month + 1) * 100;
 			mStartDay = day;
 
-			mStartingDate = mStartYear + mStartMonth + mStartDay + "_0000" ;
+			mStartingDate = mStartYear + mStartMonth + mStartDay + "_000000" ;
 			Toast.makeText(getActivity(),"Starting dates: " + mStartingDate, Toast.LENGTH_LONG).show();
 		}
 	}
-	public static class DatePickerFragment2 extends DialogFragment
+	public  class DatePickerFragment2 extends DialogFragment
 	implements DatePickerDialog.OnDateSetListener {
 		DatePickerDialog datePicker;
 		@Override
@@ -1155,11 +1288,53 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			mEndYear = year * 10000;
 			mEndMonth = (month + 1) * 100;
 			mEndDay = day;
-			mEndDate = mEndYear + mEndMonth + mEndDay + "_0000";
+			mEndDate = mEndYear + mEndMonth + mEndDay + "_000000";
 			Toast.makeText(getActivity(),"End dates: " + mEndDate, Toast.LENGTH_LONG).show();
+			listByCustomDatesRange();
 		}
 	}
 	// END
+	private ArrayList<String> listByCustomDateList = null;
+  private  void listByCustomDatesRange () //throws ParseException
+  {
+	  
+	  listByCustomDateList = new ArrayList<>();
+	  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
+		Date startDate = null;
+		Date endDate = null;
+		Date tempDate = null;
+
+		
+		try 
+		{
+			startDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mStartingDate);
+			endDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(mEndDate);
+			if ( startDate.after(endDate))
+			{
+				tempDate = startDate;
+				startDate = endDate;
+				endDate = tempDate;
+			}
+			
+	      for( String photoId : getList())
+	      {
+	    	  
+	    	  Date photoDate = new SimpleDateFormat(PhotoManager.TIME_STAMP_FORMAT).parse(photoId);
+	
+	      
+	          if (endDate.after(photoDate) && startDate.before(photoDate))
+	          {
+	              listByCustomDateList.add(photoId);  
+	          }	          
+	      }
+          imgadapter.replaceList(listByCustomDateList);
+          update();
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+  }
 
 	/**
 	 * A simple non-UI Fragment that stores a single Object and is retained over configuration

@@ -34,6 +34,33 @@ public class Utils
 		return threadPoolExecutor;
 	}
 	
+	private static ArrayList<Boolean> notifyIdList = null;
+	private static final boolean AVAILABLE = true;
+	private static final boolean BUSY = false;
+	
+	private static int notifyId = 1;
+	public synchronized static int generateNotifyId()
+	{
+		return notifyId++;
+	}
+//	public  synchronized static int  getNotfiyId()
+//	{
+//		if( notifyIdList == null)
+//		{
+//			notifyIdList = new ArrayList<Boolean>();
+//			for(int i=0; i < 10; i++)
+//			{
+//				notifyIdList.add(AVAILABLE);
+//			}
+//			notifyIdList.set(0, BUSY);
+//			return 0;			
+//		}
+//		return 0;
+//	}
+//	private synchronized static void releaseNotifyId(int notifyId)
+//	{
+//		
+//	}
 	public static Bitmap getBitmapFromFile(String filePath)
 	{
 //		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -75,6 +102,9 @@ public class Utils
 	public static void setIndividualPhotoDeleted(boolean deleted) {
 		Utils.deleted = deleted;
 	}
+	
+	public static int widthAtDp = 150;
+	public static int hieghtAtDp = 150;
 	
 	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int offset,
 			int length, int reqWidth, int reqHeight) {
@@ -165,7 +195,61 @@ public class Utils
 		return rotatedBitamp;
 
 	}
-	
+
+	public static Bitmap getGridBitmapFromResource(int id, Context context)
+	{
+		//Bitmap gridBitmap = null;
+		//int targetW = imgView.getWidth();
+		//int targetH = imgView.getHeight();
+		int reqWidthdp = 150;
+		int reqHeightdp = 150;		
+//		int reqWidthdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
+//		int reqHeightdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
+		int reqWidth = convertDpToPixel(reqWidthdp, context);
+		int reqHeight = convertDpToPixel(reqHeightdp, context);
+//		// Get the dimensions of the bitmap
+//		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+//		//bmOptions.inJustDecodeBounds = true;
+//		BitmapFactory.decodeFile(photoPath, bmOptions);
+//		int photoW = bmOptions.outWidth;
+//		int photoH = bmOptions.outHeight;
+//
+//		// Determine how much to scale down the image
+//		int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+//
+//		// Decode the image file into a Bitmap sized to fill the View
+//		bmOptions.inJustDecodeBounds = false;
+//		bmOptions.inSampleSize = scaleFactor;
+//		bmOptions.inPurgeable = true;
+//
+//		Bitmap imgBitmap = BitmapFactory.decodeFile(photoPath, bmOptions);
+
+		//First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		//BitmapFactory.decodeResource(res, resId, options);
+		BitmapFactory.decodeResource(context.getResources(), id , options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		
+//		Bitmap sampledBitmap =  BitmapFactory.decodeFile(filePath, options);
+//		Matrix matrix = new Matrix();
+//		matrix.postRotate(90);
+		
+//		Bitmap rotatedBitamp = Bitmap.createBitmap(sampledBitmap, 0, 0, 
+//                sampledBitmap.getWidth(), sampledBitmap.getHeight(), 
+//                matrix, true);
+		Bitmap sampledBitmap =  BitmapFactory
+				.decodeResource(context.getResources(), id , options);
+
+		return sampledBitmap;
+
+	}
+
 	public static Bitmap getBitmapFromByteArray(byte[] array, Context context, int reqWidth, int reqHeight)
 	{
 		//Bitmap gridBitmap = null;
@@ -211,10 +295,11 @@ public class Utils
 	public static Bitmap getGridBitmapFromByteArray(byte[] array, Context context)
 	{
 		
-		int reqWidthdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
-		int reqHeightdp = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
-		int reqWidth = convertDpToPixel(reqWidthdp, context);
-		int reqHeight = convertDpToPixel(reqHeightdp, context);
+		int reqWidth = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_width);
+		int reqHeight = context.getResources().getDimensionPixelSize(R.dimen.grid_img_view_height);
+		
+		//int reqWidth = convertDpToPixel(reqWidthdp, context);
+		//int reqHeight = convertDpToPixel(reqHeightdp, context);
 
 		//First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();

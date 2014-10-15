@@ -36,7 +36,7 @@
     <!-- Indivdual View Values -->
     <string name="action_share">Share</string>
     <string name="action_discard">Discard</string>
-    <string name="action_test">Long Press test for action Bar</string>
+    <string name="action_getPhotoInfo">Info</string>
 
     <!-- New CAB Values -->
     <string name="helloTextView">Hello world!</string>

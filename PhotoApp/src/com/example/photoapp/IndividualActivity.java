@@ -15,6 +15,8 @@ import com.example.activities.TesterActivity;
 import com.example.database.DatabaseManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -24,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,13 +43,12 @@ public class IndividualActivity extends Activity {
 		
 		String position = intent.getExtras().getString(GridActivity.STRING_ID);
 		//ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
-		
 		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
 	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
 	     imageView.setBackgroundColor(Color.BLACK);
 	     //Overflow fix
-	     setOverflowShowingAlways();
+//	     setOverflowShowingAlways();
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
@@ -66,7 +68,8 @@ public class IndividualActivity extends Activity {
 	        final int longest = (height > width ? height : width) / 2;
 		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
 					.getPhoto(position, longest, longest);
-
+		 
+		 this.getActionBar().setTitle(photoDetails.getPhotoID());
 		 imageView.setImageBitmap(photoDetails.getBitmap());
 		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 		 
@@ -112,14 +115,21 @@ public class IndividualActivity extends Activity {
 				// Delete current image
 				discard();
 				return true;
-			case R.id.action_sync:
-				// sync action
-				return true;
+
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 		//-- ACTION BAR END --//
 	}
+	private void getPhotoInfo() {
+		AlertDialog.Builder infoDialog =  new AlertDialog.Builder(this);
+		infoDialog.setTitle(photoDetails.getPhotoID());
+		infoDialog.setMessage("Album : " + photoDetails.getAlbum() + "\nUpload : " 
+						+ photoDetails.isUploadedToServerAsYesNO());
+		infoDialog.show();
+		
+	}
+
 	private void setOverflowShowingAlways() {  
 		try {  
 			ViewConfiguration config = ViewConfiguration.get(this);  
@@ -143,7 +153,8 @@ public class IndividualActivity extends Activity {
 		
 	}
 
-	private void discard() {
+	private void discard() 
+	{
 		int n = DatabaseManager.getInstance(getApplicationContext()).deletePhoto(photoDetails.getPhotoID());
 		
 		if( n > 0 )
