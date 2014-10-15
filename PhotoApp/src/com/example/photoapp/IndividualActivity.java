@@ -161,7 +161,7 @@ public class IndividualActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "Photo deleted.", Toast.LENGTH_LONG).show();
 
 		Utils.setIndividualPhotoDeleted(true);
-		Utils.list.remove(photoDetails.getPhotoID());
+		Utils.setDeletedPhotoID(photoDetails.getPhotoID());
 //		Intent intent = new Intent(this, GridActivity.class);
 //		//EditText editText = (EditText) findViewById(R.id.edit_message);
 //		//String message = editText.getText().toString();
@@ -174,6 +174,7 @@ public class IndividualActivity extends Activity {
 		// TODO Auto-generated method stub
 		
 	}
+	
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub

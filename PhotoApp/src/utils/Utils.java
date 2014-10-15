@@ -21,6 +21,15 @@ public class Utils
 	public final static int GRID_IMAGE_VIEW_SIZE_DP = 100;
 	public final static int GRID_VIEW_HOR_SPACING = 1;
 	public final static int GRID_VIEW_VER_SPACING = 1;
+	public static String PHOTO_ID_INDI_DELETED;
+	
+	public static String getDeletedPhotoID() {
+		return PHOTO_ID_INDI_DELETED;
+	}
+	public static void setDeletedPhotoID(String PhotoID) {
+		PHOTO_ID_INDI_DELETED = PhotoID;
+	}
+
 	public static ArrayList<String> list;
 	
 	private static ThreadPoolExecutor threadPoolExecutor = null;

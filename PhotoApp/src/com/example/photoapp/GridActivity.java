@@ -175,6 +175,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.smoothScrollToPosition(0);
 		if(Utils.isIndividualPhotoDeleted())
 		{
+			getList().remove(Utils.getDeletedPhotoID());
 			imgadapter.notifyDataSetChanged();
 			Utils.setIndividualPhotoDeleted(false);
 		}
