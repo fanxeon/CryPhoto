@@ -1153,7 +1153,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			Log.v("Album before", indx + "");
 
 			albumDialog.setTitle("Select an Album")
-			.setIcon(R.drawable.ic_action_collection2)
+			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 0 ,  
 					new DialogInterface.OnClickListener() {  
 				@Override 
