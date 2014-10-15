@@ -58,6 +58,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -200,8 +201,28 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		// and we want to be sure the current note progress isn't lost.
 
 	}
-
-
+	// exit alert
+	private long exitTime = 0; 
+	 
+	@Override 
+	public boolean onKeyDown(int keyCode, KeyEvent event) { 
+		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){ 
+			imgadapter.setListToAll();
+			imgadapter.UpdateGridView();
+			//Toast.makeText(GridActivity.this, "item Position is 0", Toast.LENGTH_SHORT).show();
+			navigation_list_position = 0;
+			if((System.currentTimeMillis()-exitTime) > 2000){ 
+				Toast.makeText(getApplicationContext(), "Press back agian to exit Photo App", Toast.LENGTH_SHORT).show(); 
+				exitTime = System.currentTimeMillis(); 
+			} else {
+				finish(); 
+				System.exit(0); 
+			} 
+				return true; 
+		} 
+		return super.onKeyDown(keyCode, event); 
+	} 
+	//END
 	private void setMembers(Bundle state) {
 		// TODO Auto-generated method stub
 		if (state != null)
@@ -296,11 +317,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setListNavigationCallbacks(adapter, this);
 		
 		setOverflowShowingAlways(); 
-
+		
 		actionBar.setSelectedNavigationItem(navigation_list_position);
 		//this will set up an array with references to images which will be used by the adapter later
 		//initarray(); //this will retrieve string IDs from the database manager
-
+		actionBar.setDisplayHomeAsUpEnabled(false);
 		//setSelection(setSelected, true);
 		// gridview.setAdapter(new ImageAdapter(this,cache));
 
@@ -331,7 +352,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
 		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
+	
         
 
         @Override
@@ -542,30 +563,13 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
             	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
             } 
         }
-        imgadapter.replaceList(idsForSearchResults);
-        update();
-
-    }
-    private void search2()
-    {
-    	idsForSearchResults.clear();
-    	ArrayList<Photo> photos = DatabaseManager
-    			.getInstance(getApplicationContext()).getPhotosDescriptions();
-    	String keywords = mSearchQuery;
-    	
-        for (Photo photo : photos)
-        {
-            if (!keywords.equals("") && photo.getDescription()!=null
-                && (photo.getDescription().toLowerCase().contains(keywords.toLowerCase()))
-                ||(keywords.toLowerCase().contains(photo.getDescription().toLowerCase())))
-            {
-            	idsForSearchResults.add( photo.getPhotoID() ); 
-            	//Toast.makeText(getApplicationContext(), photo.getDescription(), Toast.LENGTH_SHORT).show();
-            } 
+        if (idsForSearchResults.size() == 0){
+        	Toast.makeText(getApplicationContext(), "No results found", Toast.LENGTH_SHORT).show();
+        	
+        } else {
+	    	imgadapter.replaceList(idsForSearchResults);
+	        update();
         }
-        imgadapter.replaceList(idsForSearchResults);
-        update();
-
     }
 	
 
@@ -906,7 +910,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			//Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
 			albumListDialog.setTitle("Albums")
-			.setIcon(R.drawable.ic_action_collection2)
+			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
 					new DialogInterface.OnClickListener() {  
 				@Override 
@@ -1444,4 +1448,5 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 
 		return list;
 	}
+
 }
