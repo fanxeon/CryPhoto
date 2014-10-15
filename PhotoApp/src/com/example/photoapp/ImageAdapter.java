@@ -117,11 +117,12 @@ public class ImageAdapter extends BaseAdapter
 
 	public void replaceList(ArrayList<String> positions)
 	{
-		templist = (ArrayList<String>) list.clone(); //save the values in the array list
+		//templist = (ArrayList<String>) list.clone(); //save the values in the array list
 		synchronized(list)
 		{
 			list.clear();
-			list.addAll(positions);
+			list = positions;
+			//list.addAll(positions);
 		}
 		replaced = true;
 	}
