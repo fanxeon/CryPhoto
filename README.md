@@ -1,2 +1,2 @@
-photoviewerrep
+Crytop photo manager
 ==============
