@@ -568,7 +568,7 @@ public class DatabaseManager
 		//This method not completed yet. Do we really need it ???????<<<<<<<<<------------
 
 
-		return new ArrayList<>();
+		return new ArrayList();
 	}
 
 	
@@ -703,7 +703,7 @@ public class DatabaseManager
 	
 	public ArrayList<String> getPhotoIdsForAlbum(String albumName)
 	{
-		ArrayList<String> photoIDs = new ArrayList<>();
+		ArrayList<String> photoIDs = new ArrayList();
 		if( albumName != null)
 		{
 			//This where statement for select command

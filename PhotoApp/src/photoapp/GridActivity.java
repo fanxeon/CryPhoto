@@ -143,25 +143,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		//return result;
 	}
 
-//	@Override
-//	protected void onNewIntent(Intent intent) {
-//		// TODO Auto-generated method stub
-//		super.onNewIntent(intent);
-//		//setIntent(intent);
-//
-//		//processExtraData();
-//
-//	}
-//	private void processExtraData()
-//	{
-//		Intent intent = getIntent();
-//		//do something
-//		if( (intent.getStringExtra(Utils.PHOTO_DELETED) != null) & (getList() != null) )
-//		{
-//			getList().remove(intent.getStringExtra(Utils.PHOTO_DELETED));
-//			imgadapter.notifyDataSetChanged();
-//		}
-//	}
 	private long exitTime;  
     @Override  
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -185,9 +166,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	@Override
 	public void onResume() {
 		super.onResume();  // Always call the superclass method first
-		//adapter.notifyDataSetChanged();
-		//initarray(); //this will retrieve string IDs from the database manager
-		//Toast.makeText(GridActivity.this, "On Resume Called", Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -273,11 +251,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		setContentView(R.layout.activity_main);
 		System.out.println("Just set the layout for the activity");
 
-		//processExtraData();
-
-		//AdapterListFragment mfragment = findOrCreateListFragment(getFragmentManager());
-
-		//initialize cache and fragment
 		ImageCache cache = getImageCache(this.getFragmentManager());
 
 		System.out.println("Just initialized the array of string ids");
@@ -315,40 +288,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				navSpinner);
 		// assigning the spinner navigation
 		actionBar.setListNavigationCallbacks(adapter, this);
-		
-		setOverflowShowingAlways(); 
-		// -- new --//
-		// -- end --//
-		// Changing the action bar icon
-		// actionBar.setIcon(R.drawable.ico_actionbar);
-		//-- ACTION BAR END --//
-
-		//set up drop-down menu
-		//create an array adapter which will supply views for the drop down menu
-		//SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(this,
-		//R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
-
-		//sets up the up button on the action bar for the user to navigate backwards
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
-
+		setOverflowShowingAlways();
 		actionBar.setSelectedNavigationItem(navigation_list_position);
-		//handleIntent(getIntent());
 
-		//this will set up an array with references to images which will be used by the adapter later
-		//initarray(); //this will retrieve string IDs from the database manager
-
-		//setSelection(setSelected, true);
-		// gridview.setAdapter(new ImageAdapter(this,cache));
-
-		//set on item click listener
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				//Toast.makeText(GridActivity.this, "" + position+", "+v.getHeight(), Toast.LENGTH_SHORT).show();
-				//gridview.setSelection(position);
 				Indiview(v,position);
 			}
 		});
-
 		/** NEW CONSTRUCTION: Contextual Action Bar Method @ Fan **/
 		gridview.setOnItemLongClickListener(new OnItemLongClickListener(){
 			@Override
@@ -364,21 +311,14 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		});
 
 		gridview.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-		//gridview.setOnItemSelectedListener()
 		gridview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-        
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // TODO Auto-generated method stub
-
-        	MenuInflater inflater = mode.getMenuInflater();
-			inflater.inflate(R.menu.context, menu);
-//			return true;
-            mode.setTitle("Select Items");
-            mode.setSubtitle("One item selected");
-            return true;
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context, menu);
+                mode.setTitle("Select Items");
+                mode.setSubtitle("One item selected");
+                return true;
 
         }
 
@@ -1470,7 +1410,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	  private  void listByCustomDatesRange () //throws ParseException
 	  {
 		  
-		  listByCustomDateList = new ArrayList<>();
+		  listByCustomDateList = new ArrayList();
 		  //Date startDate = PhotoManager.getInstance(getApplicationContext()).getTimeStampAsDate(mStartingDate);
 			Date startDate = null;
 			Date endDate = null;
