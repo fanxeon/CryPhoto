@@ -19,7 +19,7 @@ android:required="true" />
 	android:largeHeap="true"
 	android:theme="@style/Theme.Theme" >
 	<activity
-		android:name=".AppStart"
+		android:name="photoapp.AppStart"
 		android:label="@string/app_name" >
 		<intent-filter>
 			<action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@ android:required="true" />
 		</intent-filter>
 	</activity>
 	<activity
-		android:name=".GridActivity"
+		android:name="photoapp.GridActivity"
 		android:label="@string/app_name"
 		android:theme="@style/Theme.Example"
 		>
@@ -46,27 +46,27 @@ android:required="true" />
 			android:value=".GridActivity" />
 	</activity>
 	<activity
-		android:name="com.example.activities.TesterActivity"
+		android:name="activities.TesterActivity"
 		android:label="@string/title_activity_tester"
-		android:parentActivityName=".GridActivity" >
+		android:parentActivityName="photoapp.GridActivity" >
 	</activity>
 	<activity
-		android:name=".IndividualActivity"
+		android:name="photoapp.IndividualActivity"
 		android:label="@string/title_activity_display_message"
 		android:theme="@style/Theme.Example"
-		android:parentActivityName=".GridActivity" >
+		android:parentActivityName="photoapp.GridActivity" >
 		<meta-data
 			android:name="android.support.PARENT_ACTIVITY"
 			android:value="com.example.photoapp.MainActivity" />
 	</activity>
 	<activity
-		android:name=".AlbumActivity"
+		android:name="photoapp.AlbumActivity"
 		android:label="@string/app_name" >
 	</activity>
 		<!-- Search results activity -->
 	<activity
-		android:name=".SearchResultsActivity"
-		android:parentActivityName=".GridActivity" >
+		android:name="photoapp.SearchResultsActivity"
+		android:parentActivityName="photoapp.GridActivity" >
 	</activity>
 </application>
 </manifest>
