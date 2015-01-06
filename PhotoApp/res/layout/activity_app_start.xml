@@ -4,31 +4,32 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="bottom"
-    android:background="@drawable/start_background">
+    android:background="@drawable/start_background2">
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="  欢迎来到"
+        android:text="欢迎使用"
         android:textColor="#ffffff"
         android:textSize ="24dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/appNameScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" CryPhoto"
+        android:text="CryPhoto"
         android:textSize ="50dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="Tuan"
         android:textColor="#ffffff"
         android:clickable="true"  />
     <TextView
+        android:id="@+id/developer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="    Developed by FanX"
+        android:text="Developed by FanX"
         android:textSize ="20dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="Tuan"

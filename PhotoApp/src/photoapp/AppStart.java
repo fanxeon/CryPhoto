@@ -44,7 +44,7 @@ public class AppStart extends Activity {
 	            public void onAnimationStart(Animation animation) {}
 	                                                                          
 	        });
-	        TextView textView = (TextView) findViewById(R.id.textView2);
+	        TextView textView = (TextView) findViewById(R.id.welcomeText);
 	        textView.setOnClickListener(new TextView.OnClickListener(){
 
 				@Override

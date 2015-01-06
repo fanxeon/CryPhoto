@@ -17,7 +17,7 @@ android:required="true" />
 	android:icon="@drawable/logo"
 	android:label="@string/app_name"
 	android:largeHeap="true"
-	android:theme="@style/Theme.Theme" >
+	android:theme="@style/AppTheme" >
 	<activity
 		android:name="photoapp.AppStart"
 		android:label="@string/app_name" >
@@ -38,10 +38,10 @@ android:required="true" />
 			<action android:name="android.intent.action.SEARCH" />
 		</intent-filter>
 		<meta-data
-			android:name="android.app.searchable"
+			android:name="android.adapter.searchable"
 			android:resource="@xml/searchable" />
 		<meta-data
-			android:name="android.app.default_searchable"
+			android:name="android.adapter.default_searchable"
 			android:value=".GridActivity" />
 	</activity>
 	<activity
@@ -55,7 +55,7 @@ android:required="true" />
 		android:parentActivityName="photoapp.GridActivity" >
 		<meta-data
 			android:name="android.support.PARENT_ACTIVITY"
-			android:value="com.example.photoapp.MainActivity" />
+			android:value="photoapp.IndividualActivity" />
 	</activity>
 	<activity
 		android:name="photoapp.AlbumActivity"

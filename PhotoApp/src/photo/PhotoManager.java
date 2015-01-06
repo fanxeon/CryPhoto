@@ -15,7 +15,6 @@ import java.util.Date;
 
 
 import android.content.Context;
-import app.PhotoViewerApplication;
 
 /**
  * This a (singleton) photo manager class, all  

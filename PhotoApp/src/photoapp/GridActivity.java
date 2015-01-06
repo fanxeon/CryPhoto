@@ -269,11 +269,12 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		// Spinner title navigation data
 		navSpinner = new ArrayList<SpinnerNavItem>();
-		navSpinner.add(new SpinnerNavItem("All", R.drawable.ic_action_view_as_grid));
-		navSpinner.add(new SpinnerNavItem("Albums", R.drawable.ic_action_collection));
-		navSpinner.add(new SpinnerNavItem("Date Range", R.drawable.ic_action_time));
-		navSpinner.add(new SpinnerNavItem("Last Week", R.drawable.ic_action_data_usage));
-		navSpinner.add(new SpinnerNavItem("Last month", R.drawable.ic_action_data_usage2));
+		navSpinner.add(new SpinnerNavItem("全部", R.drawable.ic_action_view_as_grid));
+		navSpinner.add(new SpinnerNavItem("相册", R.drawable.ic_action_collection));
+		navSpinner.add(new SpinnerNavItem("指定日期", R.drawable.ic_action_time));
+		navSpinner.add(new SpinnerNavItem("一周以前", R.drawable.ic_action_data_usage));
+		navSpinner.add(new SpinnerNavItem("一个月之前", R.drawable.ic_action_data_usage));
+
 		// title drop down adapter
 		adapter = new TitleNavigationAdapter(getApplicationContext(),
 				navSpinner);
@@ -307,8 +308,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.context, menu);
-                mode.setTitle("Select Items");
-                mode.setSubtitle("One item selected");
+                mode.setTitle("选择照片");
+                mode.setSubtitle("一张照片已选择");
                 return true;
 
         }
@@ -318,10 +319,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
              int selectCount = gridview.getCheckedItemCount();
              switch (selectCount) {
                  case 1:
-                     mode.setSubtitle("One item selected");
+                     mode.setSubtitle("一张照片已选择");
                      break;
                  default:
-                     mode.setSubtitle("" + selectCount + " items selected");
+                     mode.setSubtitle("" + selectCount + " 张照片已选择");
                      break;
              }
              switch (item.getItemId()){
@@ -373,10 +374,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                 actionList.clear();
                 if ( numOfPhotos == 1) {
                     Toast.makeText(getApplicationContext(),
-                            "1 photo deleted.", Toast.LENGTH_SHORT).show();
+                            "1 张照片已删除", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), numOfPhotos +
-                            " photos deleted.", Toast.LENGTH_SHORT).show();
+                            " 照片已删除", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -394,10 +395,10 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
                 int selectCount = gridview.getCheckedItemCount();
                 switch (selectCount) {
                     case 1:
-                        mode.setSubtitle("One item selected");
+                        mode.setSubtitle("一张照片已选择");
                         break;
                     default:
-                        mode.setSubtitle("" + selectCount + " items selected");
+                        mode.setSubtitle("" + selectCount + " 照片已选择");
                         break;
                 }
             }
@@ -448,7 +449,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
             } 
         }
         if (idsForSearchResults.size() == 0){
-        	Toast.makeText(getApplicationContext(),"Results not found", Toast.LENGTH_LONG).show();
+        	Toast.makeText(getApplicationContext(),"未找到结果", Toast.LENGTH_LONG).show();
         	onRestart();
         } else {
 	        imgadapter.replaceList(idsForSearchResults);
@@ -573,7 +574,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		builder.setTitle("输入新相册名");
 
 		builder.setView(view);  
-		builder.setPositiveButton("Save", new DialogInterface.OnClickListener(){
+		builder.setPositiveButton("保存", new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int which) {
 				if(which == Dialog.BUTTON_POSITIVE){  
 
@@ -585,7 +586,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 				}
 			}
 		});  
-		builder.setNegativeButton("Cancel", this);
+		builder.setNegativeButton("取消", this);
 		//DatabaseManager.getInstance(getApplicationContext()).insertAlbum("ss");
 		builder.create().show();  
 		//int n = DatabaseManager.getInstance(getApplicationContext()).insertAlbum();
@@ -605,37 +606,13 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			public void OnTaskFinished(ArrayList<String> downloadedPhotoIds) {
 				if(downloadedPhotoIds.size() > 0 )
 				{	
-					//this method will be called by downloadPhotoTask when it finish downloading
-					//					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
-					//							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
-					//					task.execute(downloadedPhoto.getPhotoID());
 
-					//					DatabaseWorker dbWorker = new DatabaseWorker();
-					//					dbWorker.execute(newPhoto);						
 					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>
 					getList().addAll(downloadedPhotoIds);
 					imgadapter.notifyDataSetChanged();
 
-					//		DownloadPhotoTask downloadPhotoTask = new DownloadPhotoTask(this);
-					//		downloadPhotoTask.setCallbackOnTaskFinished(new Callback<Photo>() {			
-					//			@Override
-					//			public void OnTaskFinished(Photo downloadedPhoto) {
-					//				if(downloadedPhoto != null)
-					//				{	
-					//					//this method will be called by downloadPhotoTask when it finish downloading
-					//					AddToCacheTask task = new AddToCacheTask(getApplicationContext()
-					//							,getImageCache(getFragmentManager()), downloadedPhoto.getGridBitmap());
-					//					task.execute(downloadedPhoto.getPhotoID());
-					//					
-					////					DatabaseWorker dbWorker = new DatabaseWorker();
-					////					dbWorker.execute(newPhoto);						
-					//					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-					//					//Add photoId, individualBitmap to Cache and adapter ???????????????????
-					//					//>>>>>>>>>>>>>>>>>>>>>>>>
-					//					getList().add(downloadedPhoto.getPhotoID());
-					//					imgadapter.notifyDataSetChanged();
 				}	
 			}
 		});
@@ -651,11 +628,11 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private void openSearch() 
 	{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);  
-			builder.setTitle("Search by Description");  
+			builder.setTitle("根据描述搜索");
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			builder.setView(input);	
-			builder.setPositiveButton("Search", new DialogInterface.OnClickListener(){
+			builder.setPositiveButton("搜索", new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
 					if(which == Dialog.BUTTON_POSITIVE){  
 						mSearchQuery = input.getText().toString();
@@ -663,7 +640,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					}
 				}
 			});  
-			builder.setNegativeButton("Cancel", this);
+			builder.setNegativeButton("取消", this);
 			
 			builder.show();
 	
@@ -782,7 +759,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			
 			//Toast.makeText(GridActivity.this, "item Position is 1", Toast.LENGTH_SHORT).show();
 			albumList = DatabaseManager.getInstance(getApplicationContext()).getAlbumNames();
-			albumListDialog.setTitle("Albums")
+			albumListDialog.setTitle("相册")
 			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), -1 ,  
 					new DialogInterface.OnClickListener() {  
@@ -854,14 +831,6 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					startDate.show(getFragmentManager(), "datePicker");
 				}
 			}
-			
-//			DialogFragment endDate = new DatePickerFragment2();
-//			endDate.show(getFragmentManager(), "datePicker");
-//
-//			
-//			DialogFragment startDate = new DatePickerFragment();
-//			startDate.show(getFragmentManager(), "datePicker");
-
 			/**>>> Add Methods to respond Times(Custom date range)<<<**/
 			update();//Delete it when methods add
 			//update();//Delete it when methods add
@@ -1012,7 +981,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 			albumDialog = new AlertDialog.Builder(this);
 			Log.v("Album before", indx + "");
 
-			albumDialog.setTitle("Select an Album")
+			albumDialog.setTitle("选择相册")
 			.setIcon(R.drawable.ic_action_collection)
 			.setSingleChoiceItems(albumList.toArray(new String[albumList.size()]), 0 ,  
 					new DialogInterface.OnClickListener() {  
@@ -1030,36 +999,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 					getList().add(newPhotoID);
 
 					DatabaseWorker dbWorker = new DatabaseWorker();
-					dbWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhoto);						
-
-					//					boolean done = false;
-					//					while(!done)
-					//					{
-					//						try
-					//						{
-					//							Boolean b = cacheTask.get();
-					//							done = true;
-					//						}
-					//						catch(InterruptedException in)
-					//						{
-					//							//interrupted = false;
-					//							done = false;
-					//						}
-					//						catch(ExecutionException e)
-					//						{
-					//							done = true;
-					//							System.out.println("Encountered an executopn exception");
-					//						}
-					//						catch(Exception e)
-					//						{
-					//							done = true;
-					//							System.out.println("Encountered an exception");
-					//						}
-					//					}
-
-					//					imgadapter.notifyDataSetChanged();
-
-
+					dbWorker.executeOnExecutor(Utils.getThreadPoolExecutorInstance(),newPhoto);
 					//            						//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 					//Add photoId, individualBitmap to Cache and adapter ???????????????????
 					//>>>>>>>>>>>>>>>>>>>>>>>>

@@ -9,10 +9,6 @@ import server.UploadPhotoTask;
 import utils.Utils;
 
 import com.example.photoapp.R;
-import com.example.photoapp.R.id;
-import com.example.photoapp.R.layout;
-import com.example.photoapp.R.menu;
-
 import database.DatabaseManager;
 
 import activities.TesterActivity;
@@ -47,48 +43,48 @@ public class IndividualActivity extends Activity {
 		//ArrayList<String> list = intent.getStringArrayListExtra(GridActivity.STRING_LIST);
 		//GridActivity.getList();
 		 //ImageAdapter imageAdapter = new ImageAdapter(this);
-	     ImageView imageView = (ImageView) findViewById(R.id.SingleView);
-	     imageView.setBackgroundColor(Color.BLACK);
+	    ImageView imageView = (ImageView) findViewById(R.id.SingleView);
+	    imageView.setBackgroundColor(Color.BLACK);
 	     //Overflow fix
 //	     setOverflowShowingAlways();
 //	     int height = imageView.getHeight();
 //	     int width = imageView.getWidth();
 //	     Bitmap bm = DatabaseManager.getInstance(getApplicationContext()).getBitmap(position, width, height);
 //	     imageView.setImageBitmap(bm);
-	     //check the cache for the image	     
+	     //check the cache for the image
 //	     FetchFromCacheTask fetchtask = new FetchFromCacheTask(imageView, this.getApplicationContext(), this.getFragmentManager());
 //		 fetchtask.execute(position);
-		 
+
 //		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
 //				 					.getPhotoWithoutBitmaps(position);
 //		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
-	        final DisplayMetrics displayMetrics = new DisplayMetrics();
-	        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-	        final int height = displayMetrics.heightPixels;
-	        final int width = displayMetrics.widthPixels;
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        final int height = displayMetrics.heightPixels;
+        final int width = displayMetrics.widthPixels;
 
-	        final int longest = (height > width ? height : width) / 2;
-		 photoDetails = DatabaseManager.getInstance(getApplicationContext())
+        final int longest = (height > width ? height : width) / 2;
+		photoDetails = DatabaseManager.getInstance(getApplicationContext())
 					.getPhoto(position, longest, longest);
 		 
-		 this.getActionBar().setTitle(photoDetails.getPhotoID());
-		 imageView.setImageBitmap(photoDetails.getBitmap());
-		 Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
+		this.getActionBar().setTitle(photoDetails.getPhotoID());
+		imageView.setImageBitmap(photoDetails.getBitmap());
+		Toast.makeText(getApplicationContext(), photoDetails.getDescription(), Toast.LENGTH_LONG).show();
 		 
-	     // -- Text view for Description --//
-	     TextView textView = (TextView) findViewById(R.id.Description);
+        // -- Text view for Description --//
+        TextView textView = (TextView) findViewById(R.id.Description);
 
-	     textView.setText(photoDetails.getDescription() + " @ " + photoDetails.getAlbum());
-	     //textView.setText(photoDetails.getAlbum());
-	     // -- END --//
-	     //imageView.setImageResource(GridActivity.images[position]);
-		
-//		// Create the text view
-//	    TextView textView = new TextView(this);
-//	    textView.setTextSize(40);
-//	    textView.setText(message);
+        textView.setText(photoDetails.getDescription() + "\n分类到 " + photoDetails.getAlbum());
+        //textView.setText(photoDetails.getAlbum());
+        // -- END --//
+        //imageView.setImageResource(GridActivity.images[position]);
 
-	    // Set the text view as the activity layout
+        //		// Create the text view
+        //	    TextView textView = new TextView(this);
+        //	    textView.setTextSize(40);
+        //	    textView.setText(message);
+
+        // Set the text view as the activity layout
 	   
 	}
 
@@ -164,17 +160,7 @@ public class IndividualActivity extends Activity {
 
 		Utils.setIndividualPhotoDeleted(true);
 		Utils.setDeletedPhotoID(photoDetails.getPhotoID());
-//		Intent intent = new Intent(this, GridActivity.class);
-//		//EditText editText = (EditText) findViewById(R.id.edit_message);
-//		//String message = editText.getText().toString();
-//		intent.putExtra("deleted", photoDetails.getPhotoID());
-//		//intent.putStringArrayListExtra(STRING_LIST, getList());
-//		startActivity(intent);
-
 		finish();
-		
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override

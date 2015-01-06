@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/imageViewPicTaken"
         android:layout_alignTop="@+id/btnDB"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_action_web_site" />
 
     <TextView
         android:id="@+id/txtViewDesc"
