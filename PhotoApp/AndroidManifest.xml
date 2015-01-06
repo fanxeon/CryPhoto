@@ -29,7 +29,6 @@ android:required="true" />
 	<activity
 		android:name="photoapp.GridActivity"
 		android:label="@string/app_name"
-		android:theme="@style/Theme.Example"
 		>
 		<intent-filter>
 			<action android:name="android.intent.action.VIEW" />
@@ -53,7 +52,6 @@ android:required="true" />
 	<activity
 		android:name="photoapp.IndividualActivity"
 		android:label="@string/title_activity_display_message"
-		android:theme="@style/Theme.Example"
 		android:parentActivityName="photoapp.GridActivity" >
 		<meta-data
 			android:name="android.support.PARENT_ACTIVITY"

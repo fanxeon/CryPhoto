@@ -10,7 +10,7 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="  Welcome to"
+        android:text="  欢迎来到"
         android:textColor="#ffffff"
         android:textSize ="24dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -19,8 +19,17 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Photo App"
+        android:text=" CryPhoto"
         android:textSize ="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:onClick="Tuan"
+        android:textColor="#ffffff"
+        android:clickable="true"  />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="    Developed by FanX"
+        android:textSize ="20dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:onClick="Tuan"
         android:textColor="#ffffff"
