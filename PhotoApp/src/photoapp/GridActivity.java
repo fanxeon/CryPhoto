@@ -28,7 +28,6 @@ import server.ServerManager;
 import server.SyncPhotosTask;
 import server.UploadPhotoTask;
 import utils.Utils;
-
 import com.example.photoapp.R;
 
 import database.DatabaseManager;
@@ -85,6 +84,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TimePicker;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 //import android.widget.EditText;
 
@@ -152,7 +152,7 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
    
             if ((System.currentTimeMillis() - exitTime) > 2000)   
             {  
-                Toast.makeText(getApplicationContext(), "再次按下退出CryPhoto",
+                Toast.makeText(getApplicationContext(), "再次按下退出 CryPhoto",
                         Toast.LENGTH_SHORT).show();  
                 exitTime = System.currentTimeMillis();
             } else {  
@@ -628,7 +628,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 	private void openSearch() 
 	{
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);  
-			builder.setTitle("根据描述搜索");
+			builder.setTitle("键入描述搜索照片")
+                 .setIcon(R.drawable.ic_action_search);
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 			builder.setView(input);	
@@ -932,7 +933,8 @@ public class GridActivity extends Activity implements OnNavigationListener, OnCl
 		{
 			//GridView gridview = (GridView) findViewById(R.id.gridview);
 			AlertDialog.Builder descriptionDialog = new AlertDialog.Builder(this);
-			descriptionDialog.setTitle("Enter description");
+			descriptionDialog.setTitle("输入描述文字")
+                           .setIcon(R.drawable.ic_action_add_to_queue);
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_TEXT);
 

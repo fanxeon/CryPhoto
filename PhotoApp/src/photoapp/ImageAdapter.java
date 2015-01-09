@@ -43,39 +43,6 @@ public class ImageAdapter extends BaseAdapter
 		System.out.println("Just got an instance of the Image Cache");
 		//putincache();
 	}
-
-	//working properly
-//	private void putincache()
-//	{
-//		System.out.println("Attempting to add stuff to cache");
-//		int i;
-//		for(i=0; i < list.size(); i++)
-//		{
-//			//Integer pos = Integer.valueOf(list.get(i));
-//			//FetchFromCacheTask fttask = new FetchFromCacheTask();
-//			AddToCacheTask task = new AddToCacheTask(mContext,cache,reqWidth,reqHeight);
-//			task.execute(list.get(i));
-//		}
-//	}
-
-	//	   private void initarray()
-	//	   {
-	//		   int[] images = mContext.getResources().getIntArray(R.array.ImageRef);
-	//		   images = new int[] { R.drawable.img1, R.drawable.img2,
-	//				      R.drawable.img3, R.drawable.img1,
-	//				      R.drawable.img2, R.drawable.img3,
-	//				      R.drawable.img1, R.drawable.img2,
-	//				      R.drawable.img3, R.drawable.img1,
-	//				      R.drawable.img2, R.drawable.img3,
-	//				      R.drawable.img1, R.drawable.img2,
-	//				      R.drawable.img3, R.drawable.img1,
-	//				      R.drawable.img2, R.drawable.img3,
-	//				      R.drawable.img1, R.drawable.img2,
-	//				      R.drawable.img3, R.drawable.img1,
-	//				      R.drawable.img2, R.drawable.img3,
-	//				   };
-	//		   this.images = images;
-	//	   }
 	
 	public ArrayList<String> getList()
 	{
