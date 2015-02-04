@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.example.photoapp.R;
 
-import database.DatabaseManager;
+import database.DatabaseManager;import photoapp.FetchFromCacheTask;import photoapp.ImageCache;
 
 import android.content.Context;
 import android.content.res.Resources;
